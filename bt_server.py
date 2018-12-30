@@ -9,5 +9,5 @@ def onStateChanged(state, msg):
         print "Got message", msg
         server.sendMessage(msg)
        
-serviceName = "EchoServer"
+serviceName = "TrainmoteServer"
 server = BTServer(serviceName, stateChanged = onStateChanged)
