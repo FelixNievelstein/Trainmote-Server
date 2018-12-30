@@ -1,6 +1,7 @@
 from libs.btpycom import *
 
 def onStateChanged(state, msg):
+    print state
     if state == "LISTENING":
         print "Server is listening"
     elif state == "CONNECTED":
