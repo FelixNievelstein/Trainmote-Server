@@ -57,7 +57,7 @@ def setup_logging():
 def main():
     print "Starting main"
     # Setup logging
-    setup_logging()
+    # setup_logging()
     print "Setup Logging finished"
     # We need to wait until Bluetooth init is done
     time.sleep(10)
