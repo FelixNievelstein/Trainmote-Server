@@ -145,13 +145,20 @@ P_MOTA1_LOW = False
 def backward():        
     if not P_MOTA1_LOW:
         GPIO.output(P_MOTA1, GPIO.LOW)
+        print "GPIO Low"
     else:
         GPIO.output(P_MOTA1, GPIO.HIGH)
+        print "GPIO High"
 
 def setup():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setwarnings(False)
     GPIO.setup(P_MOTA1, GPIO.OUT)
+    GPIO.output(P_MOTA1, GPIO.LOW)
+    time.sleep(1)
+    GPIO.output(P_MOTA1, GPIO.HIGH)
+    time.sleep(1)
+    GPIO.output(P_MOTA1, GPIO.LOW)
 
 setup()
 main()
