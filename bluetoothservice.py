@@ -55,11 +55,13 @@ def setup_logging():
 
 # Main loop
 def main():
+    print "Starting main"
     # Setup logging
     setup_logging()
 
     # We need to wait until Bluetooth init is done
     time.sleep(10)
+    print "Bluetooth initalised"
 
     # Make device visible
     os.system("hciconfig hci0 piscan")
