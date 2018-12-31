@@ -77,7 +77,7 @@ def main():
     port = server_sock.getsockname()[1]
 
     # The service UUID to advertise
-    uuid = "00001101-0000-1000-8000-00805F9B34FB"
+    uuid = "aaabf455-b0e1-4b88-b9c8-184e53f15663"
 
     # Start advertising the service
     advertise_service(server_sock, "TrainmoteServer",
