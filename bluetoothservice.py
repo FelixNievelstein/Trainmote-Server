@@ -117,7 +117,7 @@ def main():
             elif data == "example":
                 response = "msg:This is an example"
             elif data == "GPIO":
-                response = "msg:Setting GPIO"
+                backward()
             # Insert more here
             else:
                 response = "msg:Not supported"
