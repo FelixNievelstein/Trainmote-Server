@@ -143,7 +143,7 @@ P_MOTA1 = 8 # right motor
 P_MOTA1_LOW = True
 
 def backward():        
-    if not P_MOTA1_LOW:
+    if GPIO.input(P_MOTA1):
         GPIO.output(P_MOTA1, GPIO.LOW)
         print "GPIO Low"
     else:
