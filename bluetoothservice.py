@@ -19,7 +19,7 @@ class LoggerHelper(object):
 
 def setup_logging():
     # Default logging settings
-    LOG_FILE = "/var/log/raspibtsrv.log"
+    LOG_FILE = "/var/log/bluetoothservice.log"
     LOG_LEVEL = logging.INFO
 
     # Define and parse command line arguments
@@ -77,7 +77,7 @@ def main():
     port = server_sock.getsockname()[1]
 
     # The service UUID to advertise
-    uuid = "AAABF455-B0E1-4B88-B9C8-184E53F15663"
+    uuid = "00001101-0000-1000-8000-00805F9B34FB"
 
     # Start advertising the service
     advertise_service(server_sock, "TrainmoteServer",
