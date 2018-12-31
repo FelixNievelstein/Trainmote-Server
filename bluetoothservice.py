@@ -140,7 +140,7 @@ def main():
             break
 
 P_MOTA1 = 8 # right motor
-P_MOTA1_LOW = False
+P_MOTA1_LOW = True
 
 def backward():        
     if not P_MOTA1_LOW:
