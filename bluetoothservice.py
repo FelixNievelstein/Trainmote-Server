@@ -5,6 +5,7 @@ import sys
 import os
 import time
 from bluetooth import *
+import RPi.GPIO as GPIO
 
 
 class LoggerHelper(object):
@@ -115,6 +116,8 @@ def main():
                 response = "msg:Pong"
             elif data == "example":
                 response = "msg:This is an example"
+            elif data == "GPIO":
+                response = "msg:Setting GPIO"
             # Insert more here
             else:
                 response = "msg:Not supported"
@@ -135,4 +138,19 @@ def main():
             print "Server going down"
             break
 
+P_MOTA1 = 8 # right motor
+P_MOTA1_LOW = False
+
+def backward():        
+    if not P_MOTA1_LOW:
+        GPIO.output(P_MOTA1, GPIO.LOW)
+    else:
+        GPIO.output(P_MOTA1, GPIO.HIGH)
+
+def setup():
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setwarnings(False)
+    GPIO.setup(P_MOTA1, GPIO.OUT)
+
+setup()
 main()
