@@ -30,7 +30,7 @@ def setup():
     GPIO.setup(P_MOTA1, GPIO.OUT)
     GPIO.output(P_MOTA1, GPIO.LOW)
     time.sleep(1)
-    GPIO.output(P_MOTA1, GPIO.HIGH)su
+    GPIO.output(P_MOTA1, GPIO.HIGH)
     time.sleep(1)
     GPIO.output(P_MOTA1, GPIO.LOW)
 
