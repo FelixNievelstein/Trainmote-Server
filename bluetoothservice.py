@@ -95,9 +95,7 @@ def main():
 
         print "Waiting for connection on RFCOMM channel %d" % port
 
-        try:
-            client_sock = None
-
+        try:                        
             # This will block until we get a new connection
             client_sock, client_info = server_sock.accept()
             print "Accepted connection from ", client_info
@@ -156,7 +154,7 @@ def setup():
     GPIO.setup(P_MOTA1, GPIO.OUT)
     GPIO.output(P_MOTA1, GPIO.LOW)
     time.sleep(1)
-    GPIO.output(P_MOTA1, GPIO.HIGH)
+    GPIO.output(P_MOTA1, GPIO.HIGH)su
     time.sleep(1)
     GPIO.output(P_MOTA1, GPIO.LOW)
 
