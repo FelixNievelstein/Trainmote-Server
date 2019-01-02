@@ -16,6 +16,23 @@ class LoggerHelper(object):
     def write(self, message):
         if message.rstrip() != "":
             self.logger.log(self.level, message.rstrip())
+def backward():        
+    if GPIO.input(P_MOTA1):
+        GPIO.output(P_MOTA1, GPIO.LOW)
+        print "GPIO Low"
+    else:
+        GPIO.output(P_MOTA1, GPIO.HIGH)
+        print "GPIO High"
+
+def setup():
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setwarnings(False)
+    GPIO.setup(P_MOTA1, GPIO.OUT)
+    GPIO.output(P_MOTA1, GPIO.LOW)
+    time.sleep(1)
+    GPIO.output(P_MOTA1, GPIO.HIGH)su
+    time.sleep(1)
+    GPIO.output(P_MOTA1, GPIO.LOW)
 
 
 def setup_logging():
@@ -56,6 +73,7 @@ def setup_logging():
 
 # Main loop
 def main():
+    setup()
     print "Starting main"
     # Setup logging
     # setup_logging()
@@ -140,23 +158,4 @@ def main():
 P_MOTA1 = 22 # right motor
 P_MOTA1_LOW = True
 
-def backward():        
-    if GPIO.input(P_MOTA1):
-        GPIO.output(P_MOTA1, GPIO.LOW)
-        print "GPIO Low"
-    else:
-        GPIO.output(P_MOTA1, GPIO.HIGH)
-        print "GPIO High"
-
-def setup():
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setwarnings(False)
-    GPIO.setup(P_MOTA1, GPIO.OUT)
-    GPIO.output(P_MOTA1, GPIO.LOW)
-    time.sleep(1)
-    GPIO.output(P_MOTA1, GPIO.HIGH)su
-    time.sleep(1)
-    GPIO.output(P_MOTA1, GPIO.LOW)
-
-setup()
 main()
