@@ -139,7 +139,7 @@ def main():
             print "Server going down"
             break
 
-P_MOTA1 = 8 # right motor
+P_MOTA1 = 22 # right motor
 P_MOTA1_LOW = True
 
 def backward():        
