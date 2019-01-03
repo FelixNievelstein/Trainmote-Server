@@ -138,10 +138,8 @@ def main():
 
             # Handle the request
             if is_json(data):
-                jsonData = json.loads(data)                
-                for command in jsonData["commands"]:
-                    print command
-                    switchPin(command.id)
+                jsonData = json.loads(data)                                
+                switchPin(jsonData["id"])
                     
                 response = "msg:Setting GPIO"                
             # Insert more here
