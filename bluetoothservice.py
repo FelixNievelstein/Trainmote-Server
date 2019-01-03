@@ -4,6 +4,7 @@ import argparse
 import sys
 import os
 import time
+import json
 from bluetooth import *
 import RPi.GPIO as GPIO
 
@@ -70,6 +71,12 @@ def setup_logging():
     # Replace stderr with logging to file at ERROR level
     sys.stderr = LoggerHelper(logger, logging.ERROR)
 
+def is_json(myjson):
+  try:
+    json_object = json.loads(myjson)
+  except ValueError, e:
+    return False
+  return True
 
 # Main loop
 def main():
@@ -115,8 +122,9 @@ def main():
 
         try:                        
             # This will block until we get a new connection
-            client_sock, client_info = server_sock.accept()
-            print "Accepted connection from ", client_info
+            if client_sock is None:
+                client_sock, client_info = server_sock.accept()
+                print "Accepted connection from ", client_info
 
             # Read the data sent by the client
             data = client_sock.recv(1024)
@@ -126,15 +134,9 @@ def main():
             print "Received [%s]" % data
 
             # Handle the request
-            if data == "getop":
-                response = "op:%s" % ",".join(operations)
-            elif data == "ping":
-                response = "msg:Pong"
-            elif data == "example":
-                response = "msg:This is an example"
-            elif data == "GPIO":
+            if is_json(data):
                 response = "msg:Setting GPIO"
-                backward()
+                backward()            
             # Insert more here
             else:
                 response = "msg:Not supported"
