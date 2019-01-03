@@ -8,6 +8,8 @@ import json
 from bluetooth import *
 import RPi.GPIO as GPIO
 
+P_MOTA1 = 22 # right motor
+P_MOTA1_LOW = True
 
 class LoggerHelper(object):
     def __init__(self, logger, level):
@@ -17,6 +19,7 @@ class LoggerHelper(object):
     def write(self, message):
         if message.rstrip() != "":
             self.logger.log(self.level, message.rstrip())
+
 def backward():        
     if GPIO.input(P_MOTA1):
         GPIO.output(P_MOTA1, GPIO.LOW)
@@ -116,14 +119,13 @@ def main():
     operations = ["ping", "example"]
 
     # Main Bluetooth server loop
-    while True:
+    client_sock = None
+    while True:                
 
-        print "Waiting for connection on RFCOMM channel %d" % port
-        client_sock = None
-        
         try:                        
             # This will block until we get a new connection
             if client_sock is None:
+                print "Waiting for connection on RFCOMM channel %d" % port
                 client_sock, client_info = server_sock.accept()
                 print "Accepted connection from ", client_info
 
@@ -158,7 +160,6 @@ def main():
             print "Server going down"
             break
 
-P_MOTA1 = 22 # right motor
-P_MOTA1_LOW = True
+
 
 main()
