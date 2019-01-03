@@ -24,10 +24,8 @@ class LoggerHelper(object):
 def switchPin(pin):        
     if GPIO.input(pin):
         GPIO.output(pin, GPIO.LOW)
-        print "GPIO Low" + pin
     else:
         GPIO.output(pin, GPIO.HIGH)
-        print "GPIO High" + pin
 
 def setup():
     GPIO.setmode(GPIO.BOARD)
