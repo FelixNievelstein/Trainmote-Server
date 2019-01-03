@@ -119,7 +119,8 @@ def main():
     while True:
 
         print "Waiting for connection on RFCOMM channel %d" % port
-
+        client_sock = None
+        
         try:                        
             # This will block until we get a new connection
             if client_sock is None:
