@@ -8,8 +8,9 @@ import json
 from bluetooth import *
 import RPi.GPIO as GPIO
 
-P_MOTA1 = 29 # right motor
-P_MOTA1_LOW = True
+P_Switch1 = 29 # switch 1
+P_Switch2 = 31 # switch 2
+P_Switch3 = 33 # switch 3
 
 class LoggerHelper(object):
     def __init__(self, logger, level):
@@ -20,23 +21,20 @@ class LoggerHelper(object):
         if message.rstrip() != "":
             self.logger.log(self.level, message.rstrip())
 
-def backward():        
-    if GPIO.input(P_MOTA1):
-        GPIO.output(P_MOTA1, GPIO.LOW)
-        print "GPIO Low"
+def switchPin(pin):        
+    if GPIO.input(pin):
+        GPIO.output(pin, GPIO.LOW)
+        print "GPIO Low" + pin
     else:
-        GPIO.output(P_MOTA1, GPIO.HIGH)
-        print "GPIO High"
+        GPIO.output(pin, GPIO.HIGH)
+        print "GPIO High" + pin
 
 def setup():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setwarnings(False)
-    GPIO.setup(P_MOTA1, GPIO.OUT)
-    GPIO.output(P_MOTA1, GPIO.LOW)
-    time.sleep(1)
-    GPIO.output(P_MOTA1, GPIO.HIGH)
-    time.sleep(1)
-    GPIO.output(P_MOTA1, GPIO.LOW)
+    GPIO.setup(P_Switch1, GPIO.OUT)
+    GPIO.setup(P_Switch2, GPIO.OUT)
+    GPIO.setup(P_Switch3, GPIO.OUT)
 
 
 def setup_logging():
@@ -140,8 +138,12 @@ def main():
 
             # Handle the request
             if is_json(data):
-                response = "msg:Setting GPIO"
-                backward()            
+                jsonData = json.loads(data)                
+                for command in jsonData["commands"]:
+                    print command
+                    switchPin(command.id)
+                    
+                response = "msg:Setting GPIO"                
             # Insert more here
             else:
                 response = "msg:Not supported"
