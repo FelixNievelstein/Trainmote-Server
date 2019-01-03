@@ -8,7 +8,7 @@ import json
 from bluetooth import *
 import RPi.GPIO as GPIO
 
-P_MOTA1 = 22 # right motor
+P_MOTA1 = 29 # right motor
 P_MOTA1_LOW = True
 
 class LoggerHelper(object):
@@ -83,7 +83,9 @@ def is_json(myjson):
 
 # Main loop
 def main():
+    
     setup()
+
     print "Starting main"
     # Setup logging
     # setup_logging()
