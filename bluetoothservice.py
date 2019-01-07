@@ -4,13 +4,8 @@ import argparse
 import sys
 import os
 import time
-import json
+import gpioservice
 from bluetooth import *
-import RPi.GPIO as GPIO
-
-P_Switch1 = 29 # switch 1
-P_Switch2 = 31 # switch 2
-P_Switch3 = 33 # switch 3
 
 class LoggerHelper(object):
     def __init__(self, logger, level):
@@ -20,19 +15,6 @@ class LoggerHelper(object):
     def write(self, message):
         if message.rstrip() != "":
             self.logger.log(self.level, message.rstrip())
-
-def switchPin(pin):        
-    if GPIO.input(pin):
-        GPIO.output(pin, GPIO.LOW)
-    else:
-        GPIO.output(pin, GPIO.HIGH)
-
-def setup():
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setwarnings(False)
-    GPIO.setup(P_Switch1, GPIO.OUT)
-    GPIO.setup(P_Switch2, GPIO.OUT)
-    GPIO.setup(P_Switch3, GPIO.OUT)
 
 
 def setup_logging():
@@ -70,17 +52,10 @@ def setup_logging():
     # Replace stderr with logging to file at ERROR level
     sys.stderr = LoggerHelper(logger, logging.ERROR)
 
-def is_json(myjson):
-  try:
-    json_object = json.loads(myjson)
-  except ValueError, e:
-    return False
-  return True
-
 # Main loop
 def main():
     
-    setup()
+    gpioservice.setup()
 
     print "Starting main"
     # Setup logging
@@ -135,15 +110,8 @@ def main():
             print "Received [%s]" % data
 
             # Handle the request
-            if is_json(data):
-                jsonData = json.loads(data)                                
-                switchPin(int(jsonData["id"]))
-                    
-                response = "msg:Setting GPIO"                
-            # Insert more here
-            else:
-                response = "msg:Not supported"
-
+            response = gpioservice.receivedMessage(data)
+            
             client_sock.send(response)
             print "Sent back [%s]" % response
 
