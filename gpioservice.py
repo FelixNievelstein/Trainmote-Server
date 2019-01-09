@@ -30,6 +30,7 @@ def setup():
 
 
 def receivedMessage(message):
+    print "receivedMessage"
     if is_json(message):
         jsonData = json.loads(message)                                
         print jsonData["type"]
