@@ -32,12 +32,21 @@ def setup():
 def receivedMessage(message):
     if is_json(message):
         jsonData = json.loads(message)                                
-        switchPin(int(jsonData["id"]))
-            
-        return "msg:Setting GPIO"                
+        print jsonData["type"]
+        if jsonData["type"] == "SET_SWITCH" or jsonData["type"] == "SET_STOPPING_POINT":
+            switchPin(int(jsonData["id"]))
+            return "msg:Setting GPIO"
+        elif jsonData["type"] == "GET_SWITCH" or jsonData["type"] == "GET_STOPPING_POINT":
+            return getValueForPin(int(jsonData["id"]))
+        else:
+            return "msg:Not supported"
     # Insert more here
     else:
         return "msg:Not supported"
+
+def getValueForPin(pin): 
+    pinValue = GPIO.input(pin)
+    return "msg: Switch" + pinValue
 
 def is_json(myjson):
   try:
