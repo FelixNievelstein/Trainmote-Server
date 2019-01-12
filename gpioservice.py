@@ -48,7 +48,7 @@ def receivedMessage(message):
 
 def getValueForPin(pin, commandType):
     pinValue = GPIO.input(pin)
-    commandResult = CommandResultModel(str(pinValue), commandType)
+    commandResult = CommandResultModel(commandType, str(pinValue))
     return json.dumps(commandResult.__dict__)
 
 def is_json(myjson):
