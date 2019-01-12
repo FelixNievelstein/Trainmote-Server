@@ -1,5 +1,6 @@
 import json
 import RPi.GPIO as GPIO
+from CommandResultModel import CommandResultModel
 
 
 P_Switch1 = 29 # switch 1
@@ -33,21 +34,22 @@ def receivedMessage(message):
     print "receivedMessage"
     if is_json(message):
         jsonData = json.loads(message)                                
-        print jsonData["type"]
-        if jsonData["type"] == "SET_SWITCH" or jsonData["type"] == "SET_STOPPING_POINT":
+        command = jsonData["type"]
+        if command == "SET_SWITCH" or command == "SET_STOPPING_POINT":
             switchPin(int(jsonData["id"]))
             return "msg:Setting GPIO"
-        elif jsonData["type"] == "GET_SWITCH" or jsonData["type"] == "GET_STOPPING_POINT":
-            return getValueForPin(int(jsonData["id"]))
+        elif command == "GET_SWITCH" or command == "GET_STOPPING_POINT":
+            return getValueForPin(int(jsonData["id"]), command)
         else:
             return "msg:Not supported"
     # Insert more here
     else:
         return "msg:Not supported"
 
-def getValueForPin(pin): 
+def getValueForPin(pin, commandType):
     pinValue = GPIO.input(pin)
-    return "msg: Switch" + str(pinValue)
+    commandResult = CommandResultModel(str(pinValue), commandType)
+    return json.dumps(commandResult.__dict__)
 
 def is_json(myjson):
   try:
