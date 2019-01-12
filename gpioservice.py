@@ -47,7 +47,7 @@ def receivedMessage(message):
 
 def getValueForPin(pin): 
     pinValue = GPIO.input(pin)
-    return "msg: Switch" + pinValue
+    return "msg: Switch" + str(pinValue)
 
 def is_json(myjson):
   try:
