@@ -116,6 +116,7 @@ def main():
             print "Sent back [%s]" % response
 
         except IOError:
+            print "Error occured"
             pass
 
         except KeyboardInterrupt:
