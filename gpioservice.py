@@ -23,11 +23,15 @@ def setup():
     GPIO.setwarnings(False)
     GPIO.setup(P_Switch1, GPIO.OUT)
     GPIO.setup(P_Switch2, GPIO.OUT)
-    GPIO.setup(P_Switch3, GPIO.OUT)
+    GPIO.setup(P_Switch3, GPIO.OUT)    
     GPIO.setup(P_Stop1, GPIO.OUT)
+    setPinDefault(P_Stop1)
     GPIO.setup(P_Stop2, GPIO.OUT)
+    setPinDefault(P_Stop2)
     GPIO.setup(P_Stop3, GPIO.OUT)
+    setPinDefault(P_Stop3)
     GPIO.setup(P_Stop4, GPIO.OUT)
+    setPinDefault(P_Stop4)
 
 
 def receivedMessage(message):
@@ -39,6 +43,8 @@ def receivedMessage(message):
             switchPin(int(jsonData["id"]))
             return "msg:Setting GPIO"
         elif command == "GET_SWITCH" or command == "GET_STOPPING_POINT":
+            return getValueForPin(int(jsonData["id"]), jsonData["id"], command)
+        elif command == "CONFIG_SWITCH" or command == "CONFIG_STOPPING_POINT":
             return getValueForPin(int(jsonData["id"]), jsonData["id"], command)
         else:
             return "msg:Not supported"
@@ -57,3 +63,6 @@ def is_json(myjson):
   except ValueError, e:
     return False
   return True
+
+def setPinDefault(pin):
+    GPIO.output(pin, GPIO.LOW)
