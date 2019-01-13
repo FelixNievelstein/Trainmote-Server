@@ -39,16 +39,16 @@ def receivedMessage(message):
             switchPin(int(jsonData["id"]))
             return "msg:Setting GPIO"
         elif command == "GET_SWITCH" or command == "GET_STOPPING_POINT":
-            return getValueForPin(int(jsonData["id"]), command)
+            return getValueForPin(int(jsonData["id"]), jsonData["id"], command)
         else:
             return "msg:Not supported"
     # Insert more here
     else:
         return "msg:Not supported"
 
-def getValueForPin(pin, commandType):
+def getValueForPin(pin, id, commandType):
     pinValue = GPIO.input(pin)
-    commandResult = CommandResultModel(commandType, str(pinValue))
+    commandResult = CommandResultModel(commandType, id, str(pinValue))
     return json.dumps(commandResult.__dict__)
 
 def is_json(myjson):
