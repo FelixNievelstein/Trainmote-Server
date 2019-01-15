@@ -43,7 +43,7 @@ def receivedMessage(message):
         for commandData in jsonData:
             results.append(performCommand(commandData))
 
-        json.dumps(results.__dict__)
+        json.dumps(results)
     # Insert more here
     else:
         return "msg:Not valid json"
