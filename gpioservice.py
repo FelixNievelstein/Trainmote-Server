@@ -17,6 +17,7 @@ def switchPin(pin):
         GPIO.output(pin, GPIO.LOW)
     else:
         GPIO.output(pin, GPIO.HIGH)
+    return GPIO.input(pin)
 
 def setup():
     GPIO.setmode(GPIO.BOARD)
@@ -37,25 +38,30 @@ def setup():
 def receivedMessage(message):
     print "receivedMessage"
     if is_json(message):
-        jsonData = json.loads(message)                                
-        command = jsonData["type"]
-        if command == "SET_SWITCH" or command == "SET_STOPPING_POINT":
-            switchPin(int(jsonData["id"]))
-            return "msg:Setting GPIO"
-        elif command == "GET_SWITCH" or command == "GET_STOPPING_POINT":
-            return getValueForPin(int(jsonData["id"]), jsonData["id"], command)
-        elif command == "CONFIG_SWITCH" or command == "CONFIG_STOPPING_POINT":
-            return getValueForPin(int(jsonData["id"]), jsonData["id"], command)
-        else:
-            return "msg:Not supported"
+        jsonData = json.loads(message) 
+        results = []
+        for commandData in jsonData:
+            results.append(performCommand(commandData))
+
+        json.dumps(results.__dict__)
     # Insert more here
     else:
-        return "msg:Not supported"
+        return "msg:Not valid json"
+
+def performCommand(command):
+    commandType = command["commandType"]
+    if commandType == "SET_SWITCH" or commandType == "SET_STOPPING_POINT":        
+        return CommandResultModel(commandType, command["id"], switchPin(int(command["id"])))
+    elif commandType == "GET_SWITCH" or commandType == "GET_STOPPING_POINT":
+        return getValueForPin(int(command["id"]), command["id"], commandType)
+    elif commandType == "CONFIG_SWITCH" or commandType == "CONFIG_STOPPING_POINT":
+        return getValueForPin(int(command["id"]), command["id"], commandType)
+    else:
+        return "msg:Command not supported"
 
 def getValueForPin(pin, id, commandType):
     pinValue = GPIO.input(pin)
-    commandResult = CommandResultModel(commandType, id, str(pinValue))
-    return json.dumps(commandResult.__dict__)
+    return CommandResultModel(commandType, id, str(pinValue))    
 
 def is_json(myjson):
   try:
