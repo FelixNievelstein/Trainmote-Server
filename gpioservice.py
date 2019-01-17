@@ -44,6 +44,7 @@ def receivedMessage(message):
             results = results +  performCommand(commandData) + ","
 
         results = results + "]"
+        return results
     # Insert more here
     else:
         return "msg:Not valid json"
