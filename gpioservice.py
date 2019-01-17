@@ -51,7 +51,7 @@ def receivedMessage(message):
 def performCommand(command):
     commandType = command["commandType"]
     if commandType == "SET_SWITCH" or commandType == "SET_STOPPING_POINT":        
-        return CommandResultModel(commandType, command["id"], switchPin(int(command["id"])))
+        return json.dumps(CommandResultModel(commandType, command["id"], switchPin(int(command["id"]))).__dict__)
     elif commandType == "GET_SWITCH" or commandType == "GET_STOPPING_POINT":
         return getValueForPin(int(command["id"]), command["id"], commandType)
     elif commandType == "CONFIG_SWITCH" or commandType == "CONFIG_STOPPING_POINT":
