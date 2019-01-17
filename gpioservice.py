@@ -43,7 +43,7 @@ def receivedMessage(message):
         for commandData in jsonData:
             results = results +  performCommand(commandData) + ","
 
-        results = results + "]"
+        results = results[:-1] + "]"
         return results
     # Insert more here
     else:
