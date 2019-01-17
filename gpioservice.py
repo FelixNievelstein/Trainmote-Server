@@ -39,11 +39,11 @@ def receivedMessage(message):
     print "receivedMessage"
     if is_json(message):
         jsonData = json.loads(message) 
-        results = []
+        results = "["
         for commandData in jsonData:
-            results.append(performCommand(commandData))
+            results = results +  performCommand(commandData) + ","
 
-        json.dumps(results)
+        results = results + "]"
     # Insert more here
     else:
         return "msg:Not valid json"
@@ -57,11 +57,11 @@ def performCommand(command):
     elif commandType == "CONFIG_SWITCH" or commandType == "CONFIG_STOPPING_POINT":
         return getValueForPin(int(command["id"]), command["id"], commandType)
     else:
-        return "msg:Command not supported"
+        return "{ \"error\":\"Command not supported\"}"
 
 def getValueForPin(pin, id, commandType):
     pinValue = GPIO.input(pin)
-    return CommandResultModel(commandType, id, str(pinValue))    
+    return json.dumps(CommandResultModel(commandType, id, str(pinValue)).__dict__)
 
 def is_json(myjson):
   try:
