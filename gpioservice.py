@@ -72,4 +72,4 @@ def is_json(myjson):
   return True
 
 def setPinDefault(pin):
-    GPIO.output(pin, GPIO.LOW)
+    GPIO.output(pin, GPIO.HIGH)
