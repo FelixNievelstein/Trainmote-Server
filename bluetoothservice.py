@@ -119,6 +119,7 @@ def main():
             print "Error occured"
             if client_sock is not None:
                 client_sock.close()
+                client_sock = None
             pass
 
         except KeyboardInterrupt:
