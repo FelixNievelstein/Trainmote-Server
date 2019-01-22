@@ -6,6 +6,7 @@ import os
 import time
 import gpioservice
 from bluetooth import *
+import traintrackingservice
 
 class LoggerHelper(object):
     def __init__(self, logger, level):
@@ -56,6 +57,7 @@ def setup_logging():
 def main():
     
     gpioservice.setup()
+    traintrackingservice.setupTrackingService()
 
     print "Starting main"
     # Setup logging
