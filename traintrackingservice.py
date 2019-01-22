@@ -1,5 +1,6 @@
 import Adafruit_ADS1x15
 import time
+import threading
 
 GAIN = 1
 adc = Adafruit_ADS1x15.ADS1115()
@@ -7,7 +8,13 @@ adc = Adafruit_ADS1x15.ADS1115()
 def setupTrackingService():    
     startTracking()
 
-def startTracking():    
+def startTracking():
+    # do some stuff
+    trackingThread = threading.Thread(target=trackVoltage)
+    trackingThread.start()
+    # continue doing stuff
+
+def trackVoltage():    
     # Print nice channel column headers.
     print('| {0:>6} | {1:>6} | {2:>6} | {3:>6} |'.format(*range(4)))
     print('-' * 37)
