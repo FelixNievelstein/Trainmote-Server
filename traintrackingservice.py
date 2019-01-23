@@ -41,4 +41,5 @@ def trackStoppingPoint(id):
 def stopTrackSoppingPoint(id): 
     if id in trackingPoints:
         trackingPoints.remove(id)
+        print trackingPoints
     
