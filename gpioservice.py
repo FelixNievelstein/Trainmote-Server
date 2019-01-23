@@ -1,5 +1,8 @@
 import json
 import RPi.GPIO as GPIO
+from traintrackingservice import setupTrackingService
+from traintrackingservice import trackStoppingPoint
+from traintrackingservice import stopTrackSoppingPoint
 from CommandResultModel import CommandResultModel
 
 
@@ -9,14 +12,16 @@ P_Switch3 = 33 # switch 3
 P_Stop1 = 35 # stop 1
 P_Stop2 = 37 # stop 2
 P_Stop3 = 36 # stop 3
-P_Stop4 = 38 # stop 3
+P_Stop4 = 38 # stop 4
 
 
 def switchPin(pin):        
     if GPIO.input(pin):
         GPIO.output(pin, GPIO.LOW)
+        stopTrackSoppingPoint(pin)
     else:
         GPIO.output(pin, GPIO.HIGH)
+        trackStoppingPoint(pin)
     return GPIO.input(pin)
 
 def setup():
@@ -33,6 +38,7 @@ def setup():
     setPinDefault(P_Stop3)
     GPIO.setup(P_Stop4, GPIO.OUT)
     setPinDefault(P_Stop4)
+    setupTrackingService()
 
 
 def receivedMessage(message):
@@ -73,3 +79,4 @@ def is_json(myjson):
 
 def setPinDefault(pin):
     GPIO.output(pin, GPIO.HIGH)
+    trackStoppingPoint(pin)
