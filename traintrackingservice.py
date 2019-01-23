@@ -4,7 +4,7 @@ import threading
 
 GAIN = 1
 adc = Adafruit_ADS1x15.ADS1115()
-trackingPoints = [None] * 1
+trackingPoints = [None] * 4
 
 def setupTrackingService():    
     startTracking()
@@ -36,6 +36,7 @@ def trackVoltage():
 
 def trackStoppingPoint(id):
     trackingPoints.append(id)
+    print trackingPoints
 
 def stopTrackSoppingPoint(id): 
     if id in trackingPoints:
