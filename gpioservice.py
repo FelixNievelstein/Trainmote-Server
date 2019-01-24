@@ -39,6 +39,7 @@ def setup():
     gpioRelais.append(GPIOStoppingPoint(37, 37, None))
     gpioRelais.append(GPIOStoppingPoint(36, 26, 2))
     gpioRelais.append(GPIOStoppingPoint(38, 38, None))
+    setupTrackingDefault()
 
 def setupTrackingDefault():
     for relais in gpioRelais:
