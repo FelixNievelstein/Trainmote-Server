@@ -1,10 +1,12 @@
 import json
 import RPi.GPIO as GPIO
-from traintrackingservice import setupTrackingService
-from traintrackingservice import trackStoppingPoint
-from traintrackingservice import stopTrackSoppingPoint
+from traintrackingservice import TrackingService
 from CommandResultModel import CommandResultModel
+from GPIORelaisModel import GPIORelaisModel
+from GPIORelaisModel import GPIOStoppingPoint
 
+gpioRelais = []
+trackingServices = []
 
 P_Switch1 = 29 # switch 1
 P_Switch2 = 31 # switch 2
@@ -15,31 +17,37 @@ P_Stop3 = 36 # stop 3
 P_Stop4 = 38 # stop 4
 
 
-def switchPin(pin):        
-    if GPIO.input(pin):
-        GPIO.output(pin, GPIO.LOW)
-        stopTrackSoppingPoint(pin)
+def switchPin(relais):        
+    if relais.getStatus():
+        if relais.relaisType == 'Stop':
+            startTrackingFor(relais)
+        return relais.setStatus(GPIO.LOW)
     else:
-        GPIO.output(pin, GPIO.HIGH)
-        trackStoppingPoint(pin)
-    return GPIO.input(pin)
+        if relais.relaisType == 'Stop':
+            trackingService = next((tracker for tracker in trackingServices if tracker.stoppingPoint.id == relais.id), None)
+            if trackingService :
+                trackingService.stopTracking()
+        return relais.setStatus(GPIO.HIGH)
 
 def setup():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setwarnings(False)
-    GPIO.setup(P_Switch1, GPIO.OUT)
-    GPIO.setup(P_Switch2, GPIO.OUT)
-    GPIO.setup(P_Switch3, GPIO.OUT)    
-    GPIO.setup(P_Stop1, GPIO.OUT)
-    setPinDefault(P_Stop1)
-    GPIO.setup(P_Stop2, GPIO.OUT)
-    setPinDefault(P_Stop2)
-    GPIO.setup(P_Stop3, GPIO.OUT)
-    setPinDefault(P_Stop3)
-    GPIO.setup(P_Stop4, GPIO.OUT)
-    setPinDefault(P_Stop4)
-    setupTrackingService()
+    gpioRelais.append(GPIORelaisModel(29, 29))
+    gpioRelais.append(GPIORelaisModel(31, 31))
+    gpioRelais.append(GPIORelaisModel(33, 33))
+    gpioRelais.append(GPIOStoppingPoint(35, 35, None))
+    gpioRelais.append(GPIOStoppingPoint(37, 37, None))
+    gpioRelais.append(GPIOStoppingPoint(36, 26, 2))
+    gpioRelais.append(GPIOStoppingPoint(38, 38, None))
 
+def setupTrackingDefault():
+    for relais in gpioRelais:
+        startTrackingFor(relais)
+        
+def startTrackingFor(relais):
+    trackingService = TrackingService(relais)
+    trackingServices.append(trackingService)
+    trackingService.startTracking()
 
 def receivedMessage(message):
     print "receivedMessage"
@@ -76,7 +84,3 @@ def is_json(myjson):
   except ValueError, e:
     return False
   return True
-
-def setPinDefault(pin):
-    GPIO.output(pin, GPIO.HIGH)
-    trackStoppingPoint(pin)
