@@ -16,7 +16,7 @@ class TrackingService:
         # do some stuff
         self.isTracking = True
         self.trackingThread.start()
-        print 'Start Tracking: ' + self.stoppingPoint.measurmentpin
+        print 'Start Tracking: '
         # continue doing stuff
 
     def trackVoltageInBackground(self):
