@@ -5,12 +5,12 @@ import threading
 class TrackingService: 
 
     GAIN = 1
-    adc = Adafruit_ADS1x15.ADS1115()
-    trackingThread = threading.Thread(target=trackVoltageInBackground)
+    adc = Adafruit_ADS1x15.ADS1115()    
     isTracking = False
 
     def __init__(self, stoppingPoint):
         self.stoppingPoint = stoppingPoint
+        self.trackingThread = threading.Thread(target=self.trackVoltageInBackground)
         
     def startTracking(self):
         # do some stuff
