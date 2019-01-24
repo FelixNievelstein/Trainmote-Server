@@ -19,11 +19,11 @@ P_Stop4 = 38 # stop 4
 
 def switchPin(relais):        
     if relais.getStatus():
-        if relais.relaisType == 'Stop':
+        if isinstance(relais, GPIOStoppingPoint):
             startTrackingFor(relais)
         return relais.setStatus(GPIO.LOW)
     else:
-        if relais.relaisType == 'Stop':
+        if isinstance(relais, GPIOStoppingPoint):
             trackingService = next((tracker for tracker in trackingServices if tracker.stoppingPoint.id == relais.id), None)
             if trackingService :
                 trackingService.stopTracking()
@@ -43,7 +43,8 @@ def setup():
 
 def setupTrackingDefault():
     for relais in gpioRelais:
-        startTrackingFor(relais)
+        if isinstance(relais, GPIOStoppingPoint):
+            startTrackingFor(relais)
         
 def startTrackingFor(relais):
     trackingService = TrackingService(relais)
