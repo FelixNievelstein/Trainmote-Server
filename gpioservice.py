@@ -43,7 +43,7 @@ def setup():
 
 def setupTrackingDefault():
     for relais in gpioRelais:
-        if isinstance(relais, GPIOStoppingPoint):
+        if isinstance(relais, GPIOStoppingPoint) and relais.measurmentpin is not None:
             startTrackingFor(relais)
         
 def startTrackingFor(relais):
