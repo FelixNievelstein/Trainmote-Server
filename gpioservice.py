@@ -70,7 +70,7 @@ def performCommand(command):
     if commandType == "SET_SWITCH" or commandType == "SET_STOPPING_POINT":
         relais = getRelaisWithID(int(command["id"]))
         if relais is not None:
-            return json.dumps(CommandResultModel(commandType, command["id"], switchPin(relais).__dict__))
+            return json.dumps(CommandResultModel(commandType, command["id"], switchPin(relais)).__dict__)
         else:
             return "{ \"error\":\"Relais not found\"}"
     elif commandType == "GET_SWITCH" or commandType == "GET_STOPPING_POINT":
