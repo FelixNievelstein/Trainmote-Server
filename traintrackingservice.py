@@ -20,6 +20,7 @@ class TrackingService:
     def stopTracking(self):
         print 'Stop Tracking: ',  self.stoppingPoint.measurmentpin        
         self.trackingThread.kill.set()
+        self.trackingThread.join()
         self.isTracking = False
 
 class TrackerThread(threading.Thread):
