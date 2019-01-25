@@ -10,23 +10,30 @@ class TrackingService:
 
     def __init__(self, stoppingPoint):
         self.stoppingPoint = stoppingPoint
-        self.trackingThread = threading.Thread(target=self.trackVoltageInBackground)
+        self.trackingThread = TrackerThread(stoppingPoint)
         
     def startTracking(self):
         # do some stuff
         self.isTracking = True
-        self.trackingThread.start()
+        self.trackingThread.trackVoltage()
         print 'Start Tracking: ', self.stoppingPoint.measurmentpin
-        # continue doing stuff
+        # continue doing stuff    
 
-    def trackVoltageInBackground(self):
-        while self.isTracking:
+    def stopTracking(self):
+        print 'Stop Tracking: ',  self.stoppingPoint.measurmentpin        
+        self.trackingThread.kill.set()
+        self.isTracking = False
+
+class TrackerThread(threading.Thread):
+
+    def __init__(self, stoppingPoint):
+        threading.Thread.__init__(self)
+        self.stoppingPoint = stoppingPoint
+        self.kill = threading.Event()
+
+    def trackVoltage(self):
+        while not self.kill.is_set():
             currentVoltage = self.adc.read_adc(self.stoppingPoint.measurmentpin, gain= self.GAIN)
             if abs(currentVoltage) > 10:
                 print 'Detected voltage at Stopping Point: ', self.stoppingPoint.measurmentpin
             time.sleep(0.3)
-
-    def stopTracking(self):
-        print 'Stop Tracking: ',  self.stoppingPoint.measurmentpin
-        self.isTracking = False
-    
