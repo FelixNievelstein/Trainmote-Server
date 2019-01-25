@@ -13,7 +13,7 @@ class TrackingService:
     def startTracking(self):
         # do some stuff
         self.isTracking = True
-        self.trackingThread.trackVoltage()
+        self.trackingThread.start()
         print 'Start Tracking: ', self.stoppingPoint.measurmentpin
         # continue doing stuff    
 
@@ -31,6 +31,9 @@ class TrackerThread(threading.Thread):
         threading.Thread.__init__(self)
         self.stoppingPoint = stoppingPoint
         self.kill = threading.Event()
+    
+    def run (self):
+        self.trackVoltage()
 
     def trackVoltage(self):
         while not self.kill.is_set():
