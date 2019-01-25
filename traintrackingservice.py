@@ -16,17 +16,17 @@ class TrackingService:
         # do some stuff
         self.isTracking = True
         self.trackingThread.start()
-        print 'Start Tracking: '
+        print 'Start Tracking: ' + self.measurmentpin
         # continue doing stuff
 
     def trackVoltageInBackground(self):
         while self.isTracking:
-            currentVoltage = self.adc.read_adc(self.stoppingPoint.myMeasurmentpin, gain= self.GAIN)
+            currentVoltage = self.adc.read_adc(self.stoppingPoint.measurmentpin, gain= self.GAIN)
             if abs(currentVoltage) > 10:
-                print 'Detected voltage at Stopping Point: ' + self.stoppingPoint.myMeasurmentpin
+                print 'Detected voltage at Stopping Point: ' + self.stoppingPoint.measurmentpin
             time.sleep(0.3)
 
     def stopTracking(self):
-        print 'Stop Tracking: ' +  self.stoppingPoint.myMeasurmentpin
+        print 'Stop Tracking: ' +  self.stoppingPoint.measurmentpin
         self.isTracking = False
     

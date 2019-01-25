@@ -24,11 +24,9 @@ class GPIORelaisModel(object):
 
 
 class GPIOStoppingPoint(GPIORelaisModel):
-    
-    myMeasurmentpin = None
 
     def __init__(self, id, pin, measurmentpin):
-        self.myMeasurmentpin = measurmentpin    
+        self.measurmentpin = measurmentpin    
         GPIORelaisModel.__init__(self, id, pin)
 
 
