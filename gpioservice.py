@@ -23,6 +23,7 @@ def switchPin(relais):
             trackingService = next((tracker for tracker in trackingServices if tracker.stoppingPoint.id == relais.id), None)
             if trackingService :
                 trackingService.stopTracking()
+                trackingServices.remove(trackingService)
         return relais.setStatus(GPIO.LOW)
     else:
         if isinstance(relais, GPIOStoppingPoint):
