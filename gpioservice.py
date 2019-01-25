@@ -26,7 +26,7 @@ def switchPin(relais):
                 trackingServices.remove(trackingService)
         return relais.setStatus(GPIO.LOW)
     else:
-        if isinstance(relais, GPIOStoppingPoint):
+        if isinstance(relais, GPIOStoppingPoint) and relais.measurmentpin is not None:
             startTrackingFor(relais)        
         return relais.setStatus(GPIO.HIGH)
 
