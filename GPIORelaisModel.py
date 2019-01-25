@@ -20,7 +20,8 @@ class GPIORelaisModel(object):
         return GPIO.input(self.pin)
     
     def setStatus(self, value):
-        return GPIO.output(self.pin, value)
+        GPIO.output(self.pin, value)
+        return self.getStatus()
 
 
 class GPIOStoppingPoint(GPIORelaisModel):
