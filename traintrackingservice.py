@@ -3,9 +3,7 @@ import time
 import threading
 
 class TrackingService: 
-
-    GAIN = 1
-    adc = Adafruit_ADS1x15.ADS1115()    
+    
     isTracking = False
 
     def __init__(self, stoppingPoint):
@@ -25,6 +23,9 @@ class TrackingService:
         self.isTracking = False
 
 class TrackerThread(threading.Thread):
+
+    GAIN = 1
+    adc = Adafruit_ADS1x15.ADS1115()
 
     def __init__(self, stoppingPoint):
         threading.Thread.__init__(self)
