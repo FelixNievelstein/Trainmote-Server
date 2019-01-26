@@ -33,13 +33,6 @@ def switchPin(relais):
 def setup():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setwarnings(False)
-    gpioRelais.append(GPIORelaisModel(29, 29))
-    gpioRelais.append(GPIORelaisModel(31, 31))
-    gpioRelais.append(GPIORelaisModel(33, 33))
-    gpioRelais.append(GPIOStoppingPoint(35, 35, None))
-    gpioRelais.append(GPIOStoppingPoint(37, 37, None))
-    gpioRelais.append(GPIOStoppingPoint(36, 36, 2))
-    gpioRelais.append(GPIOStoppingPoint(38, 38, None))
     setupTrackingDefault()
 
 def setupTrackingDefault():
@@ -76,10 +69,26 @@ def performCommand(command):
             return "{ \"error\":\"Relais not found\"}"
     elif commandType == "GET_SWITCH" or commandType == "GET_STOPPING_POINT":
         return getValueForPin(int(command["id"]), command["id"], commandType)
-    elif commandType == "CONFIG_SWITCH" or commandType == "CONFIG_STOPPING_POINT":
-        return getValueForPin(int(command["id"]), command["id"], commandType)
+    elif commandType == "CONFIG_SWITCH":
+        resultId = createSwitch(int(command["id"]), int(command["default"]))
+        return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
+    elif commandType == "CONFIG_STOPPING_POINT":
+        resultId = createStop(int(command["id"]), int(command["measurmentId"]))
+        return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
     else:
         return "{ \"error\":\"Command not supported\"}"
+
+def createSwitch(id, default):
+    switch = GPIORelaisModel(id, id)
+    switch.defaultValue = default
+    switch.toDefault()
+    gpioRelais.append(switch)
+    return id
+
+def createStop(id, measurmentid):
+    stop = GPIOStoppingPoint(id, id, measurmentid)
+    gpioRelais.append(stop)
+    return id
 
 def getValueForPin(pin, id, commandType):
     pinValue = GPIO.input(pin)
