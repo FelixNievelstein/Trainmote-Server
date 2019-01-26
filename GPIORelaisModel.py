@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import time
 
 class GPIORelaisModel(object):
     
@@ -44,6 +45,7 @@ class GPIOSwitchPoint(GPIORelaisModel):
         if self.needsPowerOn:
                 self.powerRelais.setStatus(GPIO.HIGH)
         GPIO.output(self.pin, value)
+        time.sleep(1)
         self.powerRelais.setStatus(GPIO.LOW)
         return self.getStatus()
 
