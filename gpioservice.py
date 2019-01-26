@@ -4,18 +4,10 @@ from traintrackingservice import TrackingService
 from CommandResultModel import CommandResultModel
 from GPIORelaisModel import GPIORelaisModel
 from GPIORelaisModel import GPIOStoppingPoint
+from GPIORelaisModel import GPIOSwitchPoint
 
 gpioRelais = []
 trackingServices = []
-
-P_Switch1 = 29 # switch 1
-P_Switch2 = 31 # switch 2
-P_Switch3 = 33 # switch 3
-P_Stop1 = 35 # stop 1
-P_Stop2 = 37 # stop 2
-P_Stop3 = 36 # stop 3
-P_Stop4 = 38 # stop 4
-
 
 def switchPin(relais):        
     if relais.getStatus():
@@ -82,7 +74,7 @@ def performCommand(command):
         return "{ \"error\":\"Command not supported\"}"
 
 def createSwitch(id, default):
-    switch = GPIORelaisModel(id, id)
+    switch = GPIOSwitchPoint(id, id)
     switch.defaultValue = default
     switch.toDefault()
     gpioRelais.append(switch)
