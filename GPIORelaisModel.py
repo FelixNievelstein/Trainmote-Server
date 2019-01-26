@@ -33,7 +33,7 @@ class GPIOStoppingPoint(GPIORelaisModel):
         
 class GPIOSwitchPoint(GPIORelaisModel):        
     
-    Power_Switch = 13 # Relais which powers switches
+    Power_Switch = 33 # Relais which powers switches
     powerRelais = GPIORelaisModel(Power_Switch, Power_Switch)
 
     def __init__(self, id, pin):
