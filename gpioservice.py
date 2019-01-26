@@ -70,7 +70,7 @@ def performCommand(command):
     elif commandType == "GET_SWITCH" or commandType == "GET_STOPPING_POINT":
         return getValueForPin(int(command["id"]), command["id"], commandType)
     elif commandType == "CONFIG_SWITCH":
-        resultId = createSwitch(int(command["id"]), int(command["default"]))
+        resultId = createSwitch(int(command["id"]), int(command["defaultValue"]))
         return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
     elif commandType == "CONFIG_STOPPING_POINT":
         resultId = createStop(int(command["id"]), int(command["measurmentId"]))
