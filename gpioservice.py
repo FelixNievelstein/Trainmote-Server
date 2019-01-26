@@ -73,7 +73,10 @@ def performCommand(command):
         resultId = createSwitch(int(command["id"]), int(command["defaultValue"]))
         return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
     elif commandType == "CONFIG_STOPPING_POINT":
-        resultId = createStop(int(command["id"]), int(command["measurmentId"]))
+        if 'measurmentId' in command:
+            resultId = createStop(int(command["id"]), int(command["measurmentId"]))
+        else:
+            resultId = createStop(int(command["id"]), None)
         return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
     else:
         return "{ \"error\":\"Command not supported\"}"
