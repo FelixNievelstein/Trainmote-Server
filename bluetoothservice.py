@@ -6,6 +6,7 @@ import os
 import time
 import gpioservice
 from bluetooth import *
+from PowerController import PowerThread
 
 class LoggerHelper(object):
     def __init__(self, logger, level):
@@ -53,9 +54,10 @@ def setup_logging():
     sys.stderr = LoggerHelper(logger, logging.ERROR)
 
 # Main loop
-def main():
-    
-    gpioservice.setup()    
+def main():    
+    powerThread = PowerThread()
+    powerThread.start()
+    gpioservice.setup()
 
     print "Starting main"
     # Setup logging
