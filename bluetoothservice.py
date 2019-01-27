@@ -55,9 +55,9 @@ def setup_logging():
 
 # Main loop
 def main():    
-    powerThread = PowerThread()
-    powerThread.start()
     gpioservice.setup()
+    powerThread = PowerThread()
+    powerThread.start()    
 
     print "Starting main"
     # Setup logging
