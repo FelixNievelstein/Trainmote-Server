@@ -128,7 +128,10 @@ def main():
 
             if client_sock is not None:
                 client_sock.close()
-
+            
+            powerThread.kill.set()
+            powerThread.isTurningOff = True
+            powerThread.join()
             server_sock.close()
 
             print "Server going down"

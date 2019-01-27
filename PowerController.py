@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 import threading
 
-class PowerThread(threading.Thread):
+class PowerThread(threading.Thread):    
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -14,7 +14,7 @@ class PowerThread(threading.Thread):
         self.trackVoltage()
 
     def trackVoltage(self):
-        while not self.isTurningOff:
+        while not self.isTurningOff and not self.kill.is_set():
             if GPIO.input(18):
                 self.isTurningOff = True
                 print "Power off"
