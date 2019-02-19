@@ -17,8 +17,10 @@ class StateController:
     def setState(self, stateName):
         if self.stateThread is not None:
             self.stateThread.kill.set()
+            self.stateThread.join()
         self.stateThread = StateThread(stateName)
         self.stateThread.start()
+
 
 
 class StateThread(threading.Thread):
