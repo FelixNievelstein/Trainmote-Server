@@ -18,7 +18,7 @@ class PowerThread(threading.Thread):
             if GPIO.input(18):
                 self.isTurningOff = True
                 print "Power off"
-                from subprocess import call
-                call("sudo nohup shutdown -h now", shell=True)
+                # from subprocess import call
+                # call("sudo nohup shutdown -h now", shell=True)
             else: 
                 time.sleep(0.5)
