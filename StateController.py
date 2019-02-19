@@ -39,7 +39,7 @@ class StateThread(threading.Thread):
         else: 
             self.turnOff()
 
-    def blink(self, time):
+    def blink(self, blinkTime):
         isOn = False
         while not self.kill.is_set():
             if isOn:
@@ -47,7 +47,7 @@ class StateThread(threading.Thread):
             else:
                 self.turnOn()
             isOn = not isOn
-            time.sleep(time)
+            time.sleep(blinkTime)
 
     def turnOff(self): 
         GPIO.output(statePin, GPIO.HIGH)
