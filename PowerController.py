@@ -10,14 +10,13 @@ class PowerThread(threading.Thread):
         self.kill = threading.Event()
         GPIO.setup(18, GPIO.IN)
     
-    def run (self):
-        time.sleep(0.5)
+    def run (self):        
         self.trackVoltage()
 
     def trackVoltage(self):
         while not self.isTurningOff and not self.kill.is_set():
             if GPIO.input(18):
-                self.isTurningOff = True
+                # self.isTurningOff = True
                 print "Power off"
                 # from subprocess import call
                 # call("sudo nohup shutdown -h now", shell=True)
