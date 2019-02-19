@@ -21,6 +21,5 @@ class PowerThread(threading.Thread):
                 from subprocess import call
                 call("sudo nohup shutdown -h now", shell=True)
             else: 
-                print ("Not Power off")
                 time.sleep(0.5)
                 
