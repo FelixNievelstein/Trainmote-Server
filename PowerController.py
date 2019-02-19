@@ -20,5 +20,7 @@ class PowerThread(threading.Thread):
                 print "Power off"
                 # from subprocess import call
                 # call("sudo nohup shutdown -h now", shell=True)
+            else: 
+                print "Not Power off"
             time.sleep(0.5)        
                 
