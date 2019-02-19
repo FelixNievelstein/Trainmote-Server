@@ -128,16 +128,16 @@ def main():
             pass
 
         except KeyboardInterrupt:
-
+            stateController.setState(StateController.STATE_SHUTDOWN)
             if client_sock is not None:
                 client_sock.close()
-            stateController.setState(StateController.STATE_SHUTDOWN)
+            
             powerThread.kill.set()
             powerThread.isTurningOff = True
             powerThread.join()
-            server_sock.close()
-
+            server_sock.close()            
             print ("Server going down")
+            stateController.setState()
             break
 
 

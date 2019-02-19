@@ -16,14 +16,16 @@ class StateController:
 
     def setState(self, stateName):
         print ("Changing Thread")
-        if self.stateThread is not None:
-            print ("Kill Thread")
-            self.stateThread.kill.set()
-            self.stateThread.join()
+        self.stop()
         print ("Create New State Thread")
         self.stateThread = StateThread(stateName)
         self.stateThread.start()
 
+    def stop(self): 
+        if self.stateThread is not None:
+            print ("Kill Thread")
+            self.stateThread.kill.set()
+            self.stateThread.join()
 
 
 class StateThread(threading.Thread):
@@ -40,7 +42,7 @@ class StateThread(threading.Thread):
         elif self.currentState == STATE_CONNECTED:
             self.turnOn()
         elif self.currentState == STATE_SHUTDOWN:
-            self.blink(0.5)
+            self.blink(0.2)
         else: 
             self.turnOff()
 
