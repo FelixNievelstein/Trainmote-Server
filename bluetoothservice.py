@@ -137,7 +137,7 @@ def main():
             powerThread.join()
             server_sock.close()            
             print ("Server going down")
-            stateController.setState()
+            stateController.stop()
             break
 
 
