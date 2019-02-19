@@ -11,6 +11,7 @@ class PowerThread(threading.Thread):
         GPIO.setup(18, GPIO.IN)
     
     def run (self):
+        time.sleep(0.5)
         self.trackVoltage()
 
     def trackVoltage(self):
