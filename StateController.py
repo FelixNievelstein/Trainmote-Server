@@ -25,6 +25,7 @@ class StateController:
         if self.stateThread is not None:
             print ("Kill Thread")
             self.stateThread.kill.set()
+            self.stateThread.turnOff()
             self.stateThread.join()
 
 
