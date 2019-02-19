@@ -38,7 +38,7 @@ def startTrackingFor(relais):
     trackingService.startTracking()
 
 def receivedMessage(message):
-    print "receivedMessage"
+    print ("receivedMessage")
     if is_json(message):
         jsonData = json.loads(message) 
         results = "["
@@ -95,6 +95,6 @@ def getRelaisWithID(id):
 def is_json(myjson):
   try:
     json_object = json.loads(myjson)
-  except ValueError, e:
+  except ValueError:
     return False
   return True

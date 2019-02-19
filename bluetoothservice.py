@@ -7,6 +7,7 @@ import time
 import gpioservice
 from bluetooth import *
 from PowerController import PowerThread
+import StateController
 
 class LoggerHelper(object):
     def __init__(self, logger, level):
@@ -58,14 +59,14 @@ def main():
     gpioservice.setup()
     powerThread = PowerThread()
     powerThread.start()    
-
-    print "Starting main"
+    stateController = StateController.StateController()    
+    print ("Starting main")
     # Setup logging
     # setup_logging()
-    print "Setup Logging finished"
+    print ("Setup Logging finished")
     # We need to wait until Bluetooth init is done
     time.sleep(10)
-    print "Bluetooth initalised"
+    print ("Bluetooth initalised")
 
     # Make device visible
     os.system("hciconfig hci0 piscan")
@@ -100,25 +101,27 @@ def main():
         try:                        
             # This will block until we get a new connection
             if client_sock is None:
-                print "Waiting for connection on RFCOMM channel %d" % port
+                stateController.setState(StateController.STATE_NOT_CONNECTED)
+                print ("Waiting for connection on RFCOMM channel %d" % port)
                 client_sock, client_info = server_sock.accept()
-                print "Accepted connection from ", client_info
+                print ("Accepted connection from ", client_info)
+                stateController.setState(StateController.STATE_CONNECTED)
 
             # Read the data sent by the client
             data = client_sock.recv(1024)
             if len(data) == 0:
                 break
 
-            print "Received [%s]" % data
+            print ("Received [%s]" % data)
 
             # Handle the request
             response = gpioservice.receivedMessage(data)
             
             client_sock.send(response)
-            print "Sent back [%s]" % response
+            print ("Sent back [%s]" % response)
 
         except IOError:
-            print "Error occured"
+            print ("Error occured")
             if client_sock is not None:
                 client_sock.close()
                 client_sock = None
@@ -128,13 +131,13 @@ def main():
 
             if client_sock is not None:
                 client_sock.close()
-            
+            stateController.setState(StateController.STATE_SHUTDOWN)
             powerThread.kill.set()
             powerThread.isTurningOff = True
             powerThread.join()
             server_sock.close()
 
-            print "Server going down"
+            print ("Server going down")
             break
 
 
