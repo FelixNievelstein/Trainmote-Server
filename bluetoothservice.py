@@ -105,7 +105,7 @@ def main():
                 print ("Waiting for connection on RFCOMM channel %d" % port)
                 client_sock, client_info = server_sock.accept()
                 print ("Accepted connection from ", client_info)
-                # stateController.setState(StateController.STATE_CONNECTED)
+                stateController.setState(StateController.STATE_CONNECTED)
 
             # Read the data sent by the client
             data = client_sock.recv(1024)
