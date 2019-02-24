@@ -90,10 +90,6 @@ def main():
                        service_classes=[uuid, SERIAL_PORT_CLASS],
                        profiles=[SERIAL_PORT_PROFILE])
 
-    # These are the operations the service supports
-    # Feel free to add more
-    operations = ["ping", "example"]
-
     # Main Bluetooth server loop
     client_sock = None
     while True:                
