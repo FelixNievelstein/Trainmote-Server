@@ -40,5 +40,5 @@ class TrackerThread(threading.Thread):
         while not self.kill.is_set():
             currentVoltage = self.adc.read_adc(self.stoppingPoint.measurmentpin, gain= self.GAIN)
             if abs(currentVoltage) > 10:
-                print ('Detected voltage at Stopping Point: ', self.stoppingPoint.measurmentpin)
+                #print ('Detected voltage at Stopping Point: ', self.stoppingPoint.measurmentpin)
             time.sleep(0.3)
