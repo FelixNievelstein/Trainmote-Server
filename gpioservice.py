@@ -72,7 +72,7 @@ def performCommand(command):
         return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
     elif commandType == "PERFORM_GIT_UPDATE":
         from subprocess import call
-        call('sudo ./updateScript.sh', shell=True)
+        call('sudo sh ./updateScript.sh', shell=True)
         exit()
     else:
         return "{ \"error\":\"Command not supported\"}"
