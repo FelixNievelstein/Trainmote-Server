@@ -112,7 +112,15 @@ def main():
 
             # Handle the request
             response = gpioservice.receivedMessage(data)
-            if response == 'FIRMWARE_UPDATE': 
+            if response == 'FIRMWARE_UPDATE':
+                if client_sock is not None:
+                    client_sock.close()                
+                powerThread.kill.set()
+                powerThread.isTurningOff = True
+                powerThread.join()
+                server_sock.close()            
+                print ("Server going down")
+                stateController.stop()
                 break
             client_sock.send(response)
             print ("Sent back [%s]" % response)
