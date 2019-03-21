@@ -112,7 +112,8 @@ def main():
 
             # Handle the request
             response = gpioservice.receivedMessage(data)
-            
+            if response == 'FIRMWARE_UPDATE': 
+                break
             client_sock.send(response)
             print ("Sent back [%s]" % response)
 

@@ -73,7 +73,7 @@ def performCommand(command):
     elif commandType == "PERFORM_GIT_UPDATE":
         from subprocess import call
         call('sudo sh ./updateScript.sh', shell=True)
-        exit()
+        return 'FIRMWARE_UPDATE'
     else:
         return "{ \"error\":\"Command not supported\"}"
 
