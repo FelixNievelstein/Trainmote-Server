@@ -71,7 +71,7 @@ def performCommand(command):
             resultId = createStop(int(command["id"]), None)
         return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
     elif commandType == "PERFORM_GIT_UPDATE":
-        return json.dumps(CommandResultModel(commandType, '', 'success'))
+        return json.dumps(CommandResultModel(commandType, 0, 'success').__dict__)
     else:
         return "{ \"error\":\"Command not supported\"}"
 
