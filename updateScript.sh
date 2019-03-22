@@ -1,3 +1,3 @@
 #!/bin/bash
 git pull origin develop
-sudo python bluetoothservice.py
+git pull origin master

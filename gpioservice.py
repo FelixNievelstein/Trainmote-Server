@@ -71,9 +71,7 @@ def performCommand(command):
             resultId = createStop(int(command["id"]), None)
         return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
     elif commandType == "PERFORM_GIT_UPDATE":
-        from subprocess import call
-        call('sudo sh ./updateScript.sh', shell=True)
-        return 'FIRMWARE_UPDATE'
+        return json.dumps(CommandResultModel(commandType, 0, 'success'))
     else:
         return "{ \"error\":\"Command not supported\"}"
 

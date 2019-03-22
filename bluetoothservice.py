@@ -112,18 +112,15 @@ def main():
 
             # Handle the request
             response = gpioservice.receivedMessage(data)
-            if response == 'FIRMWARE_UPDATE':
-                if client_sock is not None:
-                    client_sock.close()                
-                powerThread.kill.set()
-                powerThread.isTurningOff = True
-                powerThread.join()
-                server_sock.close()            
-                print ("Server going down")
-                stateController.stop()
-                break
             client_sock.send(response)
             print ("Sent back [%s]" % response)
+
+            # Check if respone is firmware update, load from git and restart script.
+            if 'PERFORM_GIT_UPDATE' in response and 'success' in response:
+                from subprocess import call
+                call('sudo sh ./updateScript.sh', shell=True)
+                os.execv(sys.executable, ['python'] + sys.argv)
+                break            
 
         except IOError:
             print ("Error occured")
