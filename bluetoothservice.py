@@ -119,6 +119,16 @@ def main():
             if 'PERFORM_GIT_UPDATE' in response and 'success' in response:
                 from subprocess import call
                 call('sudo sh ./updateScript.sh', shell=True)
+                stateController.setState(StateController.STATE_SHUTDOWN)
+                if client_sock is not None:
+                    client_sock.close()
+                
+                powerThread.kill.set()
+                powerThread.isTurningOff = True
+                powerThread.join()
+                server_sock.close()            
+                print ("Server going down")
+                stateController.stop()
                 os.execv(sys.executable, ['python'] + sys.argv)
                 break            
 
