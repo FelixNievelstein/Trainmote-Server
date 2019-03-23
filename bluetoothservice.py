@@ -18,6 +18,10 @@ class LoggerHelper(object):
         if message.rstrip() != "":
             self.logger.log(self.level, message.rstrip())
 
+stateController = StateController.StateController()
+powerThread = PowerThread()
+server_sock = None
+client_sock = None
 
 def setup_logging():
     # Default logging settings
@@ -56,10 +60,9 @@ def setup_logging():
 
 # Main loop
 def main():    
-    gpioservice.setup()
-    powerThread = PowerThread()
+    gpioservice.setup()    
     powerThread.start()    
-    stateController = StateController.StateController()    
+    
     print ("Starting main")
     # Setup logging
     # setup_logging()
@@ -118,40 +121,34 @@ def main():
             # Check if respone is firmware update, load from git and restart script.
             if 'PERFORM_GIT_UPDATE' in response and 'success' in response:
                 from subprocess import call
-                call('sudo sh ./updateScript.sh', shell=True)
-                stateController.setState(StateController.STATE_SHUTDOWN)
-                if client_sock is not None:
-                    client_sock.close()
-                
-                powerThread.kill.set()
-                powerThread.isTurningOff = True
-                powerThread.join()
-                server_sock.close()            
-                print ("Server going down")
-                stateController.stop()
+                call('sudo sh ./updateScript.sh', shell=True)                
+                closeClientConnection()
+                shutDown()
                 os.execv(sys.executable, ['python'] + sys.argv)
-                break            
+                break
 
         except IOError:
             print ("Error occured")
-            if client_sock is not None:
-                client_sock.close()
-                client_sock = None
+            closeClientConnection()
             pass
 
         except KeyboardInterrupt:
-            stateController.setState(StateController.STATE_SHUTDOWN)
-            if client_sock is not None:
-                client_sock.close()
-            
-            powerThread.kill.set()
-            powerThread.isTurningOff = True
-            powerThread.join()
-            server_sock.close()            
-            print ("Server going down")
-            stateController.stop()
+            closeClientConnection()
+            shutDown()
             break
 
+def shutDown():
+    powerThread.kill.set()
+    powerThread.isTurningOff = True
+    powerThread.join()
+    stateController.setState(StateController.STATE_SHUTDOWN)
+    server_sock.close()
+    print ("Server going down")
+    stateController.stop()
 
+def closeClientConnection():
+    if client_sock is not None:
+            client_sock.close()
+            client_sock = None
 
 main()
