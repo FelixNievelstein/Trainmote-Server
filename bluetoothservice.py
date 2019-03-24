@@ -129,6 +129,7 @@ def main():
         except IOError:
             print ("Error occured")
             closeClientConnection(client_sock)
+            client_sock = None
             pass
 
         except KeyboardInterrupt:
