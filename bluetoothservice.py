@@ -122,18 +122,18 @@ def main():
             if 'PERFORM_GIT_UPDATE' in response and 'success' in response:
                 from subprocess import call
                 call('sudo sh ./updateScript.sh', shell=True)                
-                closeClientConnection()
+                closeClientConnection(client_sock)
                 shutDown()
                 os.execv(sys.executable, ['python'] + sys.argv)
                 break
 
         except IOError:
             print ("Error occured")
-            closeClientConnection()
+            closeClientConnection(client_sock)
             pass
 
         except KeyboardInterrupt:
-            closeClientConnection()
+            closeClientConnection(client_sock)
             shutDown()
             break
 
@@ -146,7 +146,7 @@ def shutDown():
     print ("Server going down")
     stateController.stop()
 
-def closeClientConnection():
+def closeClientConnection(client_sock):
     if client_sock is not None:
             client_sock.close()
             client_sock = None
