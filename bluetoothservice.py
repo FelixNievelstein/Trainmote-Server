@@ -138,13 +138,10 @@ def main():
             break
 
 def shutDown(server_sock):
-    print ("Kill power Thread")
     powerThread.kill.set()
     powerThread.isTurningOff = True
     powerThread.join()
-    print ("Set State")
     stateController.setState(StateController.STATE_SHUTDOWN)
-    print ("Close Server")
     if server_sock is not None:
         server_sock.close()
     print ("Server going down")
