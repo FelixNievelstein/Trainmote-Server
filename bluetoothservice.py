@@ -21,7 +21,6 @@ class LoggerHelper(object):
 gpioservice.setup()
 stateController = StateController.StateController()
 powerThread = PowerThread()
-server_sock = None
 client_sock = None
 
 def setup_logging():
@@ -123,7 +122,7 @@ def main():
                 from subprocess import call
                 call('sudo sh ./updateScript.sh', shell=True)                
                 closeClientConnection(client_sock)
-                shutDown()
+                shutDown(server_sock)
                 os.execv(sys.executable, ['python'] + sys.argv)
                 break
 
@@ -134,10 +133,10 @@ def main():
 
         except KeyboardInterrupt:
             closeClientConnection(client_sock)
-            shutDown()
+            shutDown(server_sock)
             break
 
-def shutDown():
+def shutDown(server_sock):
     print ("Kill power Thread")
     powerThread.kill.set()
     powerThread.isTurningOff = True
