@@ -18,6 +18,7 @@ class LoggerHelper(object):
         if message.rstrip() != "":
             self.logger.log(self.level, message.rstrip())
 
+gpioservice.setup()
 stateController = StateController.StateController()
 powerThread = PowerThread()
 server_sock = None
@@ -59,8 +60,7 @@ def setup_logging():
     sys.stderr = LoggerHelper(logger, logging.ERROR)
 
 # Main loop
-def main():    
-    gpioservice.setup()    
+def main():          
     powerThread.start()    
     
     print ("Starting main")
