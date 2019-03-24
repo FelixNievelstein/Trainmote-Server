@@ -138,15 +138,20 @@ def main():
             break
 
 def shutDown():
+    print ("Kill power Thread")
     powerThread.kill.set()
     powerThread.isTurningOff = True
     powerThread.join()
+    print ("Set State")
     stateController.setState(StateController.STATE_SHUTDOWN)
-    server_sock.close()
+    print ("Close Server")
+    if server_sock is not None:
+        server_sock.close()
     print ("Server going down")
     stateController.stop()
 
 def closeClientConnection(client_sock):
+    print ("Closing client socket")
     if client_sock is not None:
             client_sock.close()
             client_sock = None
