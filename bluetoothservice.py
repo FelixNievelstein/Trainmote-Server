@@ -7,6 +7,7 @@ import time
 import gpioservice
 from bluetooth import *
 from PowerController import PowerThread
+from databaseController import DatabaseController
 import StateController
 
 class LoggerHelper(object):
@@ -22,6 +23,7 @@ gpioservice.setup()
 stateController = StateController.StateController()
 powerThread = PowerThread()
 client_sock = None
+database = DatabaseController()
 
 def setup_logging():
     # Default logging settings
