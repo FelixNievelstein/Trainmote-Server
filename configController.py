@@ -4,13 +4,11 @@ class ConfigController():
     parser = SafeConfigParser()
 
     def getPreferences(self):
-        print(self.loadSettings())
+        print(self.checkSettingsFile())
         return None
 
-    def loadSettings(self):
+    def checkSettingsFile(self):
         files = ['settings.ini']
-        print(self.parser.read(files))
         if len(self.parser.read(files)) == 1:
-            print(files)
             return files[0]
         return None
