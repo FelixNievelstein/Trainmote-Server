@@ -70,6 +70,8 @@ def loadPersistentData():
         else:
             libInstaller = LibInstaller()
             libInstaller.installSQLite()
+            config.setSQLiteInstalled()
+            restart(None, None)
     
 
 # Main loop
@@ -135,10 +137,8 @@ def main():
             # Check if respone is firmware update, load from git and restart script.
             if 'PERFORM_GIT_UPDATE' in response and 'success' in response:
                 from subprocess import call
-                call('sudo sh ./updateScript.sh', shell=True)                
-                closeClientConnection(client_sock)
-                shutDown(server_sock)
-                os.execv(sys.executable, ['python'] + sys.argv)
+                call('sudo sh ./updateScript.sh', shell=True)
+                restart(server_sock, client_sock)
                 break
 
         except IOError:
@@ -151,6 +151,11 @@ def main():
             closeClientConnection(client_sock)
             shutDown(server_sock)
             break
+
+def restart(server_sock, client_sock):
+    closeClientConnection(client_sock)
+    shutDown(server_sock)
+    os.execv(sys.executable, ['python'] + sys.argv)
 
 def shutDown(server_sock):
     powerThread.kill.set()

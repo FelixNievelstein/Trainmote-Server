@@ -21,8 +21,13 @@ class ConfigController():
             sqliteVersion = self.parser.get('settings', 'sqliteVersion')
             return sqliteVersion is not None
         except:
-            return False
-        
+            return False        
 
     def getDataBasePath(self):
         return self.parser.get('settings', 'sqlitePath')
+
+    def setSQLiteInstalled(self):
+        try:
+            self.parser.set('settinfs', 'sqliteVersion', '3.0')
+        except:
+            return False
