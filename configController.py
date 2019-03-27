@@ -28,6 +28,6 @@ class ConfigController():
 
     def setSQLiteInstalled(self):
         try:
-            self.parser.set('settinfs', 'sqliteVersion', '3.0')
+            self.parser.set('settings', 'sqliteVersion', '3.0')
         except:
             return False
