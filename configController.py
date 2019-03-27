@@ -17,8 +17,12 @@ class ConfigController():
         return None
 
     def isSQLiteInstalled(self):
-        sqliteVersion = self.parser.get('settings', 'sqliteVersion')
-        return sqliteVersion is not None
+        try:
+            sqliteVersion = self.parser.get('settings', 'sqliteVersion')
+            return sqliteVersion is not None
+        except:
+            return False
+        
 
     def getDataBasePath(self):
         return self.parser.get('settings', 'sqlitePath')
