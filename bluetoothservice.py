@@ -10,6 +10,7 @@ from PowerController import PowerThread
 from databaseController import DatabaseController
 import StateController
 from configController import ConfigController
+from libInstaller import LibInstaller
 
 class LoggerHelper(object):
     def __init__(self, logger, level):
@@ -24,7 +25,6 @@ gpioservice.setup()
 stateController = StateController.StateController()
 powerThread = PowerThread()
 client_sock = None
-database = DatabaseController()
 config = ConfigController()        
 
 def setup_logging():
@@ -66,8 +66,10 @@ def loadPersistentData():
     if config.loadPreferences():
         if config.isSQLiteInstalled():
             dbPath = config.getDataBasePath()
+            database = DatabaseController()
         else:
-            database.installSQLite()
+            libInstaller = LibInstaller()
+            libInstaller.installSQLite()
     
 
 # Main loop

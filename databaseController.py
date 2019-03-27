@@ -1,4 +1,5 @@
-class DatabaseController():
+import sqlite3
 
-    def installSQLite(self):
-        print('Installation SQLite')
+class DatabaseController():
+    def __init__(self):
+        print('Init Database Controller')
