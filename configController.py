@@ -1,4 +1,5 @@
 from ConfigParser import SafeConfigParser
+import sys
 
 class ConfigController():
     parser = SafeConfigParser()
@@ -19,6 +20,7 @@ class ConfigController():
     def isSQLiteInstalled(self):
         try:
             sqliteVersion = self.parser.get('settings', 'sqliteVersion')
+            print()
             return sqliteVersion is not None
         except:
             return False        
@@ -29,5 +31,8 @@ class ConfigController():
     def setSQLiteInstalled(self):
         try:
             self.parser.set('settings', 'sqliteVersion', '3.0')
+            self.parser.write(sys.stdout)
+            print('Store config')
+            return True
         except:
             return False

@@ -70,8 +70,10 @@ def loadPersistentData():
         else:
             libInstaller = LibInstaller()
             libInstaller.installSQLite()
-            config.setSQLiteInstalled()
-            restart(None, None)
+            if config.setSQLiteInstalled():
+                restart(None, None)
+            else: 
+                shutDown(None)
     
 
 # Main loop
