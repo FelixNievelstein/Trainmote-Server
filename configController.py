@@ -4,7 +4,11 @@ class ConfigController():
     parser = SafeConfigParser()
 
     def getPreferences(self):
-        print(self.checkSettingsFile())
+        path = self.checkSettingsFile()
+        if path is not None:
+            print(path)
+            self.parser.read(path)
+            print(self.parser.get('info', 'version'))
         return None
 
     def checkSettingsFile(self):
