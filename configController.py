@@ -9,7 +9,8 @@ class ConfigController():
 
     def loadSettings(self):
         files = ['/content/settings.ini']
-        if self.parser.read(files) == 1:
+        print(self.parser.read('/content/settings.ini'))
+        if self.parser.read(files[0]) == 1:
             print(files)
             return files[0]
         return None
