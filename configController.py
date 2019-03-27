@@ -8,7 +8,7 @@ class ConfigController():
         return None
 
     def checkSettingsFile(self):
-        files = ['settings.ini']
+        files = ['content/settings.ini']
         if len(self.parser.read(files)) == 1:
             return files[0]
         return None
