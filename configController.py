@@ -3,16 +3,22 @@ from ConfigParser import SafeConfigParser
 class ConfigController():
     parser = SafeConfigParser()
 
-    def getPreferences(self):
+    def loadPreferences(self):
         path = self.checkSettingsFile()
         if path is not None:
-            print(path)
             self.parser.read(path)
-            print(self.parser.get('info', 'version'))
-        return None
+            return True            
+        return False
 
     def checkSettingsFile(self):
         files = ['content/settings.ini']
         if len(self.parser.read(files)) == 1:
             return files[0]
         return None
+
+    def isSQLiteInstalled(self):
+        sqliteVersion = self.parser.get('setting', 'sqliteVersion')
+        return sqliteVersion is not None
+
+    def getDataBasePath(self):
+        return self.parser.get('setting', 'sqlitePath')

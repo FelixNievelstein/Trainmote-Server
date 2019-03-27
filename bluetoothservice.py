@@ -9,6 +9,7 @@ from bluetooth import *
 from PowerController import PowerThread
 from databaseController import DatabaseController
 import StateController
+from configController import ConfigController
 
 class LoggerHelper(object):
     def __init__(self, logger, level):
@@ -24,6 +25,7 @@ stateController = StateController.StateController()
 powerThread = PowerThread()
 client_sock = None
 database = DatabaseController()
+config = ConfigController()        
 
 def setup_logging():
     # Default logging settings
@@ -60,9 +62,18 @@ def setup_logging():
     # Replace stderr with logging to file at ERROR level
     sys.stderr = LoggerHelper(logger, logging.ERROR)
 
+def loadPersistentData():
+    if config.loadPreferences():
+        if config.isSQLiteInstalled():
+            dbPath = config.getDataBasePath()
+        else:
+            database.installSQLite()
+    
+
 # Main loop
 def main():          
-    powerThread.start()    
+    powerThread.start()
+    loadPersistentData()
     
     print ("Starting main")
     # Setup logging
