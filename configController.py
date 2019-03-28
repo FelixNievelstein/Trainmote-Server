@@ -25,7 +25,9 @@ class ConfigController():
             return False        
 
     def getDataBasePath(self):
-        return self.parser.get('settings', 'sqlitePath')
+        if self.loadPreferences():
+            return self.parser.get('settings', 'sqlitePath')
+        return None
 
     def setSQLiteInstalled(self):
         try:

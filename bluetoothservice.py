@@ -7,7 +7,6 @@ import time
 import gpioservice
 from bluetooth import *
 from PowerController import PowerThread
-from databaseController import DatabaseController
 import StateController
 from configController import ConfigController
 from libInstaller import LibInstaller
@@ -64,10 +63,7 @@ def setup_logging():
 
 def loadPersistentData():
     if config.loadPreferences():
-        if config.isSQLiteInstalled():
-            dbPath = config.getDataBasePath()
-            database = DatabaseController()
-        else:
+        if not config.isSQLiteInstalled():
             libInstaller = LibInstaller()
             libInstaller.installSQLite()
             if config.setSQLiteInstalled():

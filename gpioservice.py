@@ -5,6 +5,7 @@ from CommandResultModel import CommandResultModel
 from GPIORelaisModel import GPIORelaisModel
 from GPIORelaisModel import GPIOStoppingPoint
 from GPIORelaisModel import GPIOSwitchPoint
+from databaseController import DatabaseController
 
 gpioRelais = []
 trackingServices = []
@@ -83,6 +84,7 @@ def createSwitch(id, default):
 
 def createStop(id, measurmentid):
     stop = GPIOStoppingPoint(id, id, measurmentid)
+    DatabaseController().insertStopModel(id, measurmentid)
     gpioRelais.append(stop)
     return id
 
