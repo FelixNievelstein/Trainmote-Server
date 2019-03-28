@@ -29,10 +29,14 @@ class ConfigController():
         return self.parser.get('settings', 'sqlitePath')
 
     def setSQLiteInstalled(self):
-        try:
-            self.parser.set('settings', 'sqliteVersion', '3.0')
-            self.parser.write(sys.stdout)
-            print('Store config')
-            return True
-        except:
-            return False
+        path = self.checkSettingsFile()
+        if path is not None:
+            try:
+                self.parser.set('settings', 'sqliteVersion', '3.0')
+                # save to a file
+                with open(path, 'w') as configfile:
+                    parser.write(configfile)
+                return True
+            except:
+                return False
+        return False
