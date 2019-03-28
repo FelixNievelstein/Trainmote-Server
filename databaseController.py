@@ -8,10 +8,13 @@ class DatabaseController():
     def openDatabase(self):
         config = ConfigController()
         dbPath = config.getDataBasePath()
+        print(dbPath)
         if dbPath is not None:
             try:
                 self.conn = sqlite3.connect(dbPath)
+                print(self.conn)
                 self.curs = conn.cursor()
+                print(self.curs)
                 return True
             except:
                 print('Error connecting database')
