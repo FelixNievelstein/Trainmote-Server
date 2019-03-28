@@ -29,6 +29,7 @@ class ConfigController():
         return self.parser.get('settings', 'sqlitePath')
 
     def setSQLiteInstalled(self):
+        parser.write(sys.stdout)
         try:
             self.parser.set('settings', 'sqliteVersion', '3.0')
             parser.write(sys.stdout)
