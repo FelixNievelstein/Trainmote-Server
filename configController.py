@@ -29,13 +29,13 @@ class ConfigController():
         return self.parser.get('settings', 'sqlitePath')
 
     def setSQLiteInstalled(self):
-        parser.write(sys.stdout)
+        self.parser.write(sys.stdout)
         try:
             self.parser.set('settings', 'sqliteVersion', '3.0')
-            parser.write(sys.stdout)
+            self.parser.write(sys.stdout)
             # save to a file
             with open('content/settings.ini', 'w') as configfile:
-                parser.write(configfile)
+                self.parser.write(configfile)
             return True
         except:
             print('Error saving config')
