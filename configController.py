@@ -20,7 +20,6 @@ class ConfigController():
     def isSQLiteInstalled(self):
         try:
             sqliteVersion = self.parser.get('settings', 'sqliteVersion')
-            print()
             return sqliteVersion is not None
         except:
             return False        
@@ -29,10 +28,8 @@ class ConfigController():
         return self.parser.get('settings', 'sqlitePath')
 
     def setSQLiteInstalled(self):
-        self.parser.write(sys.stdout)
         try:
             self.parser.set('settings', 'sqliteVersion', '3.0')
-            self.parser.write(sys.stdout)
             # save to a file
             with open('content/settings.ini', 'w') as configfile:
                 self.parser.write(configfile)
