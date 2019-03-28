@@ -37,4 +37,5 @@ class ConfigController():
                 parser.write(configfile)
             return True
         except:
+            print('Error saving config')
             return False
