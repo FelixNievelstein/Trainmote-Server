@@ -9,7 +9,7 @@ class DatabaseController():
         DB_NAME = "TrainmoteDB"
 
         #SQL File with Table Schema and Initialization Data
-        SQL_File_Name = "tom-db.sqlite"
+        SQL_File_Name = "content/tom-db.sqlite"
         ##############################################
 
         #Read Table Schema into a Variable and remove all New Line Chars
