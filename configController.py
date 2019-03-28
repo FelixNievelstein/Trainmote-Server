@@ -12,7 +12,7 @@ class ConfigController():
         return False
 
     def checkSettingsFile(self):
-        files = ['content/settings.ini']
+        files = ['content/settings.ini']        
         if len(self.parser.read(files)) == 1:
             return files[0]
         return None
@@ -29,16 +29,12 @@ class ConfigController():
         return self.parser.get('settings', 'sqlitePath')
 
     def setSQLiteInstalled(self):
-        path = self.checkSettingsFile()
-        if path is not None:
-            try:
-                self.parser['settings']['sqliteVersion'] = '3.0'
-                parser.write(sys.stdout)
-                print(path)
-                # save to a file
-                with open(path, 'w') as configfile:
-                    parser.write(configfile)
-                return True
-            except:
-                return False
-        return False
+        try:
+            self.parser.set('settings', 'sqliteVersion', '3.0')
+            parser.write(sys.stdout)
+            # save to a file
+            with open('content/settings.ini', 'w') as configfile:
+                parser.write(configfile)
+            return True
+        except:
+            return False
