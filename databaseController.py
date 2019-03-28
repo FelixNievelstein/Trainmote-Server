@@ -13,10 +13,11 @@ class DatabaseController():
             try:
                 self.conn = sqlite3.connect(dbPath)
                 print(self.conn)
-                self.curs = conn.cursor()
+                self.curs = self.conn.cursor()
                 print(self.curs)
                 return True
-            except:
+            except Exception as e: 
+                print(e)
                 print('Error connecting database')
         return False
 
