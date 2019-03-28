@@ -32,7 +32,9 @@ class ConfigController():
         path = self.checkSettingsFile()
         if path is not None:
             try:
-                self.parser.set('settings', 'sqliteVersion', '3.0')
+                self.parser['settings']['sqliteVersion'] = '3.0'
+                parser.write(sys.stdout)
+                print(path)
                 # save to a file
                 with open(path, 'w') as configfile:
                     parser.write(configfile)
