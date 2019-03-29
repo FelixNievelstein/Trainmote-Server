@@ -1,8 +1,10 @@
 from ConfigParser import SafeConfigParser
 import sys
+import os
 
 class ConfigController():
     parser = SafeConfigParser()
+    pathPreferences = 'content/sharedPreferences.ini'
 
     def loadPreferences(self):
         path = self.checkSettingsFile()
@@ -12,10 +14,27 @@ class ConfigController():
         return False
 
     def checkSettingsFile(self):
-        files = ['content/settings.ini']        
-        if len(self.parser.read(files)) == 1:
-            return files[0]
+        if os.path.isfile(self.pathPreferences):
+            if len(self.parser.read(self.pathPreferences)) == 1:
+                return self.pathPreferences
+        else:
+            self.createPreferencesFile(self.pathPreferences)
+            if len(self.parser.read(self.pathPreferences)) == 1:
+                return self.pathPreferences
         return None
+
+    def createPreferencesFile(self, file):
+        print('Create Preferences')
+        createParser = SafeConfigParser()
+        createParser.add_section('info')
+        createParser.set('info','version', '0.1')
+        createParser.add_section('settings')
+        createParser.set('settings','sqlitePath', 'content/tom-db.sqlite')
+        with open(file, 'w+') as iniFile:
+            print('Created File')
+            createParser.write(iniFile)
+            
+
 
     def isSQLiteInstalled(self):
         try:
@@ -33,7 +52,7 @@ class ConfigController():
         try:
             self.parser.set('settings', 'sqliteVersion', '3.0')
             # save to a file
-            with open('content/settings.ini', 'w') as configfile:
+            with open(self.pathPreferences, 'w') as configfile:
                 self.parser.write(configfile)
             return True
         except:
