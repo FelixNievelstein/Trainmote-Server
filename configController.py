@@ -14,7 +14,8 @@ class ConfigController():
         return False
 
     def checkSettingsFile(self):
-        if os.path.isfile(self.pathPreferences):
+        if os.path.exists(self.pathPreferences):
+            print('found file')
             if len(self.parser.read(self.pathPreferences)) == 1:
                 return self.pathPreferences
         else:
