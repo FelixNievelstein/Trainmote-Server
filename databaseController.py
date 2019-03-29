@@ -38,7 +38,10 @@ class DatabaseController():
         if self.openDatabase():
             # Insert a row of data
             print('Insert Stop: %i' % relaisId)
-            self.curs.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId))
+            if messId is not None:
+                self.curs.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId))
+            else:
+                self.curs.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId))
             self.conn.commit()
             self.conn.close()
 
