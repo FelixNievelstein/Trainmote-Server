@@ -15,7 +15,6 @@ class ConfigController():
 
     def checkSettingsFile(self):
         if os.path.exists(self.pathPreferences):
-            print('found file')
             if len(self.parser.read(self.pathPreferences)) == 1:
                 return self.pathPreferences
         else:
@@ -25,14 +24,13 @@ class ConfigController():
         return None
 
     def createPreferencesFile(self, file):
-        print('Create Preferences')
         createParser = SafeConfigParser()
         createParser.add_section('info')
         createParser.set('info','version', '0.1')
         createParser.add_section('settings')
         createParser.set('settings','sqlitePath', 'content/tom-db.sqlite')
         with open(file, 'w+') as iniFile:
-            print('Created File')
+            print('Created Preferences Inital File')
             createParser.write(iniFile)
             
 
