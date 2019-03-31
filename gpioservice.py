@@ -42,6 +42,8 @@ def receivedMessage(message):
     if is_json(message):
         jsonData = json.loads(message) 
         results = "["
+        if "CONFIG" in jsonData[0]["commandType"]:
+            print("Clear DB")
         for commandData in jsonData:
             results = results +  performCommand(commandData) + ","
 
