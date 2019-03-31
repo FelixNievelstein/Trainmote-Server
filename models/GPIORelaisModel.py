@@ -36,8 +36,9 @@ class GPIOStoppingPoint(GPIORelaisModel):
 class GPIOSwitchPoint(GPIORelaisModel):        
     
     
-    def __init__(self, id, pin):
+    def __init__(self, id, switchType, pin):
         self.needsPowerOn = True
+        self.switchType = switchType
         self.powerRelais = GPIORelaisModel(33, 33)
         GPIORelaisModel.__init__(self, id, pin) 
 

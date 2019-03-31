@@ -28,7 +28,7 @@ class DatabaseController():
         connection = sqlite3.connect(dbPath)
         cursor = connection.cursor()
         sqlStatementStop = 'CREATE TABLE "TMStopModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "mess_id" INTEGER)'
-        sqlStatementSwitch = 'CREATE TABLE "TMSwitchModel" (""uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, relais_id" TEXT NOT NULL, "switchType" INTEGER)'
+        sqlStatementSwitch = 'CREATE TABLE "TMSwitchModel" (""uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "switchType" TEXT, "defaultValue" INTEGER)'
         cursor.execute(sqlStatementStop)
         cursor.execute(sqlStatementSwitch)
         connection.commit()
@@ -42,6 +42,14 @@ class DatabaseController():
                 self.curs.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId))
             else:
                 self.curs.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId))
+            self.conn.commit()
+            self.conn.close()
+
+    def insertSwitchModel(self, model):
+        if self.openDatabase():
+            # Insert a row of data
+            print('Insert Switch: %i' % model.pin)
+            self.curs.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%i', '%i')" % (model.pin, model.switchType, model.defaultValue))
             self.conn.commit()
             self.conn.close()
 

@@ -4,3 +4,4 @@ class CommandModel(object):
         self.commandType = commandType
         self.id = id
         self.value = value
+        self.params = dict()

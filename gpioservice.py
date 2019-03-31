@@ -1,10 +1,10 @@
 import json
 import RPi.GPIO as GPIO
 from traintrackingservice import TrackingService
-from CommandResultModel import CommandResultModel
-from GPIORelaisModel import GPIORelaisModel
-from GPIORelaisModel import GPIOStoppingPoint
-from GPIORelaisModel import GPIOSwitchPoint
+from models.CommandResultModel import CommandResultModel
+from models.GPIORelaisModel import GPIORelaisModel
+from models.GPIORelaisModel import GPIOStoppingPoint
+from models.GPIORelaisModel import GPIOSwitchPoint
 from databaseController import DatabaseController
 
 gpioRelais = []
@@ -62,7 +62,8 @@ def performCommand(command):
     elif commandType == "GET_SWITCH" or commandType == "GET_STOPPING_POINT":
         return getValueForPin(int(command["id"]), command["id"], commandType)
     elif commandType == "CONFIG_SWITCH":
-        resultId = createSwitch(int(command["id"]), int(command["defaultValue"]))
+        params = command["params"]
+        resultId = createSwitch(int(command["id"]), int(command["defaultValue"]), params["switchType"])
         return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
     elif commandType == "CONFIG_STOPPING_POINT":
         if 'measurmentId' in command:
@@ -75,10 +76,11 @@ def performCommand(command):
     else:
         return "{ \"error\":\"Command not supported\"}"
 
-def createSwitch(id, default):
-    switch = GPIOSwitchPoint(id, id)
-    switch.defaultValue = default
+def createSwitch(id, default, switchType):
+    switch = GPIOSwitchPoint(id, switchType, id)
+    switch.setDefaultValue(default)
     switch.toDefault()
+    DatabaseController().insertSwitchModel(switch)
     gpioRelais.append(switch)
     return id
 
