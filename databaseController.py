@@ -28,7 +28,7 @@ class DatabaseController():
         connection = sqlite3.connect(dbPath)
         cursor = connection.cursor()
         sqlStatementStop = 'CREATE TABLE "TMStopModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "mess_id" INTEGER)'
-        sqlStatementSwitch = 'CREATE TABLE "TMSwitchModel" (""uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "switchType" TEXT, "defaultValue" INTEGER)'
+        sqlStatementSwitch = 'CREATE TABLE "TMSwitchModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "switchType" TEXT, "defaultValue" INTEGER)'
         cursor.execute(sqlStatementStop)
         cursor.execute(sqlStatementSwitch)
         connection.commit()
