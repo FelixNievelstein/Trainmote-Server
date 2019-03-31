@@ -53,6 +53,13 @@ class DatabaseController():
             self.conn.commit()
             self.conn.close()
 
+    def removeAll(self):
+        if self.openDatabase():
+            self.curs.execute("DELETE FROM TMSwitchModel")
+            self.curs.execute("DELETE FROM TMStopModel")
+            self.conn.commit()
+            self.conn.close()
+
 
     
         

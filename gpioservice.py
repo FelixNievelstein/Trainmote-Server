@@ -44,6 +44,7 @@ def receivedMessage(message):
         results = "["
         if "CONFIG" in jsonData[0]["commandType"]:
             print("Clear DB")
+            DatabaseController().removeAll()
         for commandData in jsonData:
             results = results +  performCommand(commandData) + ","
 
