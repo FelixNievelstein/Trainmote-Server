@@ -49,7 +49,7 @@ class DatabaseController():
         if self.openDatabase():
             # Insert a row of data
             print('Insert Switch: %i' % model.pin)
-            self.curs.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%i', '%i')" % (model.pin, model.switchType, model.defaultValue))
+            self.curs.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%s', '%i')" % (model.pin, model.switchType, model.defaultValue))
             self.conn.commit()
             self.conn.close()
 
