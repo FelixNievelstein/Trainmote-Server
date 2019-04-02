@@ -46,8 +46,17 @@ class GPIOSwitchPoint(GPIORelaisModel):
         if self.needsPowerOn:
                 self.powerRelais.setStatus(GPIO.LOW)
         GPIO.output(self.pin, value)
-        time.sleep(0.6)
+        time.sleep(0.4)
         self.powerRelais.setStatus(GPIO.HIGH)
         return self.getStatus()
+
+    def toDefault(self):
+        if self.needsPowerOn:
+                self.powerRelais.setStatus(GPIO.LOW)
+        GPIO.output(self.pin, self.defaultValue)
+        time.sleep(0.4)
+        self.powerRelais.setStatus(GPIO.HIGH)
+
+
 
 
