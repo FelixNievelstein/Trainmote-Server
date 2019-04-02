@@ -53,7 +53,6 @@ class GPIOSwitchPoint(GPIORelaisModel):
     def toDefault(self):
         if self.needsPowerOn:
             self.powerRelais.setStatus(GPIO.LOW)
-        print("set To Default")
         GPIO.output(self.pin, self.defaultValue)
         time.sleep(0.5)
         self.powerRelais.setStatus(GPIO.HIGH)

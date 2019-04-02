@@ -67,7 +67,6 @@ class DatabaseController():
         if self.openDatabase():
             self.curs.execute("SELECT * FROM TMSwitchModel")            
             for dataSet in self.curs:
-                print(dataSet)
                 switchModel = GPIOSwitchPoint(dataSet[1], dataSet[2], dataSet[1])
                 switchModel.setDefaultValue(dataSet[3])
                 allSwitchModels.append(switchModel)
@@ -78,7 +77,6 @@ class DatabaseController():
         if self.openDatabase():
             self.curs.execute("SELECT * FROM TMStopModel")            
             for dataSet in self.curs:
-                print(dataSet)
                 stop = GPIOStoppingPoint(dataSet[1], dataSet[1], dataSet[2])
                 allStopModels.append(stop)
         return allStopModels
