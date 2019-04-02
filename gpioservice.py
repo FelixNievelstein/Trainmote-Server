@@ -32,10 +32,15 @@ def loadInitialData():
     switchModels = DatabaseController().getAllSwichtModels()
     for model in switchModels:
         gpioRelais.append(model)
-        model.toDefault()
     stopModels = DatabaseController().getAllStopModels()
     for stop in stopModels:
         gpioRelais.append(stop)
+    setAllToDefault()
+
+def setAllToDefault():
+    for relais in gpioRelais:
+        print(relais)
+        relais.toDefault()
 
 def setupTrackingDefault():
     for relais in gpioRelais:
