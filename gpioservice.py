@@ -50,8 +50,8 @@ def startTrackingFor(relais):
 def resetData():
     print("Clear DB")
     DatabaseController().removeAll()
-    gpioRelais.clear()
-    trackingServices.clear()
+    del gpioRelais [:]
+    del trackingServices [:]
 
 def receivedMessage(message):
     if is_json(message):
