@@ -32,26 +32,33 @@ def loadInitialData():
     switchModels = DatabaseController().getAllSwichtModels()
     for model in switchModels:
         gpioRelais.append(model)
+        model.toDefault()
+    stopModels = DatabaseController().getAllStopModels()
+    for stop in stopModels:
+        gpioRelais.append(stop)
 
 def setupTrackingDefault():
     for relais in gpioRelais:
         if isinstance(relais, GPIOStoppingPoint) and relais.measurmentpin is not None:
-            startTrackingFor(relais)
+            startTrackingFor(relais)            
         
 def startTrackingFor(relais):
     trackingService = TrackingService(relais)
     trackingServices.append(trackingService)
     trackingService.startTracking()
 
+def resetData():
+    print("Clear DB")
+    DatabaseController().removeAll()
+    gpioRelais.clear()
+    trackingServices.clear()
+
 def receivedMessage(message):
     if is_json(message):
         jsonData = json.loads(message) 
         results = "["
         if "CONFIG" in jsonData[0]["commandType"]:
-            print("Clear DB")
-            DatabaseController().removeAll()
-            gpioRelais = []
-            trackingServices = []
+            resetData()
         for commandData in jsonData:
             results = results +  performCommand(commandData) + ","
 

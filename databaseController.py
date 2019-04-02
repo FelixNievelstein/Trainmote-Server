@@ -2,6 +2,7 @@ import sqlite3
 import os
 from configController import ConfigController
 from models.GPIORelaisModel import GPIOSwitchPoint
+from models.GPIORelaisModel import GPIOStoppingPoint
 
 class DatabaseController():
     curs = None
@@ -71,6 +72,16 @@ class DatabaseController():
                 switchModel.setDefaultValue(dataSet[3])
                 allSwitchModels.append(switchModel)
         return allSwitchModels
+
+    def getAllStopModels(self):
+        allStopModels = []
+        if self.openDatabase():
+            self.curs.execute("SELECT * FROM TMStopModel")            
+            for dataSet in self.curs:
+                print(dataSet)
+                stop = GPIOStoppingPoint(dataSet[1], dataSet[1], dataSet[2])
+                allStopModels.append(stop)
+        return allStopModels
             
             
                 
