@@ -1,6 +1,7 @@
 import sqlite3
 import os
 from configController import ConfigController
+from models.GPIORelaisModel import GPIOSwitchPoint
 
 class DatabaseController():
     curs = None
@@ -59,6 +60,21 @@ class DatabaseController():
             self.curs.execute("DELETE FROM TMStopModel")
             self.conn.commit()
             self.conn.close()
+    
+    def getAllSwichtModels(self):
+        allSwitchModels = []
+        if self.openDatabase():
+            self.curs.execute("SELECT * FROM TMSwitchModel")            
+            for dataSet in self.curs:
+                print(dataSet)
+                switchModel = GPIOSwitchPoint(dataSet[1], dataSet[2], dataSet[1])
+                switchModel.setDefaultValue(dataSet[3])
+                allSwitchModels.append(switchModel)
+        return allSwitchModels
+            
+            
+                
+
 
 
     

@@ -21,6 +21,7 @@ class LoggerHelper(object):
             self.logger.log(self.level, message.rstrip())
 
 gpioservice.setup()
+gpioservice.loadInitialData()
 stateController = StateController.StateController()
 powerThread = PowerThread()
 client_sock = None

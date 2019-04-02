@@ -28,6 +28,11 @@ def setup():
     GPIO.setwarnings(False)
     setupTrackingDefault()
 
+def loadInitialData():
+    switchModels = DatabaseController().getAllSwichtModels()
+    for model in switchModels:
+        gpioRelais.append(model)
+
 def setupTrackingDefault():
     for relais in gpioRelais:
         if isinstance(relais, GPIOStoppingPoint) and relais.measurmentpin is not None:
@@ -45,6 +50,8 @@ def receivedMessage(message):
         if "CONFIG" in jsonData[0]["commandType"]:
             print("Clear DB")
             DatabaseController().removeAll()
+            gpioRelais = []
+            trackingServices = []
         for commandData in jsonData:
             results = results +  performCommand(commandData) + ","
 
