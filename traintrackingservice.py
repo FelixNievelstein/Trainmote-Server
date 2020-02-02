@@ -32,13 +32,18 @@ class TrackerThread(threading.Thread):
     # Create the I2C bus
     i2c = busio.I2C(board.SCL, board.SDA)
 
-    # Create the ADC object using the I2C bus
-    ads = ADS.ADS1115(i2c)
 
     def __init__(self, stoppingPoint):
         threading.Thread.__init__(self)
         self.stoppingPoint = stoppingPoint
         self.kill = threading.Event()
+
+        try:
+            # Create the ADC object using the I2C bus
+            ads = ADS.ADS1115(i2c)
+...         break
+...     except ValueError:
+...         print("Oops! ADS1115 not installed")
     
     def run (self):
         self.trackVoltage()
