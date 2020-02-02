@@ -40,10 +40,9 @@ class TrackerThread(threading.Thread):
 
         try:
             # Create the ADC object using the I2C bus
-            ads = ADS.ADS1115(i2c)
-...         break
-...     except ValueError:
-...         print("Oops! ADS1115 not installed")
+            ads = ADS.ADS1115(self.i2c)
+        except ValueError:
+            print("Oops! ADS1115 not installed")
     
     def run (self):
         self.trackVoltage()
