@@ -1,4 +1,7 @@
-import Adafruit_ADS1x15
+import board
+import busio
+import adafruit_ads1x15.ads1115 as ADS
+from adafruit_ads1x15.analog_in import AnalogIn
 import time
 import threading
 
@@ -26,7 +29,11 @@ class TrackingService:
 class TrackerThread(threading.Thread):
 
     GAIN = 1
-    adc = Adafruit_ADS1x15.ADS1115()
+    # Create the I2C bus
+    i2c = busio.I2C(board.SCL, board.SDA)
+
+    # Create the ADC object using the I2C bus
+    ads = ADS.ADS1115(i2c)
 
     def __init__(self, stoppingPoint):
         threading.Thread.__init__(self)
@@ -38,7 +45,8 @@ class TrackerThread(threading.Thread):
 
     def trackVoltage(self):
         while not self.kill.is_set():
-            currentVoltage = self.adc.read_adc(self.stoppingPoint.measurmentpin, gain= self.GAIN)
+            # chan = AnalogIn(ads, ADS.P0)
+            # currentVoltage = self.ads.read_adc(self.stoppingPoint.measurmentpin, gain= self.GAIN)
             #if abs(currentVoltage) > 10:
              #   print ('Detected voltage at Stopping Point: ', self.stoppingPoint.measurmentpin)
             time.sleep(0.3)
