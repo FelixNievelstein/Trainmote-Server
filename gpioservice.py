@@ -13,7 +13,7 @@ trackingServices = []
 # Inital Loading and Setup
 
 def setup():
-    GPIO.setmode(GPIO.BOARD)
+    GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     setupTrackingDefault()
 
