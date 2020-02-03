@@ -5,7 +5,7 @@ setup(
     packages=['trainmote-module'],
     entry_points={
         'console_scripts' : [
-            'startTrainmote = trainmote-module.bluetoothservice',
+            'startTrainmote = trainmote-module.bluetoothservice:main',
         ]
     },
     install_requires=[
