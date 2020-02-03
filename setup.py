@@ -5,7 +5,6 @@ setup(
     packages=['trainmote-module'],   
     install_requires=[
         'adafruit-circuitpython-ads1x15',
-        'bluetooth libbluetooth-dev',
         'pybluez',
         'RPI.GPIO',
         'adafruit-blinka'
