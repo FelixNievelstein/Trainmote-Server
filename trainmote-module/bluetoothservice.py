@@ -136,7 +136,7 @@ def main():
             # Check if respone is firmware update, load from git and restart script.
             if 'PERFORM_GIT_UPDATE' in response and 'success' in response:
                 from subprocess import call
-                call('sudo sh ./updateScript.sh', shell=True)
+                call('sudo sh ./scripts/updateScript.sh', shell=True)
                 restart(server_sock, client_sock)
                 break
 
