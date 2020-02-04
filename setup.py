@@ -1,21 +1,21 @@
 from setuptools import setup
 from setuptools.command.develop import develop
 from setuptools.command.install import install
-from subprocess import check_call
+from subprocess import call                
 
 class PostDevelopCommand(develop):
     """Post-installation for development mode."""
     def run(self):
-        check_call("apt-get install bluetooth libbluetooth-dev".split())
-        check_call("mkdir content".split())
+        call('sudo apt-get install bluetooth libbluetooth-dev', shell=True)
+        call('mkdir content', shell=True)
         # PUT YOUR POST-INSTALL SCRIPT HERE or CALL A FUNCTION
         develop.run(self)
 
 class PostInstallCommand(install):
     """Post-installation for installation mode."""
     def run(self):
-        check_call("apt-get install bluetooth libbluetooth-dev".split())
-        check_call("mkdir content".split())        
+        call('sudo apt-get install bluetooth libbluetooth-dev', shell=True)
+        call('mkdir content', shell=True)
         # PUT YOUR POST-INSTALL SCRIPT HERE or CALL A FUNCTION
         install.run(self)
 
