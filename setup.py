@@ -2,17 +2,16 @@ from setuptools import setup
 import atexit
 from distutils.command.install import install
 
-def _post_install():
-    print('POST INSTALL')
-    from subprocess import call
-    call('sudo apt-get install bluetooth libbluetooth-dev', shell=True)
-    call('mkdir content', shell=True)
-
-
 class new_install(install):
-    def __init__(self, *args, **kwargs):
-        super(new_install, self).__init__(*args, **kwargs)
+    def run(self):
+        def _post_install():
+            print('POST INSTALL')
+            from subprocess import call
+            call('sudo apt-get install bluetooth libbluetooth-dev', shell=True)
+            call('mkdir content', shell=True)            
+
         atexit.register(_post_install)
+        install.run(self)
 
 setup(
     name='trainmote-module',
