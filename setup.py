@@ -1,23 +1,17 @@
 from setuptools import setup
-from setuptools.command.develop import develop
-from setuptools.command.install import install
-from subprocess import call                
+from distutils.command.install import install
+from subprocess import call
 
-class PostDevelopCommand(develop):
-    """Post-installation for development mode."""
-    def run(self):
-        call('sudo apt-get install bluetooth libbluetooth-dev', shell=True)
+def _post_install():
+    print('POST INSTALL')
+    call('sudo apt-get install bluetooth libbluetooth-dev', shell=True)
         call('mkdir content', shell=True)
-        # PUT YOUR POST-INSTALL SCRIPT HERE or CALL A FUNCTION
-        develop.run(self)
 
-class PostInstallCommand(install):
-    """Post-installation for installation mode."""
-    def run(self):
-        call('sudo apt-get install bluetooth libbluetooth-dev', shell=True)
-        call('mkdir content', shell=True)
-        # PUT YOUR POST-INSTALL SCRIPT HERE or CALL A FUNCTION
-        install.run(self)
+
+class new_install(install):
+    def __init__(self, *args, **kwargs):
+        super(new_install, self).__init__(*args, **kwargs)
+        atexit.register(_post_install)
 
 setup(
     name='trainmote-module',
@@ -33,10 +27,7 @@ setup(
         'adafruit-blinka'
     ],
     python_requires='>=3, <4',
-    cmdclass={
-        'develop': PostDevelopCommand,
-        'install': PostInstallCommand,
-    },
+    cmdclass={'install': new_install},
     project_urls={
         "Source Code": "https://github.com/FelixNievelstein/Trainmote-Server",
     },
