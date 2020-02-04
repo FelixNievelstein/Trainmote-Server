@@ -2,16 +2,26 @@ from setuptools import setup
 import atexit
 from distutils.command.install import install
 
-class new_install(install):
-    def run(self):
-        def _post_install():
-            print('POST INSTALL')
-            from subprocess import call
-            call('sudo apt-get install bluetooth libbluetooth-dev', shell=True)
-            call('mkdir content', shell=True)            
+def _post_install():
+    print('POST INSTALL')
+    from subprocess import call
+    call('sudo apt-get install bluetooth libbluetooth-dev', shell=True)
+    call('mkdir content', shell=True)
 
-        atexit.register(_post_install)
+class CustomInstallCommand(install):
+    def run(self):                    
         install.run(self)
+        _post_install()
+
+class CustomDevelopCommand(develop):
+    def run(self):                    
+        develop.run(self)
+        _post_install()
+
+class CustomEggInfoCommand(egg_info):
+    def run(self):                    
+        egg_info.run(self)
+        _post_install()
 
 setup(
     name='trainmote-module',
@@ -27,7 +37,11 @@ setup(
         'adafruit-blinka'
     ],
     python_requires='>=3, <4',
-    cmdclass={'install': new_install},
+    cmdclass={
+        'install': CustomInstallCommand,
+        'develop': CustomDevelopCommand,
+        'egg_info': CustomEggInfoCommand
+    },
     project_urls={
         "Source Code": "https://github.com/FelixNievelstein/Trainmote-Server",
     },
