@@ -1,6 +1,8 @@
 from setuptools import setup
 import atexit
-from distutils.command.install import install
+from setuptools.command.install import install
+from setuptools.command.develop import develop
+from setuptools.command.egg_info import egg_info
 
 def _post_install():
     print('POST INSTALL')
