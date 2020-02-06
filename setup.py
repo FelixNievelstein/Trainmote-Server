@@ -31,7 +31,11 @@ setup(
     description='Application to create a bluetooth server to control a model train environment',
     author='Felix Nievelstein',
     author_email='app@felix-nievelstein.de',
-    packages=['trainmote-module'],   
+    package_dir={'trainmote-module':'',
+                'models': 'trainmote-module',
+                'scripts': 'trainmote-module',
+                'libs': 'trainmote-module'},
+    packages=['trainmote-module', 'models', 'scripts', 'libs'],   
     install_requires=[
         'adafruit-circuitpython-ads1x15',
         'pybluez',
