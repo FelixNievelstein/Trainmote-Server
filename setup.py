@@ -31,7 +31,7 @@ setup(
     description='Application to create a bluetooth server to control a model train environment',
     author='Felix Nievelstein',
     author_email='app@felix-nievelstein.de',
-    package_dir={'':'trainmote-module',
+    package_dir={
                 'models': 'trainmote-module/models',
                 'scripts': 'trainmote-module/scripts',
                 'libs': 'trainmote-module/libs'},
