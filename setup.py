@@ -42,7 +42,7 @@ setup(
         'console_scripts': [
             'trainmote = bluetoothservice:main',
         ]
-    }
+    },
     python_requires='>=3, <4',
     cmdclass={
         'install': CustomInstallCommand,
