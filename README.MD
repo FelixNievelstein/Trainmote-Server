@@ -12,6 +12,7 @@
 - sudo python3 -m pip install pybluez
 - pip3 install RPI.GPIO
 - pip3 install adafruit-blinka
+- Edit /lib/systemd/system/bluetooth.service and add '-C' after 'bluetoothd'. Reboot.
 
 # NOTE:
 Project based on python3. Always start project with python3. 
