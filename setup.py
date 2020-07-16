@@ -1,41 +1,35 @@
-from setuptools import setup
+import setuptools
 import atexit
 from setuptools.command.install import install
 from setuptools.command.develop import develop
 from setuptools.command.egg_info import egg_info
+from distutils.core import Extension, setup
 
-def _post_install():
-    print('POST INSTALL')
-    from subprocess import call
-    call('sudo apt-get install bluetooth libbluetooth-dev', shell=True)
-    call('mkdir content', shell=True)
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
-class CustomInstallCommand(install):
-    def run(self):                    
-        install.run(self)
-        _post_install()
-
-class CustomDevelopCommand(develop):
-    def run(self):                    
-        develop.run(self)
-        _post_install()
-
-class CustomEggInfoCommand(egg_info):
-    def run(self):                    
-        egg_info.run(self)
-        _post_install()
-
-setup(
-    name='trainmote-module',
+setuptools.setup(
+    name='trainmote-module_felix-nievelstein_de',
     version='0.2',
     description='Application to create a bluetooth server to control a model train environment',
+    long_description=long_description,
+    url="https://github.com/FelixNievelstein/Trainmote-Server",
     author='Felix Nievelstein',
     author_email='app@felix-nievelstein.de',
-    package_dir={
-                'models': 'trainmote-module/models',
-                'scripts': 'trainmote-module/scripts',
-                'libs': 'trainmote-module/libs'},
-    packages=['trainmote-module', 'models', 'scripts', 'libs'],   
+    package_dir={'': 'src'},
+    ext_modules=[Extension('bluetooth._bluetooth',
+                     libraries = ['bluetooth'],
+                     #extra_compile_args=['-O0'],
+                     sources = ['bluez/btmodule.c', 'bluez/btsdp.c'])],
+    packages=setuptools.find_packages(),
+    package_data={
+        "trainmote-module": ["scripts/*.sh"]
+    },
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: POSIX :: Linux"
+    ],
     install_requires=[
         'adafruit-circuitpython-ads1x15',
         'pybluez',
@@ -48,12 +42,5 @@ setup(
         ]
     },
     python_requires='>=3, <4',
-    cmdclass={
-        'install': CustomInstallCommand,
-        'develop': CustomDevelopCommand,
-        'egg_info': CustomEggInfoCommand
-    },
-    project_urls={
-        "Source Code": "https://github.com/FelixNievelstein/Trainmote-Server",
-    },
+    data_files=[('content/', [])]
 )
