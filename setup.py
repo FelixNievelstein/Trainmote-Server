@@ -5,7 +5,7 @@ from setuptools.command.develop import develop
 from setuptools.command.egg_info import egg_info
 from distutils.core import Extension, setup
 
-with open("README.md", "r") as fh:
+with open("README.MD", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
