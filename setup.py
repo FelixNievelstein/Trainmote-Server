@@ -17,10 +17,10 @@ setuptools.setup(
     author='Felix Nievelstein',
     author_email='app@felix-nievelstein.de',
     package_dir={'': 'src'},
-    ext_modules=[Extension('bluetooth._bluetooth',
-                     libraries = ['bluetooth'],
-                     #extra_compile_args=['-O0'],
-                     sources = ['bluez/btmodule.c', 'bluez/btsdp.c'])],
+    #ext_modules=[Extension('bluetooth._bluetooth',
+     #                libraries = ['bluetooth'],
+      #               #extra_compile_args=['-O0'],
+       #              sources = ['bluez/btmodule.c', 'bluez/btsdp.c'])],
     packages=setuptools.find_packages(),
     package_data={
         "trainmote-module": ["scripts/*.sh"]
