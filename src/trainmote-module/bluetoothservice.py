@@ -172,4 +172,5 @@ def closeClientConnection(client_sock):
             client_sock.close()
             client_sock = None
 
-main()
+if __name__ == '__main__':
+    main()

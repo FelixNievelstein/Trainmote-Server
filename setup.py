@@ -38,7 +38,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'trainmote = bluetoothservice:main',
+            'trainmote = src/bluetoothservice:main',
         ]
     },
     python_requires='>=3, <4',
