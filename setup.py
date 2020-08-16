@@ -23,7 +23,7 @@ setuptools.setup(
        #              sources = ['bluez/btmodule.c', 'bluez/btsdp.c'])],
     packages=setuptools.find_packages(),
     package_data={
-        "trainmote-module": ["scripts/*.sh"]
+        "pkg_trainmote": ["scripts/*.sh"]
     },
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -38,7 +38,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'trainmote = src/bluetoothservice:main',
+            'trainmote = pkg_trainmote.bluetoothservice:main',
         ]
     },
     python_requires='>=3, <4',
