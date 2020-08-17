@@ -10,7 +10,7 @@ with open("README.MD", "r") as fh:
 
 setuptools.setup(
     name='trainmote-module_felix-nievelstein_de',
-    version='0.2.1',
+    version='0.2.2',
     description='Application to create a bluetooth server to control a model train environment',
     long_description=long_description,
     url="https://github.com/FelixNievelstein/Trainmote-Server",
@@ -21,7 +21,7 @@ setuptools.setup(
      #                libraries = ['bluetooth'],
       #               #extra_compile_args=['-O0'],
        #              sources = ['bluez/btmodule.c', 'bluez/btsdp.c'])],
-    packages=setuptools.find_packages(),
+    packages=['pkg_trainmote', 'pkg_trainmote.models'],
     package_data={
         "pkg_trainmote": ["scripts/*.sh"]
     },
