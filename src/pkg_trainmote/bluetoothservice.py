@@ -4,12 +4,12 @@ import argparse
 import sys
 import os
 import time
-import gpioservice
 from bluetooth import *
-from PowerController import PowerThread
-import StateController
-from configController import ConfigController
-from libInstaller import LibInstaller
+from . import gpioservice
+from .PowerController import PowerThread
+from .configController import ConfigController
+from .StateController import StateController
+from .libInstaller import LibInstaller
 
 class LoggerHelper(object):
     def __init__(self, logger, level):
