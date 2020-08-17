@@ -10,7 +10,7 @@ with open("README.MD", "r") as fh:
 
 setuptools.setup(
     name='trainmote-module_felix-nievelstein_de',
-    version='0.2.3',
+    version='0.2.4',
     description='Application to create a bluetooth server to control a model train environment',
     long_description=long_description,
     url="https://github.com/FelixNievelstein/Trainmote-Server",

@@ -1,8 +1,8 @@
 import sqlite3
 import os
-from configController import ConfigController
-from models.GPIORelaisModel import GPIOSwitchPoint
-from models.GPIORelaisModel import GPIOStoppingPoint
+from .configController import ConfigController
+from .models.GPIORelaisModel import GPIOSwitchPoint
+from .models.GPIORelaisModel import GPIOStoppingPoint
 
 class DatabaseController():
     curs = None

@@ -1,11 +1,11 @@
 import json
 import RPi.GPIO as GPIO
-from traintrackingservice import TrackingService
-from models.CommandResultModel import CommandResultModel
-from models.GPIORelaisModel import GPIORelaisModel
-from models.GPIORelaisModel import GPIOStoppingPoint
-from models.GPIORelaisModel import GPIOSwitchPoint
-from databaseController import DatabaseController
+from .traintrackingservice import TrackingService
+from .models.CommandResultModel import CommandResultModel
+from .models.GPIORelaisModel import GPIORelaisModel
+from .models.GPIORelaisModel import GPIOStoppingPoint
+from .models.GPIORelaisModel import GPIOSwitchPoint
+from .databaseController import DatabaseController
 
 gpioRelais = []
 trackingServices = []
