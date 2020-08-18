@@ -5,7 +5,7 @@ from .models.CommandResultModel import CommandResultModel
 from .models.GPIORelaisModel import GPIORelaisModel
 from .models.GPIORelaisModel import GPIOStoppingPoint
 from .models.GPIORelaisModel import GPIOSwitchPoint
-from .databaseController import DatabaseController
+from .databaseControllerModule import DatabaseController
 
 gpioRelais = []
 trackingServices = []

@@ -6,9 +6,9 @@ import os
 import time
 from bluetooth import *
 from . import gpioservice
-from .PowerController import PowerThread
-from .configController import ConfigController
-from . import stateController
+from .powerControllerModule import PowerThread
+from .configControllerModule import ConfigController
+from . import stateControllerModule
 from .libInstaller import LibInstaller
 
 class LoggerHelper(object):
@@ -22,7 +22,7 @@ class LoggerHelper(object):
 
 gpioservice.setup()
 gpioservice.loadInitialData()
-stateController = stateController.StateController()
+stateController = stateControllerModule.StateController()
 powerThread = PowerThread()
 client_sock = None
 config = ConfigController()        
@@ -115,11 +115,11 @@ def main():
         try:                        
             # This will block until we get a new connection
             if client_sock is None:
-                stateController.setState(stateController.STATE_NOT_CONNECTED)
+                stateController.setState(stateControllerModule.STATE_NOT_CONNECTED)
                 print ("Waiting for connection on RFCOMM channel %d" % port)
                 client_sock, client_info = server_sock.accept()
                 print ("Accepted connection from ", client_info)
-                stateController.setState(stateController.STATE_CONNECTED)
+                stateController.setState(stateControllerModule.STATE_CONNECTED)
 
             # Read the data sent by the client
             data = client_sock.recv(1024)
@@ -160,7 +160,7 @@ def shutDown(server_sock):
     powerThread.kill.set()
     powerThread.isTurningOff = True
     powerThread.join()
-    stateController.setState(StateController.STATE_SHUTDOWN)
+    stateController.setState(stateControllerModule.STATE_SHUTDOWN)
     if server_sock is not None:
         server_sock.close()
     print ("Server going down")
