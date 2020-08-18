@@ -8,7 +8,7 @@ from bluetooth import *
 from . import gpioservice
 from .PowerController import PowerThread
 from .configController import ConfigController
-from .StateController import StateController
+from . import stateController
 from .libInstaller import LibInstaller
 
 class LoggerHelper(object):
@@ -22,7 +22,7 @@ class LoggerHelper(object):
 
 gpioservice.setup()
 gpioservice.loadInitialData()
-stateController = StateController.StateController()
+stateController = stateController.StateController()
 powerThread = PowerThread()
 client_sock = None
 config = ConfigController()        
@@ -115,11 +115,11 @@ def main():
         try:                        
             # This will block until we get a new connection
             if client_sock is None:
-                stateController.setState(StateController.STATE_NOT_CONNECTED)
+                stateController.setState(stateController.STATE_NOT_CONNECTED)
                 print ("Waiting for connection on RFCOMM channel %d" % port)
                 client_sock, client_info = server_sock.accept()
                 print ("Accepted connection from ", client_info)
-                stateController.setState(StateController.STATE_CONNECTED)
+                stateController.setState(stateController.STATE_CONNECTED)
 
             # Read the data sent by the client
             data = client_sock.recv(1024)
