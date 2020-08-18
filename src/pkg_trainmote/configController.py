@@ -4,6 +4,7 @@ import os
 
 class ConfigController():
     parser = SafeConfigParser()
+    directory = 'content'
     pathPreferences = 'content/sharedPreferences.ini'
 
     def loadPreferences(self):
@@ -18,12 +19,13 @@ class ConfigController():
             if len(self.parser.read(self.pathPreferences)) == 1:
                 return self.pathPreferences
         else:
+            self.createContentDir()
             self.createPreferencesFile(self.pathPreferences)
             if len(self.parser.read(self.pathPreferences)) == 1:
                 return self.pathPreferences
         return None
 
-    def createPreferencesFile(self, file):
+    def createPreferencesFile(self, file):                
         createParser = SafeConfigParser()
         createParser.add_section('info')
         createParser.set('info','version', '0.1')
@@ -33,7 +35,9 @@ class ConfigController():
             print('Created Preferences Inital File')
             createParser.write(iniFile)
             
-
+    def createContentDir(self):
+        if not os.path.exists(self.directory):
+            os.makedirs(self.directory)
 
     def isSQLiteInstalled(self):
         try:
