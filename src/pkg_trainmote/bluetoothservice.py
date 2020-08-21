@@ -79,12 +79,10 @@ def main():
     loadPersistentData()
     
     print ("Starting main")
-    # Setup logging
-    # setup_logging()
-    print ("Setup Logging finished")
     # We need to wait until Bluetooth init is done
     time.sleep(10)
     print ("Bluetooth initalised")
+    print (read_local_bdaddr())
 
     # Make device visible
     os.system("hciconfig hci0 piscan")
@@ -171,6 +169,33 @@ def closeClientConnection(client_sock):
     if client_sock is not None:
             client_sock.close()
             client_sock = None
+
+def read_local_bdaddr():
+     hci_sock = _bt.hci_open_dev(0)
+     old_filter = hci_sock.getsockopt( _bt.SOL_HCI, _bt.HCI_FILTER, 14)
+     flt = _bt.hci_filter_new()
+     opcode = _bt.cmd_opcode_pack(_bt.OGF_INFO_PARAM, 
+             _bt.OCF_READ_BD_ADDR)
+     _bt.hci_filter_set_ptype(flt, _bt.HCI_EVENT_PKT)
+     _bt.hci_filter_set_event(flt, _bt.EVT_CMD_COMPLETE);
+     _bt.hci_filter_set_opcode(flt, opcode)
+     hci_sock.setsockopt( _bt.SOL_HCI, _bt.HCI_FILTER, flt )
+
+     _bt.hci_send_cmd(hci_sock, _bt.OGF_INFO_PARAM, _bt.OCF_READ_BD_ADDR )
+
+     pkt = hci_sock.recv(255)
+
+     status,raw_bdaddr = struct.unpack("xxxxxxB6s", pkt)
+     assert status == 0
+
+     t = [ "%X" % ord(get_byte(b)) for b in raw_bdaddr ]
+     t.reverse()
+     bdaddr = ":".join(t)
+
+     # restore old filter
+     hci_sock.setsockopt( _bt.SOL_HCI, _bt.HCI_FILTER, old_filter )
+     return bdaddr
+
 
 if __name__ == '__main__':
     main()
