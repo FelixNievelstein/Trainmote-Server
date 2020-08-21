@@ -13,7 +13,7 @@ setuptools.setup(
     version='0.2.8',
     description='Application to create a bluetooth server to control a model train environment',
     long_description=long_description,
-    long_description_content_type='text/markdown'
+    long_description_content_type='text/markdown',
     url="https://github.com/FelixNievelstein/Trainmote-Server",
     author='Felix Nievelstein',
     author_email='app@felix-nievelstein.de',
