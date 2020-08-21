@@ -171,17 +171,17 @@ def closeClientConnection(client_sock):
             client_sock = None
 
 def read_local_bdaddr():
-     hci_sock = _bt.hci_open_dev(0)
-     old_filter = hci_sock.getsockopt( _bt.SOL_HCI, _bt.HCI_FILTER, 14)
-     flt = _bt.hci_filter_new()
-     opcode = _bt.cmd_opcode_pack(_bt.OGF_INFO_PARAM, 
-             _bt.OCF_READ_BD_ADDR)
-     _bt.hci_filter_set_ptype(flt, _bt.HCI_EVENT_PKT)
-     _bt.hci_filter_set_event(flt, _bt.EVT_CMD_COMPLETE);
-     _bt.hci_filter_set_opcode(flt, opcode)
-     hci_sock.setsockopt( _bt.SOL_HCI, _bt.HCI_FILTER, flt )
+     hci_sock = _bluetooth.hci_open_dev(0)
+     old_filter = hci_sock.getsockopt( _bluetooth.SOL_HCI, _bluetooth.HCI_FILTER, 14)
+     flt = _bluetooth.hci_filter_new()
+     opcode = _bluetooth.cmd_opcode_pack(_bluetooth.OGF_INFO_PARAM, 
+             _bluetooth.OCF_READ_BD_ADDR)
+     _bluetooth.hci_filter_set_ptype(flt, _bluetooth.HCI_EVENT_PKT)
+     _bluetooth.hci_filter_set_event(flt, _bluetooth.EVT_CMD_COMPLETE);
+     _bluetooth.hci_filter_set_opcode(flt, opcode)
+     hci_sock.setsockopt( _bluetooth.SOL_HCI, _bluetooth.HCI_FILTER, flt )
 
-     _bt.hci_send_cmd(hci_sock, _bt.OGF_INFO_PARAM, _bt.OCF_READ_BD_ADDR )
+     _bluetooth.hci_send_cmd(hci_sock, _bluetooth.OGF_INFO_PARAM, _bluetooth.OCF_READ_BD_ADDR )
 
      pkt = hci_sock.recv(255)
 
@@ -193,7 +193,7 @@ def read_local_bdaddr():
      bdaddr = ":".join(t)
 
      # restore old filter
-     hci_sock.setsockopt( _bt.SOL_HCI, _bt.HCI_FILTER, old_filter )
+     hci_sock.setsockopt( _bluetooth.SOL_HCI, _bluetooth.HCI_FILTER, old_filter )
      return bdaddr
 
 
