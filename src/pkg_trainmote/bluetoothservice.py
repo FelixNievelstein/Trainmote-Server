@@ -170,32 +170,5 @@ def closeClientConnection(client_sock):
             client_sock.close()
             client_sock = None
 
-def read_local_bdaddr():
-     hci_sock = _bluetooth.hci_open_dev(0)
-     old_filter = hci_sock.getsockopt( _bluetooth.SOL_HCI, _bluetooth.HCI_FILTER, 14)
-     flt = _bluetooth.hci_filter_new()
-     opcode = _bluetooth.cmd_opcode_pack(_bluetooth.OGF_INFO_PARAM, 
-             _bluetooth.OCF_READ_BD_ADDR)
-     _bluetooth.hci_filter_set_ptype(flt, _bluetooth.HCI_EVENT_PKT)
-     _bluetooth.hci_filter_set_event(flt, _bluetooth.EVT_CMD_COMPLETE);
-     _bluetooth.hci_filter_set_opcode(flt, opcode)
-     hci_sock.setsockopt( _bluetooth.SOL_HCI, _bluetooth.HCI_FILTER, flt )
-
-     _bluetooth.hci_send_cmd(hci_sock, _bluetooth.OGF_INFO_PARAM, _bluetooth.OCF_READ_BD_ADDR )
-
-     pkt = hci_sock.recv(255)
-
-     status,raw_bdaddr = struct.unpack("xxxxxxB6s", pkt)
-     assert status == 0
-
-     t = [ "%X" % ord(get_byte(b)) for b in raw_bdaddr ]
-     t.reverse()
-     bdaddr = ":".join(t)
-
-     # restore old filter
-     hci_sock.setsockopt( _bluetooth.SOL_HCI, _bluetooth.HCI_FILTER, old_filter )
-     return bdaddr
-
-
 if __name__ == '__main__':
     main()
