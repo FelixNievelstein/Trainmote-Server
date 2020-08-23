@@ -85,7 +85,8 @@ def main():
     print (read_local_bdaddr())
 
     # Make device visible
-    os.system("hciconfig hci0 piscan")
+    from subprocess import call
+    call("sudo hciconfig hci0 piscan", shell=True)
 
     # Create a new server socket using RFCOMM protocol
     server_sock = BluetoothSocket(RFCOMM)
