@@ -65,7 +65,7 @@ class DatabaseController():
     def getAllSwichtModels(self):
         allSwitchModels = []
         if self.openDatabase():
-            self.curs.execute("SELECT * FROM TMSwitchModel")            
+            self.execute("SELECT * FROM TMSwitchModel")
             for dataSet in self.curs:
                 switchModel = GPIOSwitchPoint(dataSet[1], dataSet[2], dataSet[1])
                 switchModel.setDefaultValue(dataSet[3])
@@ -75,11 +75,21 @@ class DatabaseController():
     def getAllStopModels(self):
         allStopModels = []
         if self.openDatabase():
-            self.curs.execute("SELECT * FROM TMStopModel")            
+            self.execute("SELECT * FROM TMStopModel")
             for dataSet in self.curs:
-                stop = GPIOStoppingPoint(dataSet[1], dataSet[1], dataSet[2])
-                allStopModels.append(stop)
+                    stop = GPIOStoppingPoint(dataSet[1], dataSet[1], dataSet[2])
+                    allStopModels.append(stop)
         return allStopModels
+
+    def execute(self, query):
+        try:
+            self.curs.execute(query)
+            self.conn.commit()
+        except Exception as err:
+            print('Query Failed: %s\nError: %s' % (query, str(err)))
+        finally:
+            self.conn.close()
+
             
             
                 

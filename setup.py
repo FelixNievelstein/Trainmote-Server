@@ -10,7 +10,7 @@ with open("README.MD", "r") as fh:
 
 setuptools.setup(
     name='trainmote-module_felix-nievelstein_de',
-    version='0.2.93',
+    version='0.2.94',
     description='Application to create a bluetooth server to control a model train environment',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -33,7 +33,7 @@ setuptools.setup(
     ],
     install_requires=[
         'adafruit-circuitpython-ads1x15',
-        'pybluez',
+        'PyBluez',
         'RPI.GPIO',
         'adafruit-blinka'
     ],
