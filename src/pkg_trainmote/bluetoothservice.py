@@ -10,6 +10,7 @@ from .powerControllerModule import PowerThread
 from .configControllerModule import ConfigController
 from . import stateControllerModule
 from .libInstaller import LibInstaller
+from subprocess import call
 
 class LoggerHelper(object):
     def __init__(self, logger, level):
@@ -80,12 +81,11 @@ def main():
     
     print ("Starting main")
     # We need to wait until Bluetooth init is done
-    time.sleep(10)
-    print ("Bluetooth initalised")
+    # time.sleep(10)
+    # print ("Bluetooth initalised")
     print (read_local_bdaddr())
 
     # Make device visible
-    from subprocess import call
     call("sudo hciconfig hci0 piscan", shell=True)
 
     # Create a new server socket using RFCOMM protocol
@@ -102,7 +102,7 @@ def main():
     uuid = "aaabf455-b0e1-4b88-b9c8-184e53f15663"
 
     # Start advertising the service
-    advertise_service(server_sock, "TrainmoteServer",
+    advertise_service( server_sock, "TrainmoteServer",
                        service_id=uuid,
                        service_classes=[uuid, SERIAL_PORT_CLASS],
                        profiles=[SERIAL_PORT_PROFILE])
@@ -133,8 +133,7 @@ def main():
             print ("Sent back [%s]" % response)
 
             # Check if respone is firmware update, load from git and restart script.
-            if 'PERFORM_GIT_UPDATE' in response and 'success' in response:
-                from subprocess import call
+            if 'PERFORM_GIT_UPDATE' in response and 'success' in response:                
                 call('sudo sh ./scripts/updateScript.sh', shell=True)
                 restart(server_sock, client_sock)
                 break
