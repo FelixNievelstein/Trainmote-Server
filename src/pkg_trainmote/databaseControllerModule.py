@@ -80,10 +80,9 @@ class DatabaseController():
     def getAllStopModels(self):
         allStopModels = []
         if self.openDatabase():
-
             def readStops():
                 nonlocal allStopModels
-                print (self.curs)                
+                print (self.curs)
                 for dataSet in self.curs:
                     stop = GPIOStoppingPoint(dataSet[1], dataSet[1], dataSet[2])
                     allStopModels.append(stop)
@@ -94,7 +93,8 @@ class DatabaseController():
 
     def execute(self, query, _callback = None):
         try:
-            self.curs.execute(query)            
+            print(query)
+            self.curs.execute(query)       
             if _callback is not None:
                 _callback()
             self.conn.commit()
