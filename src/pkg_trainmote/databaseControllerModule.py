@@ -65,25 +65,38 @@ class DatabaseController():
     def getAllSwichtModels(self):
         allSwitchModels = []
         if self.openDatabase():
-            self.execute("SELECT * FROM TMSwitchModel")
-            for dataSet in self.curs:
-                switchModel = GPIOSwitchPoint(dataSet[1], dataSet[2], dataSet[1])
-                switchModel.setDefaultValue(dataSet[3])
-                allSwitchModels.append(switchModel)
+            def readSwitchs():
+                nonlocal allSwitchModels
+                print (self.curs)                
+                for dataSet in self.curs:
+                    switchModel = GPIOSwitchPoint(dataSet[1], dataSet[2], dataSet[1])
+                    switchModel.setDefaultValue(dataSet[3])
+                    allSwitchModels.append(switchModel)
+
+            self.execute("SELECT * FROM TMSwitchModel", readSwitchs)
+
         return allSwitchModels
 
     def getAllStopModels(self):
         allStopModels = []
         if self.openDatabase():
-            self.execute("SELECT * FROM TMStopModel")
-            for dataSet in self.curs:
+
+            def readStops():
+                nonlocal allStopModels
+                print (self.curs)                
+                for dataSet in self.curs:
                     stop = GPIOStoppingPoint(dataSet[1], dataSet[1], dataSet[2])
                     allStopModels.append(stop)
+
+            self.execute("SELECT * FROM TMStopModel", readStops)
+            
         return allStopModels
 
-    def execute(self, query):
+    def execute(self, query, _callback = None):
         try:
-            self.curs.execute(query)
+            self.curs.execute(query)            
+            if _callback is not None:
+                _callback()
             self.conn.commit()
         except Exception as err:
             print('Query Failed: %s\nError: %s' % (query, str(err)))
