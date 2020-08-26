@@ -16,6 +16,7 @@ class ConfigController():
 
     def checkSettingsFile(self):
         if os.path.exists(self.pathPreferences):
+            print("os.path.exists")
             if len(self.parser.read(self.pathPreferences)) == 1:
                 return self.pathPreferences
         else:
@@ -25,7 +26,8 @@ class ConfigController():
                 return self.pathPreferences
         return None
 
-    def createPreferencesFile(self, file):                
+    def createPreferencesFile(self, file):
+        print("createPreferencesFile")
         createParser = SafeConfigParser()
         createParser.add_section('info')
         createParser.set('info','version', '0.1')
@@ -36,6 +38,7 @@ class ConfigController():
             createParser.write(iniFile)
             
     def createContentDir(self):
+        print("createContentDir")
         if not os.path.exists(self.directory):
             os.makedirs(self.directory)
 
