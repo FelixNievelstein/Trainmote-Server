@@ -39,21 +39,17 @@ class DatabaseController():
     def insertStopModel(self, relaisId, messId):
         if self.openDatabase():
             # Insert a row of data
-            print('Insert Stop: %i' % relaisId)
+            print('Insert Stop: %i' % relaisId)            
             if messId is not None:
-                self.curs.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId))
+                self.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId), None)
             else:
-                self.curs.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId))
-            self.conn.commit()
-            self.conn.close()
+                self.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId), None)
 
     def insertSwitchModel(self, model):
         if self.openDatabase():
             # Insert a row of data
             print('Insert Switch: %i' % model.pin)
-            self.curs.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%s', '%i')" % (model.pin, model.switchType, model.defaultValue))
-            self.conn.commit()
-            self.conn.close()
+            self.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%s', '%i')" % (model.pin, model.switchType, model.defaultValue), None)            
 
     def removeAll(self):
         if self.openDatabase():
