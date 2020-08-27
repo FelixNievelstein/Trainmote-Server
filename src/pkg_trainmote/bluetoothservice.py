@@ -22,7 +22,7 @@ class LoggerHelper(object):
             self.logger.log(self.level, message.rstrip())
 
 gpioservice.setup()
-# gpioservice.loadInitialData()
+gpioservice.loadInitialData()
 stateController = stateControllerModule.StateController()
 powerThread = PowerThread()
 client_sock = None
