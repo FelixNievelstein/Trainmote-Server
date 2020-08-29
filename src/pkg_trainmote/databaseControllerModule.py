@@ -40,10 +40,10 @@ class DatabaseController():
         if self.openDatabase():
             # Insert a row of data
             print('Insert Stop: %i' % relaisId)            
-            if messId is not None:
-                self.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId), None)
-            else:
-                self.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId), None)
+            # if messId is not None:
+              #  self.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId), None)
+            # else:
+                # self.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId), None)
 
     def insertSwitchModel(self, model):
         if self.openDatabase():
@@ -98,6 +98,8 @@ class DatabaseController():
             print('Query Failed: %s\nError: %s' % (query, str(err)))
         finally:
             self.conn.close()
+            self.curs = None
+            self.conn = None
 
             
             
