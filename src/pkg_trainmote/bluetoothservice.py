@@ -81,7 +81,7 @@ def main():
     
     print ("Starting main")
     # We need to wait until Bluetooth init is done
-    # time.sleep(10)
+    time.sleep(5)
     # print ("Bluetooth initalised")
     print (read_local_bdaddr())
 
