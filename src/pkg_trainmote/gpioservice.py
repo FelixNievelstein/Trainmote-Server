@@ -93,6 +93,21 @@ def receivedMessage(message):
     else:
         return "msg:Not valid json"
 
+def getSwitch(id):
+    return getValueForPin(int(id), id, "GET_SWITCH")
+    
+def setSwitch(id):
+    relais = getRelaisWithID(int(id))
+    if relais is not None:
+        return json.dumps(CommandResultModel("GET_SWITCH", id, switchPin(relais)).__dict__)
+    else:
+        return "{ \"error\":\"Relais not found\"}"
+
+def configSwitch(command):
+    params = command["params"]
+    resultId = createSwitch(int(command["id"]), int(command["defaultValue"]), params["switchType"])
+    return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
+
 def performCommand(command):
     commandType = command["commandType"]
     if commandType == "SET_SWITCH" or commandType == "SET_STOPPING_POINT":

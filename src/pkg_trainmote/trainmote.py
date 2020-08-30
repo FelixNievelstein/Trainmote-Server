@@ -38,6 +38,13 @@ def main():
 @app.route('/')
 def hello_world():
     return jsonify(result='Hello World')
+
+@app.route('trainmote/api/v1/switch/<switch_id>', methods=["GET", "PATCH"])
+def switch(switch_id):
+    if request.method == "PATCH":
+        return gpioservice.setSwitch(switch_id)
+    else:
+        return gpioservice.getSwitch(switch_id)
   
 def restart():
     shutDown()
