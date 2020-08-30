@@ -112,13 +112,9 @@ def setSwitch(id):
         return "{ \"error\":\"Relais not found\"}"
 
 def configSwitch(data):
-    if is_json(data):
-        jsonData = json.loads(data) 
-        params = jsonData["params"]
-        resultId = createSwitch(int(jsonData["id"]), int(jsonData["defaultValue"]), params["switchType"])
-        return json.dumps(CommandResultModel("GET_SWITCH", resultId, "success").__dict__)
-    else:
-        return None
+    params = data["params"]
+    resultId = createSwitch(int(data["id"]), int(data["defaultValue"]), params["switchType"])
+    return json.dumps(CommandResultModel("GET_SWITCH", resultId, "success").__dict__)
 
 def performCommand(command):
     commandType = command["commandType"]
