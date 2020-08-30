@@ -94,7 +94,12 @@ def receivedMessage(message):
         return "msg:Not valid json"
 
 def getSwitch(id):
-    return getValueForPin(int(id), id, "GET_SWITCH")
+    switch = next((switch for switch in DatabaseController().getAllSwichtModels() if switch.id == id), None)
+    if switch is not None:
+        return getValueForPin(int(id), id, "GET_SWITCH")
+    else:
+        return "{ \"error\":\"Switch not found\"}"
+    
 
 def getAllSwitches():    
     return json.dumps([ob.__dict__ for ob in DatabaseController().getAllSwichtModels()])
@@ -106,10 +111,14 @@ def setSwitch(id):
     else:
         return "{ \"error\":\"Relais not found\"}"
 
-def configSwitch(command):
-    params = command["params"]
-    resultId = createSwitch(int(command["id"]), int(command["defaultValue"]), params["switchType"])
-    return json.dumps(CommandResultModel("GET_SWITCH", resultId, "success").__dict__)
+def configSwitch(data):
+    if is_json(data):
+        jsonData = json.loads(data) 
+        params = jsonData["params"]
+        resultId = createSwitch(int(jsonData["id"]), int(jsonData["defaultValue"]), params["switchType"])
+        return json.dumps(CommandResultModel("GET_SWITCH", resultId, "success").__dict__)
+    else:
+        return None
 
 def performCommand(command):
     commandType = command["commandType"]

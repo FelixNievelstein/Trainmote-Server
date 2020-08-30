@@ -43,11 +43,22 @@ def hello_world():
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["GET", "PATCH"])
 def switch(switch_id):
     if switch_id is None:
-        abort(404)
+        abort(400)
     if request.method == "PATCH":
         return gpioservice.setSwitch(switch_id)
     else:
         return gpioservice.getSwitch(switch_id)
+
+@app.route('/trainmote/api/v1/switch', methods=["POST"])
+def addSwitch():
+    if request.get_json() is not None:
+        result = gpioservice.configSwitch(request.get_json())
+        if result is not None:
+            return result
+        else:
+            abort(400)
+    else:
+        abort(400)
 
 @app.route('/trainmote/api/v1/switch/all')
 def getAllSwitches():
