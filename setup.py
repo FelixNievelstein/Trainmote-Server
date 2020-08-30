@@ -10,7 +10,7 @@ with open("README.MD", "r") as fh:
 
 setuptools.setup(
     name='trainmote-module_felix-nievelstein_de',
-    version='0.3.02',
+    version='0.3.03',
     description='Application to create a web server to control a model train environment',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -40,7 +40,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'trainmote = pkg_trainmote.trainmote:main',
+            'trainmote = pkg_trainmote.trainmote',
         ]
     },
     python_requires='>=3, <4',
