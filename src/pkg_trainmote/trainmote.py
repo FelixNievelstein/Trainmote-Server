@@ -1,5 +1,6 @@
 from . import gpioservice
-import flask from Flask
+from flask import Flask
+from flask import jsonify
 from .powerControllerModule import PowerThread
 from .configControllerModule import ConfigController
 from . import stateControllerModule
@@ -18,7 +19,6 @@ stateController = stateControllerModule.StateController()
 powerThread = PowerThread()
 client_sock = None
 config = ConfigController()  
-webserver.setup()
 app = Flask(__name__)
 
 def loadPersistentData():
