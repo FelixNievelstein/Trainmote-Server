@@ -10,8 +10,8 @@ with open("README.MD", "r") as fh:
 
 setuptools.setup(
     name='trainmote-module_felix-nievelstein_de',
-    version='0.2.992',
-    description='Application to create a bluetooth server to control a model train environment',
+    version='0.3.0',
+    description='Application to create a web server to control a model train environment',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url="https://github.com/FelixNievelstein/Trainmote-Server",
@@ -35,11 +35,12 @@ setuptools.setup(
         'adafruit-circuitpython-ads1x15',
         'PyBluez',
         'RPI.GPIO',
-        'adafruit-blinka'
+        'adafruit-blinka',
+        'flask'
     ],
     entry_points={
         'console_scripts': [
-            'trainmote = pkg_trainmote.bluetoothservice:main',
+            'trainmote = pkg_trainmote.trainmote:main',
         ]
     },
     python_requires='>=3, <4',
