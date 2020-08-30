@@ -95,6 +95,9 @@ def receivedMessage(message):
 
 def getSwitch(id):
     return getValueForPin(int(id), id, "GET_SWITCH")
+
+def getAllSwitches():
+    return json.dumps(gpioRelais.__dict__)
     
 def setSwitch(id):
     relais = getRelaisWithID(int(id))
@@ -106,7 +109,7 @@ def setSwitch(id):
 def configSwitch(command):
     params = command["params"]
     resultId = createSwitch(int(command["id"]), int(command["defaultValue"]), params["switchType"])
-    return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
+    return json.dumps(CommandResultModel("GET_SWITCH", resultId, "success").__dict__)
 
 def performCommand(command):
     commandType = command["commandType"]
