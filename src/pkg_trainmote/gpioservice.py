@@ -96,8 +96,8 @@ def receivedMessage(message):
 def getSwitch(id):
     return getValueForPin(int(id), id, "GET_SWITCH")
 
-def getAllSwitches():
-    return json.dumps(gpioRelais.__dict__)
+def getAllSwitches():    
+    return json.dumps([ob.__dict__ for ob in DatabaseController().getAllSwichtModels()])
     
 def setSwitch(id):
     relais = getRelaisWithID(int(id))

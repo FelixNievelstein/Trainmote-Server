@@ -1,6 +1,7 @@
 from . import gpioservice
 from flask import Flask
 from flask import jsonify
+from flask import request
 from .powerControllerModule import PowerThread
 from .configControllerModule import ConfigController
 from . import stateControllerModule
