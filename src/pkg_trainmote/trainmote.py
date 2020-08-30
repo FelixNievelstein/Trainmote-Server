@@ -30,6 +30,10 @@ def loadPersistentData():
                 restart()
             else: 
                 shutDown()
+
+def main(): 
+    print("Start webserver")
+    app.run(debug=True)
     
 @app.route('/')
 def hello_world():
@@ -51,8 +55,4 @@ def closeClientConnection():
     print ("Closing client socket")
 
 if __name__ == '__main__':
-    print("Start webserver")
-    app.run(debug=True,host="0.0.0.0")  
-
-if __name__ == '__prod__':
-    app.run(debug=False)  
+    main()
