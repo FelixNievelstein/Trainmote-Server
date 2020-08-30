@@ -33,7 +33,7 @@ def loadPersistentData():
 
 def main(): 
     print("Start webserver")
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
     
 @app.route('/')
 def hello_world():
