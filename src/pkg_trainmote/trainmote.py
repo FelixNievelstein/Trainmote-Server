@@ -71,18 +71,18 @@ def getAllSwitches():
 # Endpoint StopPoint
 
 @app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["GET", "PATCH"])
-def switch(stop_id):
+def stop(stop_id):
     if stop_id is None:
         abort(400)
     if request.method == "PATCH":
-        return gpioservice.setSwitch(switch_id)
+        return gpioservice.setStop(stop_id)
     else:
-        return gpioservice.getSwitch(switch_id)
+        return gpioservice.getStop(stop_id)
 
 @app.route('/trainmote/api/v1/stoppoint', methods=["POST"])
-def addSwitch():
+def addStop():
     if request.get_json() is not None:
-        result = gpioservice.configSwitch(request.get_json())
+        result = gpioservice.configStop(request.get_json())
         if result is not None:
             return result
         else:
@@ -91,8 +91,8 @@ def addSwitch():
         abort(400)
 
 @app.route('/trainmote/api/v1/stoppoint/all')
-def getAllSwitches():
-    return Response(gpioservice.getAllSwitches(), mimetype="application/json")
+def getAllStops():
+    return Response(gpioservice.getAllStopPoints(), mimetype="application/json")
 
 def restart():
     shutDown()
