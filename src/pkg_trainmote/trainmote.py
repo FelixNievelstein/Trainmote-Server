@@ -3,6 +3,7 @@ from flask import Flask
 from flask import jsonify
 from flask import request
 from flask import abort
+from flask import Response
 from .powerControllerModule import PowerThread
 from .configControllerModule import ConfigController
 from . import stateControllerModule
@@ -63,7 +64,7 @@ def addSwitch():
 
 @app.route('/trainmote/api/v1/switch/all')
 def getAllSwitches():
-    return gpioservice.getAllSwitches()
+    return Response(gpioservice.getAllSwitches(), mimetype="application/json")
 
 def restart():
     shutDown()
