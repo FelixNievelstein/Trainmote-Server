@@ -101,8 +101,8 @@ def getSwitch(id):
         return "{ \"error\":\"Switch not found\"}"
     
 
-def getAllSwitches():    
-    return json.dumps([ob.__dict__ for ob in DatabaseController().getAllSwichtModels()])
+def getAllSwitches():
+    return json.dumps([ob.to_dict() for ob in DatabaseController().getAllSwichtModels()])
     
 def setSwitch(id):
     relais = getRelaisWithID(int(id))

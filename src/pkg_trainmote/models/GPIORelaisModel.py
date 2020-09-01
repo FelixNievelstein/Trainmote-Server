@@ -24,6 +24,9 @@ class GPIORelaisModel(object):
         GPIO.output(self.pin, value)
         return self.getStatus()
 
+    def to_dict(self):
+      return {"id": self.id, "pin": self.pin, "defaultValue": self.defaultValue, "status": self.getStatus()}
+
 
 class GPIOStoppingPoint(GPIORelaisModel):
 
@@ -56,6 +59,12 @@ class GPIOSwitchPoint(GPIORelaisModel):
         GPIO.output(self.pin, self.defaultValue)
         time.sleep(0.2)
         self.powerRelais.setStatus(GPIO.HIGH)
+
+    def to_dict(self):
+      mdict = super().to_dict()
+      mdict["needsPowerOn"] = self.needsPowerOn
+      mdict["switchType"] = self.switchType
+      return mdict
 
 
 
