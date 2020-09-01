@@ -42,6 +42,8 @@ def main():
 def hello_world():
     return jsonify(result='Hello World')
 
+# Endpoint Switch
+
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["GET", "PATCH"])
 def switch(switch_id):
     if switch_id is None:
@@ -63,6 +65,32 @@ def addSwitch():
         abort(400)
 
 @app.route('/trainmote/api/v1/switch/all')
+def getAllSwitches():
+    return Response(gpioservice.getAllSwitches(), mimetype="application/json")
+
+# Endpoint StopPoint
+
+@app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["GET", "PATCH"])
+def switch(stop_id):
+    if stop_id is None:
+        abort(400)
+    if request.method == "PATCH":
+        return gpioservice.setSwitch(switch_id)
+    else:
+        return gpioservice.getSwitch(switch_id)
+
+@app.route('/trainmote/api/v1/stoppoint', methods=["POST"])
+def addSwitch():
+    if request.get_json() is not None:
+        result = gpioservice.configSwitch(request.get_json())
+        if result is not None:
+            return result
+        else:
+            abort(400)
+    else:
+        abort(400)
+
+@app.route('/trainmote/api/v1/stoppoint/all')
 def getAllSwitches():
     return Response(gpioservice.getAllSwitches(), mimetype="application/json")
 

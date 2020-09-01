@@ -93,6 +93,10 @@ def receivedMessage(message):
     else:
         return "msg:Not valid json"
 
+##
+# Switch
+##
+
 def getSwitch(id):
     switch = next((switch for switch in DatabaseController().getAllSwichtModels() if switch.id == id), None)
     if switch is not None:
@@ -115,6 +119,37 @@ def configSwitch(data):
     params = data["params"]
     resultId = createSwitch(int(data["id"]), int(data["defaultValue"]), params["switchType"])
     return json.dumps(CommandResultModel("GET_SWITCH", resultId, "success").__dict__)
+
+##
+# Stop Point
+##
+
+def getStop(id):
+    stop = next((stop for stop in DatabaseController().getAllStopModels() if stop.id == id), None)
+    if stop is not None:
+        return getValueForPin(int(id), id, "GET_STOPPING_POINT")
+    else:
+        return "{ \"error\":\"Stop not found\"}"
+    
+
+def getAllStopPoints():
+    return json.dumps([ob.to_dict() for ob in DatabaseController().getAllStopModels()])
+    
+def setStop(id):
+    relais = getRelaisWithID(int(id))
+    if relais is not None:
+        return json.dumps(CommandResultModel("GET_STOPPING_POINT", id, switchPin(relais)).__dict__)
+    else:
+        return "{ \"error\":\"Relais not found\"}"
+
+def configStop(data):
+    if 'measurmentId' in data:
+        resultId = createStop(int(data["id"]), int(data["measurmentId"]))
+    else:
+        resultId = createStop(int(data["id"]), None)
+    return json.dumps(CommandResultModel("CONFIG_STOPPING_POINT", resultId, "success").__dict__)
+
+
 
 def performCommand(command):
     commandType = command["commandType"]
