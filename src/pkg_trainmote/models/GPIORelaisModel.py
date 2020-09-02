@@ -31,7 +31,7 @@ class GPIORelaisModel(object):
 class GPIOStoppingPoint(GPIORelaisModel):
 
     def __init__(self, id, pin, measurmentpin):
-        super().__init__(id, pin)
+        super(GPIOStoppingPoint, self).__init__(id, pin)
         self.measurmentpin = measurmentpin
         
     
@@ -46,7 +46,7 @@ class GPIOSwitchPoint(GPIORelaisModel):
     
     
     def __init__(self, id, switchType, pin):
-        super().__init__(id, pin) 
+        super(GPIOSwitchPoint, self).__init__(id, pin) 
         self.needsPowerOn = True
         self.switchType = switchType
         self.powerRelais = GPIORelaisModel(33, 33)
