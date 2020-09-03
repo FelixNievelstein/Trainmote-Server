@@ -36,7 +36,7 @@ class GPIOStoppingPoint(GPIORelaisModel):
         
     
     def to_dict(self):
-      mdict = super().to_dict()
+      mdict = super(GPIOStoppingPoint, self).to_dict()
       mdict["measurmentpin"] = self.measurmentpin
       return mdict
 
@@ -68,7 +68,7 @@ class GPIOSwitchPoint(GPIORelaisModel):
         self.powerRelais.setStatus(GPIO.HIGH)
 
     def to_dict(self):
-      mdict = super().to_dict()
+      mdict = super(GPIOSwitchPoint, self).to_dict()
       mdict["needsPowerOn"] = self.needsPowerOn
       mdict["switchType"] = self.switchType
       return mdict
