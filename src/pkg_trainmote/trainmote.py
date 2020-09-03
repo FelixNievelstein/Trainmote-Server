@@ -21,8 +21,9 @@ gpioservice.loadInitialData()
 stateController = stateControllerModule.StateController()
 powerThread = PowerThread()
 client_sock = None
-config = ConfigController()  
+config = ConfigController()
 app = Flask(__name__)
+
 
 def loadPersistentData():
     if config.loadPreferences():
@@ -98,6 +99,7 @@ def restart():
     shutDown()
     os.execv(sys.executable, ['python'] + sys.argv)
 
+
 def shutDown():
     powerThread.kill.set()
     powerThread.isTurningOff = True
@@ -106,8 +108,10 @@ def shutDown():
     print ("Server going down")
     stateController.stop()
 
+
 def closeClientConnection():
     print ("Closing client socket")
+
 
 if __name__ == '__main__':
     main()
