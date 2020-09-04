@@ -35,15 +35,18 @@ def loadPersistentData():
             else: 
                 shutDown()
 
-def main(): 
+
+def main():
     print("Start webserver")
     app.run(debug=True, host="0.0.0.0")
-    
+
+
 @app.route('/')
 def hello_world():
     return jsonify(result='Hello World')
 
 # Endpoint Switch
+
 
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["GET", "PATCH"])
 def switch(switch_id):
@@ -53,6 +56,7 @@ def switch(switch_id):
         return gpioservice.setSwitch(switch_id)
     else:
         return gpioservice.getSwitch(switch_id)
+
 
 @app.route('/trainmote/api/v1/switch', methods=["POST"])
 def addSwitch():
@@ -65,11 +69,13 @@ def addSwitch():
     else:
         abort(400)
 
+
 @app.route('/trainmote/api/v1/switch/all')
 def getAllSwitches():
     return Response(gpioservice.getAllSwitches(), mimetype="application/json")
 
 # Endpoint StopPoint
+
 
 @app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["GET", "PATCH"])
 def stop(stop_id):
@@ -79,6 +85,7 @@ def stop(stop_id):
         return gpioservice.setStop(stop_id)
     else:
         return gpioservice.getStop(stop_id)
+
 
 @app.route('/trainmote/api/v1/stoppoint', methods=["POST"])
 def addStop():
@@ -91,9 +98,11 @@ def addStop():
     else:
         abort(400)
 
+
 @app.route('/trainmote/api/v1/stoppoint/all')
 def getAllStops():
     return Response(gpioservice.getAllStopPoints(), mimetype="application/json")
+
 
 def restart():
     shutDown()
@@ -105,12 +114,12 @@ def shutDown():
     powerThread.isTurningOff = True
     powerThread.join()
     stateController.setState(stateControllerModule.STATE_SHUTDOWN)
-    print ("Server going down")
+    print("Server going down")
     stateController.stop()
 
 
 def closeClientConnection():
-    print ("Closing client socket")
+    print("Closing client socket")
 
 
 if __name__ == '__main__':
