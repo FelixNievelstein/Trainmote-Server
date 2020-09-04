@@ -12,10 +12,12 @@ trackingServices = []
 
 # Inital Loading and Setup
 
+
 def setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     setupTrackingDefault()
+
 
 def loadInitialData():
     switchModels = DatabaseController().getAllSwichtModels()
@@ -26,20 +28,24 @@ def loadInitialData():
         gpioRelais.append(stop)
     setAllToDefault()
 
+
 def setupTrackingDefault():
     for relais in gpioRelais:
         if isinstance(relais, GPIOStoppingPoint) and relais.measurmentpin is not None:
-            startTrackingFor(relais)            
-        
+            startTrackingFor(relais)
+
+
 def startTrackingFor(relais):
     trackingService = TrackingService(relais)
     trackingServices.append(trackingService)
     trackingService.startTracking()
 
+
 def resetData():
     DatabaseController().removeAll()
-    del gpioRelais [:]
-    del trackingServices [:]
+    del gpioRelais[:]
+    del trackingServices[:]
+
 
 def createSwitch(id, default, switchType):
     switch = GPIOSwitchPoint(id, switchType, id)
@@ -49,27 +55,31 @@ def createSwitch(id, default, switchType):
     gpioRelais.append(switch)
     return id
 
+
 def createStop(id, measurmentid):
     stop = GPIOStoppingPoint(id, id, measurmentid)
     DatabaseController().insertStopModel(id, measurmentid)
     gpioRelais.append(stop)
     return id
 
+
 def getValueForPin(pin, id, commandType):
     pinValue = GPIO.input(pin)
     return json.dumps(CommandResultModel(commandType, id, str(pinValue)).__dict__)
 
-def getRelaisWithID(id): 
+
+def getRelaisWithID(id):
     return next((relais for relais in gpioRelais if relais.id == id), None)
 
 
 # Relais Actions
 
+
 def switchPin(relais):        
     if relais.getStatus():
         if isinstance(relais, GPIOStoppingPoint):
             trackingService = next((tracker for tracker in trackingServices if tracker.stoppingPoint.id == relais.id), None)
-            if trackingService :
+            if trackingService:
                 trackingService.stopTracking()
                 trackingServices.remove(trackingService)
         return relais.setStatus(GPIO.LOW)
@@ -78,14 +88,15 @@ def switchPin(relais):
             startTrackingFor(relais)        
         return relais.setStatus(GPIO.HIGH)
 
+
 def receivedMessage(message):
     if is_json(message):
-        jsonData = json.loads(message) 
+        jsonData = json.loads(message)
         results = "["
         if "CONFIG" in jsonData[0]["commandType"]:
             resetData()
         for commandData in jsonData:
-            results = results +  performCommand(commandData) + ","
+            results = results + performCommand(commandData) + ","
 
         results = results[:-1] + "]"
         return results
@@ -97,23 +108,26 @@ def receivedMessage(message):
 # Switch
 ##
 
+
 def getSwitch(id):
-    switch = next((switch for switch in DatabaseController().getAllSwichtModels() if switch.id == id), None)
-    if switch is not None:
-        return getValueForPin(int(id), id, "GET_SWITCH")
-    else:
-        return "{ \"error\":\"Switch not found\"}"
-    
+    for switch in DatabaseController().getAllSwichtModels():
+        if switch.id == id:
+            return getValueForPin(int(id), id, "GET_SWITCH")
+
+    return "{ \"error\":\"Switch not found\"}"
+
 
 def getAllSwitches():
     return json.dumps([ob.to_dict() for ob in DatabaseController().getAllSwichtModels()])
-    
+
+
 def setSwitch(id):
     relais = getRelaisWithID(int(id))
     if relais is not None:
         return json.dumps(CommandResultModel("GET_SWITCH", id, switchPin(relais)).__dict__)
     else:
         return "{ \"error\":\"Relais not found\"}"
+
 
 def configSwitch(data):
     params = data["params"]
@@ -124,17 +138,19 @@ def configSwitch(data):
 # Stop Point
 ##
 
+
 def getStop(id):
-    stop = next((stop for stop in DatabaseController().getAllStopModels() if stop.id == id), None)
-    if stop is not None:
-        return getValueForPin(int(id), id, "GET_STOPPING_POINT")
-    else:
-        return "{ \"error\":\"Stop not found\"}"
-    
+    for stop in DatabaseController().getAllStopModels():
+        if stop.id == id:
+            return getValueForPin(int(id), id, "GET_STOPPING_POINT")
+
+    return "{ \"error\":\"Stop not found\"}"
+
 
 def getAllStopPoints():
     return json.dumps([ob.to_dict() for ob in DatabaseController().getAllStopModels()])
-    
+
+
 def setStop(id):
     relais = getRelaisWithID(int(id))
     if relais is not None:
@@ -142,13 +158,13 @@ def setStop(id):
     else:
         return "{ \"error\":\"Relais not found\"}"
 
+
 def configStop(data):
     if 'measurmentId' in data:
         resultId = createStop(int(data["id"]), int(data["measurmentId"]))
     else:
         resultId = createStop(int(data["id"]), None)
     return json.dumps(CommandResultModel("CONFIG_STOPPING_POINT", resultId, "success").__dict__)
-
 
 
 def performCommand(command):
@@ -176,16 +192,19 @@ def performCommand(command):
     else:
         return "{ \"error\":\"Command not supported\"}"
 
+
 def setAllToDefault():
     for relais in gpioRelais:
         print(relais)
         relais.toDefault()
 
+
 # Validation
 
+
 def is_json(myjson):
-  try:
-    json_object = json.loads(myjson)
-  except ValueError:
-    return False
-  return True
+    try:
+        json_object = json.loads(myjson)
+    except ValueError:
+        return False
+    return True

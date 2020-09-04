@@ -4,6 +4,7 @@ from .configControllerModule import ConfigController
 from .models.GPIORelaisModel import GPIOSwitchPoint
 from .models.GPIORelaisModel import GPIOStoppingPoint
 
+
 class DatabaseController():
     curs = None
     conn = None
@@ -39,16 +40,14 @@ class DatabaseController():
     def insertStopModel(self, relaisId, messId):
         if self.openDatabase():
             # Insert a row of data
-            print('Insert Stop: %i' % relaisId)            
-            # if messId is not None:
-              #  self.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId), None)
-            # else:
-                # self.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId), None)
+            if messId is not None:
+                self.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId), None)
+            else:
+                self.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId), None)
 
     def insertSwitchModel(self, model):
         if self.openDatabase():
             # Insert a row of data
-            print('Insert Switch: %i' % model.pin)
             self.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%s', '%i')" % (model.pin, model.switchType, model.defaultValue), None)            
 
     def removeAll(self):
@@ -63,7 +62,6 @@ class DatabaseController():
         if self.openDatabase():
             def readSwitchs():
                 nonlocal allSwitchModels
-                print (self.curs)                
                 for dataSet in self.curs:
                     switchModel = GPIOSwitchPoint(dataSet[1], dataSet[2], dataSet[1])
                     switchModel.setDefaultValue(dataSet[3])
@@ -78,7 +76,6 @@ class DatabaseController():
         if self.openDatabase():
             def readStops():
                 nonlocal allStopModels
-                print (self.curs)
                 for dataSet in self.curs:
                     stop = GPIOStoppingPoint(dataSet[1], dataSet[1], dataSet[2])
                     allStopModels.append(stop)
@@ -100,12 +97,3 @@ class DatabaseController():
             self.conn.close()
             self.curs = None
             self.conn = None
-
-            
-            
-                
-
-
-
-    
-        
