@@ -111,9 +111,7 @@ def receivedMessage(message):
 
 def getSwitch(id):
     for switch in DatabaseController().getAllSwichtModels():
-        print(id)
-        print(switch.id)
-        if switch.id == id:
+        if str(switch.id) == str(id):
             return getValueForPin(int(id), id, "GET_SWITCH")
 
     return json.dumps({"error": "Switch for id {} not found".format(id)})
