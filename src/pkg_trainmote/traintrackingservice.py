@@ -5,14 +5,15 @@ from adafruit_ads1x15.analog_in import AnalogIn
 import time
 import threading
 
-class TrackingService: 
-    
+
+class TrackingService:
+
     isTracking = False
 
     def __init__(self, stoppingPoint):
         self.stoppingPoint = stoppingPoint
         self.trackingThread = TrackerThread(stoppingPoint)
-        
+
     def startTracking(self):
         # do some stuff
         self.isTracking = True
@@ -26,12 +27,12 @@ class TrackingService:
         self.trackingThread.join()
         self.isTracking = False
 
+
 class TrackerThread(threading.Thread):
 
     GAIN = 1
     # Create the I2C bus
     i2c = busio.I2C(board.SCL, board.SDA)
-
 
     def __init__(self, stoppingPoint):
         threading.Thread.__init__(self)
@@ -43,8 +44,8 @@ class TrackerThread(threading.Thread):
             ads = ADS.ADS1115(self.i2c)
         except ValueError:
             print("Oops! ADS1115 not installed")
-    
-    def run (self):
+
+    def run(self):
         self.trackVoltage()
 
     def trackVoltage(self):
