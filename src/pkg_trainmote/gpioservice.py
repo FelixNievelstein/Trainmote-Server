@@ -141,7 +141,7 @@ def configSwitch(data):
 
 def getStop(id):
     for stop in DatabaseController().getAllStopModels():
-        if stop.id == id:
+        if str(stop.id) == str(id):
             return getValueForPin(int(id), id, "GET_STOPPING_POINT")
 
     return json.dumps({"error": "Stop for id {} not found".format(id)})
