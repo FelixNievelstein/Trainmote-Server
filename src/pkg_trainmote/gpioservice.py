@@ -111,10 +111,11 @@ def receivedMessage(message):
 
 def getSwitch(id):
     for switch in DatabaseController().getAllSwichtModels():
+        print(switch)
         if switch.id == id:
             return getValueForPin(int(id), id, "GET_SWITCH")
 
-    return "{ \"error\":\"Switch not found\"}"
+    return json.dumps({"error": "Switch for id {} not found".format(id)})
 
 
 def getAllSwitches():
@@ -144,7 +145,7 @@ def getStop(id):
         if stop.id == id:
             return getValueForPin(int(id), id, "GET_STOPPING_POINT")
 
-    return "{ \"error\":\"Stop not found\"}"
+    return json.dumps({"error": "Stop for id {} not found".format(id)})
 
 
 def getAllStopPoints():
