@@ -8,6 +8,7 @@ from .powerControllerModule import PowerThread
 from .configControllerModule import ConfigController
 from . import stateControllerModule
 from .libInstaller import LibInstaller
+from .validator import Validator
 from subprocess import call
 import logging
 import logging.handlers
@@ -49,7 +50,7 @@ def hello_world():
 
 
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["GET", "PATCH"])
-def switch(switch_id):
+def switch(switch_id: str):
     if switch_id is None:
         abort(400)
     if request.method == "PATCH":
@@ -61,6 +62,8 @@ def switch(switch_id):
 @app.route('/trainmote/api/v1/switch', methods=["POST"])
 def addSwitch():
     if request.get_json() is not None:
+        if Validator().validateDict(request.get_json, ["params", "defaultValue", "id"]) is False:
+            abort(400)
         result = gpioservice.configSwitch(request.get_json())
         if result is not None:
             return result
@@ -78,7 +81,7 @@ def getAllSwitches():
 
 
 @app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["GET", "PATCH"])
-def stop(stop_id):
+def stop(stop_id: str):
     if stop_id is None:
         abort(400)
     if request.method == "PATCH":
