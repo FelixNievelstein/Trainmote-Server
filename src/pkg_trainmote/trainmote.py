@@ -10,12 +10,14 @@ from . import stateControllerModule
 from .libInstaller import LibInstaller
 from .validator import Validator
 from subprocess import call
+from jsonschema import validate
 import logging
 import logging.handlers
 import argparse
 import sys
 import os
 import time
+
 
 gpioservice.setup()
 gpioservice.loadInitialData()
@@ -59,10 +61,28 @@ def switch(switch_id: str):
         return gpioservice.getSwitch(switch_id)
 
 
+# A sample schema, like what we'd get from json.load()
+# Describe what kind of json you expect.
+schema = {
+    "type" : "object",
+    "properties" : {
+        "id" : {"type" : "string"},
+        "defaultValue" : {"type" : "boolean"},
+        "params" : {
+            "type" : "object",
+            "properties" : {
+                "switchType": {"type" : "string"}
+            }
+        },
+    },
+}
+
 @app.route('/trainmote/api/v1/switch', methods=["POST"])
 def addSwitch():
-    if request.get_json() is not None:
-        if Validator().validateDict(request.get_json, ["params", "defaultValue", "id"]) is False:
+    json = request.get_json()
+    if json is not None:
+        validate(instance=json, schema=schema)
+        if Validator().validateDict(json, ["params", "defaultValue", "id"]) is False:
             abort(400)
         result = gpioservice.configSwitch(request.get_json())
         if result is not None:

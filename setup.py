@@ -10,7 +10,7 @@ with open("README.MD", "r") as fh:
 
 setuptools.setup(
     name='trainmote-module_felix-nievelstein_de',
-    version='0.3.24',
+    version='0.3.25',
     description='Application to create a web server to control a model train environment',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -32,7 +32,8 @@ setuptools.setup(
         'PyBluez',
         'RPI.GPIO',
         'adafruit-blinka',
-        'flask'
+        'flask',
+        'jsonschema'
     ],
     entry_points={
         'console_scripts': [
