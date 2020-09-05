@@ -112,7 +112,7 @@ def getSwitch(id: str):
     for switch in DatabaseController().getAllSwichtModels():
         if str(switch.id) == id:
             currentValue = getValueForPin(int(switch.id))
-            return json.dumps({"switch": switch.to_dict, "currentValue": currentValue})
+            return json.dumps({"switch": switch.to_dict(), "currentValue": currentValue})
 
     return json.dumps({"error": "Switch for id {} not found".format(id)})
 
@@ -143,7 +143,7 @@ def getStop(id: str):
     for stop in DatabaseController().getAllStopModels():
         if str(stop.id) == id:
             currentValue = getValueForPin(int(stop.id))
-            return json.dumps({"stop": stop.to_dict, "currentValue": currentValue})
+            return json.dumps({"stop": stop.to_dict(), "currentValue": currentValue})
 
     return json.dumps({"error": "Stop for id {} not found".format(id)})
 
