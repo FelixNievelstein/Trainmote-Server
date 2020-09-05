@@ -1,11 +1,11 @@
-from typing import List, Dict
+from typing import List
 
 
 class Validator:
 
-    def validateDict(self, dictionary: Dict[str, str], keys: List[str]):
+    def validateDict(self, dictionary: dict, keys: List[str]):
         for key in keys:
-            if dictionary.get(key) is None:
+            if key not in dictionary:
                 return False
 
         return True

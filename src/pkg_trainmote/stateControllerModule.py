@@ -15,15 +15,15 @@ class StateController:
         GPIO.setup(statePin, GPIO.OUT)
 
     def setState(self, stateName):
-        print ("Changing Thread")
+        print("Changing Thread")
         self.stop()
-        print ("Create New State Thread")
+        print("Create New State Thread")
         self.stateThread = StateThread(stateName)
         self.stateThread.start()
 
     def stop(self): 
         if self.stateThread is not None:
-            print ("Kill Thread")
+            print("Kill Thread")
             self.stateThread.kill.set()
             self.stateThread.turnOff()
             self.stateThread.join()

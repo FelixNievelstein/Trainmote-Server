@@ -15,14 +15,14 @@ class DatabaseController():
         if dbPath is not None:
             if not os.path.exists(dbPath):
                 self.createInitalDatabse(dbPath)
-            
+
             try:
                 self.conn = sqlite3.connect(dbPath)
                 print(self.conn)
                 self.curs = self.conn.cursor()
                 print(self.curs)
                 return True
-            except Exception as e: 
+            except Exception as e:
                 print(e)
                 print('Error connecting database')
         return False
@@ -48,7 +48,7 @@ class DatabaseController():
     def insertSwitchModel(self, model):
         if self.openDatabase():
             # Insert a row of data
-            self.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%s', '%i')" % (model.pin, model.switchType, model.defaultValue), None)            
+            self.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%s', '%i')" % (model.pin, model.switchType, model.defaultValue), None)
 
     def removeAll(self):
         if self.openDatabase():
@@ -56,7 +56,7 @@ class DatabaseController():
             self.curs.execute("DELETE FROM TMStopModel")
             self.conn.commit()
             self.conn.close()
-    
+
     def getAllSwichtModels(self):
         allSwitchModels = []
         if self.openDatabase():
@@ -81,13 +81,13 @@ class DatabaseController():
                     allStopModels.append(stop)
 
             self.execute("SELECT * FROM TMStopModel", readStops)
-            
+
         return allStopModels
 
-    def execute(self, query, _callback = None):
+    def execute(self, query, _callback):
         try:
             print(query)
-            self.curs.execute(query)       
+            self.curs.execute(query)
             if _callback is not None:
                 _callback()
             self.conn.commit()

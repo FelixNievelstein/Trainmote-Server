@@ -18,11 +18,11 @@ class TrackingService:
         # do some stuff
         self.isTracking = True
         self.trackingThread.start()
-        print ('Start Tracking: ', self.stoppingPoint.measurmentpin)
-        # continue doing stuff    
+        print('Start Tracking: ', self.stoppingPoint.measurmentpin)
+        # continue doing stuff
 
     def stopTracking(self):
-        print ('Stop Tracking: ',  self.stoppingPoint.measurmentpin)
+        print('Stop Tracking: ', self.stoppingPoint.measurmentpin)
         self.trackingThread.kill.set()
         self.trackingThread.join()
         self.isTracking = False
@@ -52,6 +52,6 @@ class TrackerThread(threading.Thread):
         while not self.kill.is_set():
             # chan = AnalogIn(ads, ADS.P0)
             # currentVoltage = self.ads.read_adc(self.stoppingPoint.measurmentpin, gain= self.GAIN)
-            #if abs(currentVoltage) > 10:
-             #   print ('Detected voltage at Stopping Point: ', self.stoppingPoint.measurmentpin)
+            # if abs(currentVoltage) > 10:
+            # print ('Detected voltage at Stopping Point: ', self.stoppingPoint.measurmentpin)
             time.sleep(0.3)
