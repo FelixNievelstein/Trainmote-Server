@@ -1,0 +1,13 @@
+{
+    "type" : "object",
+    "properties" : {
+        "id" : {"type" : "int"},
+        "defaultValue" : {"type" : "int"},
+        "params" : {
+            "type" : "object",
+            "properties" : {
+                "switchType": {"type" : "string"}
+            }
+        }
+    }
+}

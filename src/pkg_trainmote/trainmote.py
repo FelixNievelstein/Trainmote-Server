@@ -16,6 +16,7 @@ import argparse
 import sys
 import os
 import time
+import json
 
 
 gpioservice.setup()
@@ -60,26 +61,18 @@ def switch(switch_id: str):
         return gpioservice.getSwitch(switch_id)
 
 
-# A sample schema, like what we'd get from json.load()
-# Describe what kind of json you expect.
-schema = {
-    "type" : "object",
-    "properties" : {
-        "id" : {"type" : "string"},
-        "defaultValue" : {"type" : "boolean"},
-        "params" : {
-            "type" : "object",
-            "properties" : {
-                "switchType": {"type" : "string"}
-            }
-        },
-    },
-}
+def get_schema():
+    """This function loads the given schema available"""
+    with open('./schemes/switch_scheme.json', 'r') as file:
+        schema = json.load(file)
+    return schema
+
 
 @app.route('/trainmote/api/v1/switch', methods=["POST"])
 def addSwitch():
     json = request.get_json()
     if json is not None:
+        schema = get_schema()
         if Validator().validateDict(json, schema) is False:
             abort(400)
         result = gpioservice.configSwitch(request.get_json())
