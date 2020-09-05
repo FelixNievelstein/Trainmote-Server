@@ -10,7 +10,6 @@ from . import stateControllerModule
 from .libInstaller import LibInstaller
 from .validator import Validator
 from subprocess import call
-from jsonschema import validate
 import logging
 import logging.handlers
 import argparse
@@ -81,8 +80,7 @@ schema = {
 def addSwitch():
     json = request.get_json()
     if json is not None:
-        validate(instance=json, schema=schema)
-        if Validator().validateDict(json, ["params", "defaultValue", "id"]) is False:
+        if Validator().validateDict(json, schema) is False:
             abort(400)
         result = gpioservice.configSwitch(request.get_json())
         if result is not None:
