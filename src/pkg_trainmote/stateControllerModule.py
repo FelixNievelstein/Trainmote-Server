@@ -21,7 +21,7 @@ class StateController:
         self.stateThread = StateThread(stateName)
         self.stateThread.start()
 
-    def stop(self): 
+    def stop(self):
         if self.stateThread is not None:
             print("Kill Thread")
             self.stateThread.kill.set()
@@ -32,19 +32,20 @@ class StateController:
 class StateThread(threading.Thread):
 
     currentState = ""
+
     def __init__(self, state):
         threading.Thread.__init__(self)
         self.currentState = state
         self.kill = threading.Event()
-    
-    def run (self):
+
+    def run(self):
         if self.currentState == STATE_NOT_CONNECTED:
             self.blink(1)
         elif self.currentState == STATE_CONNECTED:
             self.turnOn()
         elif self.currentState == STATE_SHUTDOWN:
             self.blink(0.2)
-        else: 
+        else:
             self.turnOff()
 
     def blink(self, blinkTime):
@@ -57,10 +58,8 @@ class StateThread(threading.Thread):
             isOn = not isOn
             time.sleep(blinkTime)
 
-    def turnOff(self): 
+    def turnOff(self):
         GPIO.output(statePin, GPIO.HIGH)
 
-    def turnOn(self): 
+    def turnOn(self):
         GPIO.output(statePin, GPIO.LOW)
-
-            

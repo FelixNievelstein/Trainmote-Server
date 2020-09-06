@@ -35,7 +35,7 @@ def loadPersistentData():
             libInstaller.installSQLite()
             if config.setSQLiteInstalled():
                 restart()
-            else: 
+            else:
                 shutDown()
 
 

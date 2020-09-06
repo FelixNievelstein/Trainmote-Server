@@ -10,7 +10,7 @@ with open("README.MD", "r") as fh:
 
 setuptools.setup(
     name='trainmote-module_felix-nievelstein_de',
-    version='0.3.27',
+    version='0.3.28',
     description='Application to create a web server to control a model train environment',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -20,8 +20,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     packages=['pkg_trainmote', 'pkg_trainmote.models'],
     package_data={
-        "pkg_trainmote": ["scripts/*.sh"],
-        "pkg_trainmote": ["schemes/*.json"]
+        "pkg_trainmote": ["scripts/*.sh", "schemes/*.json"]
     },
     classifiers=[
         "Programming Language :: Python :: 3",

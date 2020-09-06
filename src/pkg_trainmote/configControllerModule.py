@@ -11,7 +11,7 @@ class ConfigController():
         path = self.checkSettingsFile()
         if path is not None:
             self.parser.read(path)
-            return True            
+            return True
         return False
 
     def checkSettingsFile(self):
@@ -30,13 +30,13 @@ class ConfigController():
         print("createPreferencesFile")
         createParser = SafeConfigParser()
         createParser.add_section('info')
-        createParser.set('info','version', '0.1')
+        createParser.set('info', 'version', '0.1')
         createParser.add_section('settings')
-        createParser.set('settings','sqlitePath', 'content/tom-db.sqlite')
+        createParser.set('settings', 'sqlitePath', 'content/tom-db.sqlite')
         with open(file, 'w+') as iniFile:
             print('Created Preferences Inital File')
             createParser.write(iniFile)
-            
+
     def createContentDir(self):
         print("createContentDir")
         if not os.path.exists(self.directory):
@@ -46,8 +46,9 @@ class ConfigController():
         try:
             sqliteVersion = self.parser.get('settings', 'sqliteVersion')
             return sqliteVersion is not None
-        except:
-            return False        
+        except Exception as e:
+            print(e)
+            return False
 
     def getDataBasePath(self):
         if self.loadPreferences():
@@ -61,6 +62,6 @@ class ConfigController():
             with open(self.pathPreferences, 'w') as configfile:
                 self.parser.write(configfile)
             return True
-        except:
-            print('Error saving config')
+        except Exception as e:
+            print('Error saving config: {}'.format(e))
             return False

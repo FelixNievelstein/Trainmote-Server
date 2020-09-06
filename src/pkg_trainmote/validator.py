@@ -1,6 +1,6 @@
 from typing import List
 from jsonschema import validate
-import libInstaller
+from . import libInstaller
 import sysconfig
 import os.path
 import json
