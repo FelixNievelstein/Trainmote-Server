@@ -1,8 +1,8 @@
 {
     "type" : "object",
     "properties" : {
-        "id" : {"type" : "int"},
-        "defaultValue" : {"type" : "int"},
+        "id" : {"type" : "integer"},
+        "defaultValue" : {"type" : "integer"},
         "params" : {
             "type" : "object",
             "properties" : {

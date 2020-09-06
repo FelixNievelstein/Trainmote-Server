@@ -96,7 +96,7 @@ def stop(stop_id: str):
 @app.route('/trainmote/api/v1/stoppoint', methods=["POST"])
 def addStop():
     if request.get_json() is not None:
-        if Validator().validateDict(request.get_json, ["measurmentId", "id"]) is False:
+        if Validator().validateDict(mJson, "stop_scheme") is False:
             abort(400)
         result = gpioservice.configStop(request.get_json())
         if result is not None:
