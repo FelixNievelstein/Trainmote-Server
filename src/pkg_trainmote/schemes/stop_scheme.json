@@ -4,5 +4,6 @@
         "id" : {"type" : "integer"},
         "defaultValue" : {"type" : "integer"},
         "measurmentId" : {"type" : "integer"}
-    }
+    },
+    "required": ["id", "defaultValue"]
 }
