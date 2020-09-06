@@ -161,7 +161,7 @@ def setStop(id: str):
 
 
 def configStop(data):
-    if data["measurmentId"] is not None:
+    if "measurmentId" in data:
         resultId = createStop(int(data["id"]), int(data["measurmentId"]))
     else:
         resultId = createStop(int(data["id"]), None)
