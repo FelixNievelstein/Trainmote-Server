@@ -4,13 +4,14 @@ from setuptools.command.install import install
 from setuptools.command.develop import develop
 from setuptools.command.egg_info import egg_info
 from distutils.core import Extension, setup
+from .src.pkg_trainmote.trainmote import version
 
 with open("README.MD", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='trainmote-module_felix-nievelstein_de',
-    version='0.3.31',
+    name='trainmote-module_felix-nievelstein_de',    
+    version=version,
     description='Application to create a web server to control a model train environment',
     long_description=long_description,
     long_description_content_type='text/markdown',

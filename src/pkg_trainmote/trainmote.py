@@ -27,6 +27,8 @@ client_sock = None
 config = ConfigController()
 app = Flask(__name__)
 
+version: str = '0.3.32'
+
 
 def loadPersistentData():
     if config.loadPreferences():
@@ -44,9 +46,9 @@ def main():
     app.run(debug=True, host="0.0.0.0")
 
 
-@app.route('/')
+@app.route('/trainmote/api/v1')
 def hello_world():
-    return jsonify(result='Hello World')
+    return json.dumps({"trainmote": "trainmote.module.felix-nievelstein.de", "version": version})
 
 # Endpoint Switch
 
