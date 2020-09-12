@@ -131,7 +131,7 @@ def setSwitch(id: str):
     if relais is not None:
         return json.dumps(CommandResultModel("GET_SWITCH", id, switchPin(relais)).__dict__)
     else:
-        return "{ \"error\":\"Relais not found\"}"
+        raise ValueError("{ \"error\":\"Relais not found\"}")
 
 
 def configSwitch(data):
@@ -162,7 +162,7 @@ def setStop(id: str):
     if relais is not None:
         return json.dumps(CommandResultModel("GET_STOPPING_POINT", id, switchPin(relais)).__dict__)
     else:
-        return "{ \"error\":\"Relais not found\"}"
+        raise ValueError("{ \"error\":\"Relais not found\"}")
 
 
 def configStop(data):

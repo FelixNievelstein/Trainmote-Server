@@ -60,7 +60,10 @@ def switch(switch_id: str):
     if switch_id is None:
         abort(400)
     if request.method == "PATCH":
-        return gpioservice.setSwitch(switch_id)
+        try:
+            return gpioservice.setSwitch(switch_id)
+        except ValueError as e:
+            return e.args, 400
     else:
         return gpioservice.getSwitch(switch_id)
 
@@ -92,7 +95,10 @@ def stop(stop_id: str):
     if stop_id is None:
         abort(400)
     if request.method == "PATCH":
-        return gpioservice.setStop(stop_id)
+        try:
+            return gpioservice.setStop(stop_id)
+        except ValueError as e:
+            return e.args, 400
     else:
         return gpioservice.getStop(stop_id)
 
