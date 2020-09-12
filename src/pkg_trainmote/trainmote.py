@@ -44,10 +44,12 @@ def loadPersistentData():
 def main():
     print("Start webserver")
     app.run(debug=True, host="0.0.0.0")
+    stateController.setState(stateControllerModule.STATE_NOT_CONNECTED)    
 
 
 @app.route('/trainmote/api/v1')
 def hello_world():
+    stateController.setState(stateControllerModule.STATE_CONNECTED)
     return json.dumps({"trainmote": "trainmote.module.felix-nievelstein.de", "version": version})
 
 # Endpoint Switch
@@ -73,7 +75,7 @@ def addSwitch():
         if result is not None:
             return result
         else:
-            abort(400)
+            abort(406)
     else:
         abort(400)
 
@@ -105,7 +107,7 @@ def addStop():
         if result is not None:
             return result
         else:
-            abort(400)
+            abort(406)
     else:
         abort(400)
 

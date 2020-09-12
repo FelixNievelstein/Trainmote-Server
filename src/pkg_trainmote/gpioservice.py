@@ -9,6 +9,7 @@ from .databaseControllerModule import DatabaseController
 
 gpioRelais = []
 trackingServices = []
+validGpios = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
 
 # Inital Loading and Setup
 
@@ -48,19 +49,23 @@ def resetData():
 
 
 def createSwitch(id, default, switchType):
-    switch = GPIOSwitchPoint(id, switchType, id)
-    switch.setDefaultValue(default)
-    switch.toDefault()
-    DatabaseController().insertSwitchModel(switch)
-    gpioRelais.append(switch)
-    return id
+    if (isValidRaspberryPiGPIO(id)):
+        switch = GPIOSwitchPoint(id, switchType, id)
+        switch.setDefaultValue(default)
+        switch.toDefault()
+        DatabaseController().insertSwitchModel(switch)
+        gpioRelais.append(switch)
+        return id
+    return None
 
 
 def createStop(id, measurmentid):
-    stop = GPIOStoppingPoint(id, id, measurmentid)
-    DatabaseController().insertStopModel(id, measurmentid)
-    gpioRelais.append(stop)
-    return id
+    if (isValidRaspberryPiGPIO(id)):
+        stop = GPIOStoppingPoint(id, id, measurmentid)
+        DatabaseController().insertStopModel(id, measurmentid)
+        gpioRelais.append(stop)
+        return id
+    return None
 
 
 def getValueForPin(pin):
@@ -207,3 +212,7 @@ def is_json(myjson):
     except ValueError:
         return False
     return True
+
+
+def isValidRaspberryPiGPIO(pinNumber: int):
+    return pinNumber in validGpios
