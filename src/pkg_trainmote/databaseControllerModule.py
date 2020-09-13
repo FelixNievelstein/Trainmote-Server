@@ -45,10 +45,20 @@ class DatabaseController():
             else:
                 self.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId), None)
 
+    def deleteStopModel(self, id):
+        if self.openDatabase():
+            # Insert a row of data
+            self.execute("DELETE FROM TMStopModel WHERE uid = '%i';" % (id), None)
+
     def insertSwitchModel(self, model):
         if self.openDatabase():
             # Insert a row of data
             self.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%s', '%i')" % (model.pin, model.switchType, model.defaultValue), None)
+
+    def deleteSwitchModel(self, id):
+        if self.openDatabase():
+            # Insert a row of data
+            self.execute("DELETE FROM TMSwitchModel WHERE uid = '%i';" % (id), None)
 
     def removeAll(self):
         if self.openDatabase():
@@ -63,7 +73,7 @@ class DatabaseController():
             def readSwitchs():
                 nonlocal allSwitchModels
                 for dataSet in self.curs:
-                    switchModel = GPIOSwitchPoint(dataSet[1], dataSet[2], dataSet[1])
+                    switchModel = GPIOSwitchPoint(dataSet[0], dataSet[1], dataSet[2], dataSet[1])
                     switchModel.setDefaultValue(dataSet[3])
                     allSwitchModels.append(switchModel)
 
@@ -77,7 +87,7 @@ class DatabaseController():
             def readStops():
                 nonlocal allStopModels
                 for dataSet in self.curs:
-                    stop = GPIOStoppingPoint(dataSet[1], dataSet[1], dataSet[2])
+                    stop = GPIOStoppingPoint(dataSet[0], dataSet[1], dataSet[1], dataSet[2])
                     allStopModels.append(stop)
 
             self.execute("SELECT * FROM TMStopModel", readStops)

@@ -8,6 +8,7 @@ from .powerControllerModule import PowerThread
 from .configControllerModule import ConfigController
 from . import stateControllerModule
 from .libInstaller import LibInstaller
+from .databaseControllerModule import DatabaseController
 from .validator import Validator
 from subprocess import call
 import logging
@@ -22,6 +23,7 @@ import json
 gpioservice.setup()
 gpioservice.loadInitialData()
 stateController = stateControllerModule.StateController()
+dataBaseController = DatabaseController()
 powerThread = PowerThread()
 client_sock = None
 config = ConfigController()
@@ -68,6 +70,13 @@ def switch(switch_id: str):
         return gpioservice.getSwitch(switch_id)
 
 
+@app.route('/trainmote/api/v1/switch/<switch_id>', methods=["DELETE"])
+def deleteSwitch(switch_id: str):
+    if switch_id is None:
+        abort(400)
+    dataBaseController.deleteSwitchModel(switch_id)
+
+
 @app.route('/trainmote/api/v1/switch', methods=["POST"])
 def addSwitch():
     mJson = request.get_json()
@@ -101,6 +110,13 @@ def stop(stop_id: str):
             return e.args, 400
     else:
         return gpioservice.getStop(stop_id)
+
+
+@app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["DELETE"])
+def deleteStop(stop_id: str):
+    if stop_id is None:
+        abort(400)
+    dataBaseController.deleteStopModel(stop_id)
 
 
 @app.route('/trainmote/api/v1/stoppoint', methods=["POST"])
