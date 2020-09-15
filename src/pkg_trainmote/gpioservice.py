@@ -50,12 +50,14 @@ def resetData():
 
 def createSwitch(id, default, switchType):
     if (isValidRaspberryPiGPIO(id)):
-        switch = GPIOSwitchPoint(id, switchType, id)
-        switch.setDefaultValue(default)
-        switch.toDefault()
-        DatabaseController().insertSwitchModel(switch)
-        gpioRelais.append(switch)
-        return id
+        databaseController = DatabaseController()
+        result = databaseController.insertSwitchModel(id, switchType, default)
+        if (result is not None):
+            switch = databaseController.getSwitch(result)
+            gpioRelais.append(switch)
+            switch.setDefaultValue(default)
+            switch.toDefault()
+            return id
     return None
 
 

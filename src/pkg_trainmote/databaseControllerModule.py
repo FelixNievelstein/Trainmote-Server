@@ -50,10 +50,16 @@ class DatabaseController():
             # Insert a row of data
             self.execute("DELETE FROM TMStopModel WHERE uid = '%i';" % (id), None)
 
-    def insertSwitchModel(self, model):
+    def insertSwitchModel(self, pin, switchType, defaultValue):
+        resultUid = None
         if self.openDatabase():
             # Insert a row of data
-            self.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%s', '%i')" % (model.pin, model.switchType, model.defaultValue), None)
+            def createdSwitch(uid):
+                nonlocal resultUid
+                resultUid = uid
+            self.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%s', '%i')" % (pin, switchType, defaultValue), createdSwitch)
+
+        return resultUid
 
     def deleteSwitchModel(self, id):
         if self.openDatabase():
@@ -67,13 +73,25 @@ class DatabaseController():
             self.conn.commit()
             self.conn.close()
 
+    def getSwitch(self, uid):
+        switch = None
+        if self.openDatabase():
+            def readSwitch(lastrowid):
+                nonlocal switch
+                for dataSet in self.curs:
+                    switch = GPIOSwitchPoint(dataSet[0], dataSet[2], dataSet[1])
+
+            self.execute("SELECT * FROM TMSwitchModel WHERE uid = '%i';" % (uid), readSwitch)
+
+        return switch
+
     def getAllSwichtModels(self):
         allSwitchModels = []
         if self.openDatabase():
-            def readSwitchs():
+            def readSwitchs(lastrowid):
                 nonlocal allSwitchModels
                 for dataSet in self.curs:
-                    switchModel = GPIOSwitchPoint(dataSet[0], dataSet[1], dataSet[2], dataSet[1])
+                    switchModel = GPIOSwitchPoint(dataSet[0], dataSet[2], dataSet[1])
                     switchModel.setDefaultValue(dataSet[3])
                     allSwitchModels.append(switchModel)
 
@@ -84,10 +102,10 @@ class DatabaseController():
     def getAllStopModels(self):
         allStopModels = []
         if self.openDatabase():
-            def readStops():
+            def readStops(lastrowid):
                 nonlocal allStopModels
                 for dataSet in self.curs:
-                    stop = GPIOStoppingPoint(dataSet[0], dataSet[1], dataSet[1], dataSet[2])
+                    stop = GPIOStoppingPoint(dataSet[0], dataSet[1], dataSet[2])
                     allStopModels.append(stop)
 
             self.execute("SELECT * FROM TMStopModel", readStops)
@@ -98,8 +116,9 @@ class DatabaseController():
         try:
             print(query)
             self.curs.execute(query)
+            print(self.curs.lastrowid)
             if _callback is not None:
-                _callback()
+                _callback(self.curs.lastrowid)
             self.conn.commit()
         except Exception as err:
             print('Query Failed: %s\nError: %s' % (query, str(err)))

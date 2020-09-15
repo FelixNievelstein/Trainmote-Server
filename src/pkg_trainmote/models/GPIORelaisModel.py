@@ -6,8 +6,8 @@ class GPIORelaisModel(object):
 
     defaultValue = GPIO.HIGH
 
-    def __init__(self, id, pin):
-        self.id = id
+    def __init__(self, uid, pin):
+        self.uid = uid
         self.pin = pin
         GPIO.setup(self.pin, GPIO.OUT)
         self.toDefault()
@@ -26,15 +26,14 @@ class GPIORelaisModel(object):
         return self.getStatus()
 
     def to_dict(self):
-        return {"id": self.id, "pin": self.pin, "defaultValue": self.defaultValue, "status": self.getStatus()}
+        return {"uid": self.uid, "pin": self.pin, "defaultValue": self.defaultValue, "status": self.getStatus()}
 
 
 class GPIOStoppingPoint(GPIORelaisModel):
 
-    def __init__(self, uid, id, pin, measurmentpin):
-        self.uid = uid
+    def __init__(self, uid, pin, measurmentpin):
         self.measurmentpin = measurmentpin
-        super(GPIOStoppingPoint, self).__init__(uid, id, pin)
+        super(GPIOStoppingPoint, self).__init__(uid, pin)
 
     def to_dict(self):
         mdict = super(GPIOStoppingPoint, self).to_dict()
@@ -45,12 +44,11 @@ class GPIOStoppingPoint(GPIORelaisModel):
 
 class GPIOSwitchPoint(GPIORelaisModel):
 
-    def __init__(self, uid, id, switchType, pin):
-        self.uid = uid
+    def __init__(self, uid, switchType, pin):
         self.needsPowerOn = True
         self.switchType = switchType
         self.powerRelais = GPIORelaisModel(13, 13)
-        super(GPIOSwitchPoint, self).__init__(id, pin)
+        super(GPIOSwitchPoint, self).__init__(uid, pin)
 
     def setStatus(self, value):
         if self.needsPowerOn:
