@@ -70,6 +70,7 @@ def deleteSwitch(switch_id: str):
     if switch_id is None:
         abort(400)
     dataBaseController.deleteSwitchModel(int(switch_id))
+    return 'ok'
 
 
 @app.route('/trainmote/api/v1/switch', methods=["POST"])
@@ -112,6 +113,7 @@ def deleteStop(stop_id: str):
     if stop_id is None:
         abort(400)
     dataBaseController.deleteStopModel(int(stop_id))
+    return 'ok'
 
 
 @app.route('/trainmote/api/v1/stoppoint', methods=["POST"])
