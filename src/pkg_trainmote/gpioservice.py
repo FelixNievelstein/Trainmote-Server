@@ -6,6 +6,7 @@ from .models.GPIORelaisModel import GPIORelaisModel
 from .models.GPIORelaisModel import GPIOStoppingPoint
 from .models.GPIORelaisModel import GPIOSwitchPoint
 from .databaseControllerModule import DatabaseController
+from typing import Optional
 
 gpioRelais = []
 trackingServices = []
@@ -48,25 +49,29 @@ def resetData():
     del trackingServices[:]
 
 
-def createSwitch(id, default, switchType):
+def createSwitch(id: int, default: int, switchType: str) -> Optional[GPIOSwitchPoint]:
     if (isValidRaspberryPiGPIO(id)):
         databaseController = DatabaseController()
         result = databaseController.insertSwitchModel(id, switchType, default)
         if (result is not None):
             switch = databaseController.getSwitch(result)
-            gpioRelais.append(switch)
-            switch.setDefaultValue(default)
-            switch.toDefault()
-            return id
+            if (switch is not None):
+                gpioRelais.append(switch)
+                switch.setDefaultValue(default)
+                switch.toDefault()
+                return switch
     return None
 
 
-def createStop(id, measurmentid):
+def createStop(id: int, measurmentid: Optional[int]) -> Optional[GPIOStoppingPoint]:
     if (isValidRaspberryPiGPIO(id)):
-        stop = GPIOStoppingPoint(id, id, measurmentid)
-        DatabaseController().insertStopModel(id, measurmentid)
-        gpioRelais.append(stop)
-        return id
+        databaseController = DatabaseController()
+        result = databaseController.insertStopModel(id, measurmentid)
+        if (result is not None):
+            stop = databaseController.getStop(result)
+            if (stop is not None):
+                gpioRelais.append(stop)
+                return stop
     return None
 
 
@@ -118,7 +123,7 @@ def receivedMessage(message):
 def getSwitch(id: str):
     for switch in DatabaseController().getAllSwichtModels():
         if str(switch.id) == id:
-            currentValue = getValueForPin(int(switch.id))
+            currentValue = getValueForPin(int(switch.pin))
             return json.dumps({"switch": switch.to_dict(), "currentValue": currentValue})
 
     return json.dumps({"error": "Switch for id {} not found".format(id)})
@@ -138,8 +143,12 @@ def setSwitch(id: str):
 
 def configSwitch(data):
     params = data["params"]
-    resultId = createSwitch(int(data["id"]), int(data["defaultValue"]), params["switchType"])
-    return json.dumps(CommandResultModel("GET_SWITCH", resultId, "success").__dict__)
+    result = createSwitch(int(data["id"]), int(data["defaultValue"]), params["switchType"])
+    if result is not None:
+        currentValue = getValueForPin(int(result.pin))
+        return json.dumps({"switch": result.to_dict(), "currentValue": currentValue})
+    else:
+        raise ValueError("{ \"error\":\"Could not create switch\"}")
 
 ##
 # Stop Point
@@ -169,10 +178,15 @@ def setStop(id: str):
 
 def configStop(data):
     if "measurmentId" in data:
-        resultId = createStop(int(data["id"]), int(data["measurmentId"]))
+        result = createStop(int(data["id"]), int(data["measurmentId"]))
     else:
-        resultId = createStop(int(data["id"]), None)
-    return json.dumps(CommandResultModel("CONFIG_STOPPING_POINT", resultId, "success").__dict__)
+        result = createStop(int(data["id"]), None)
+
+    if result is not None:
+        currentValue = getValueForPin(int(result.pin))
+        return json.dumps({"stop": result.to_dict(), "currentValue": currentValue})
+    else:
+        raise ValueError("{ \"error\":\"Could not create stop\"}")    
 
 
 def performCommand(command):

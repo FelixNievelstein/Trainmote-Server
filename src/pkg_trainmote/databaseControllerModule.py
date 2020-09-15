@@ -3,6 +3,7 @@ import os
 from .configControllerModule import ConfigController
 from .models.GPIORelaisModel import GPIOSwitchPoint
 from .models.GPIORelaisModel import GPIOStoppingPoint
+from typing import Optional
 
 
 class DatabaseController():
@@ -37,20 +38,26 @@ class DatabaseController():
         connection.commit()
         connection.close()
 
-    def insertStopModel(self, relaisId, messId):
+    def insertStopModel(self, relaisId: int, messId: Optional[int]) -> Optional[int]:
+        resultUid = None
         if self.openDatabase():
             # Insert a row of data
-            if messId is not None:
-                self.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId), None)
-            else:
-                self.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId), None)
+            def createdStop(uid):
+                nonlocal resultUid
+                resultUid = uid
 
-    def deleteStopModel(self, id):
+            if messId is not None:
+                self.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId), createdStop)
+            else:
+                self.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId), createdStop)
+        return resultUid
+
+    def deleteStopModel(self, id: int):
         if self.openDatabase():
             # Insert a row of data
             self.execute("DELETE FROM TMStopModel WHERE uid = '%i';" % (id), None)
 
-    def insertSwitchModel(self, pin, switchType, defaultValue):
+    def insertSwitchModel(self, pin: int, switchType: str, defaultValue: int) -> Optional[int]:
         resultUid = None
         if self.openDatabase():
             # Insert a row of data
@@ -61,7 +68,7 @@ class DatabaseController():
 
         return resultUid
 
-    def deleteSwitchModel(self, id):
+    def deleteSwitchModel(self, id: int):
         if self.openDatabase():
             # Insert a row of data
             self.execute("DELETE FROM TMSwitchModel WHERE uid = '%i';" % (id), None)
@@ -73,7 +80,7 @@ class DatabaseController():
             self.conn.commit()
             self.conn.close()
 
-    def getSwitch(self, uid):
+    def getSwitch(self, uid) -> Optional[GPIOSwitchPoint]:
         switch = None
         if self.openDatabase():
             def readSwitch(lastrowid):
@@ -98,6 +105,18 @@ class DatabaseController():
             self.execute("SELECT * FROM TMSwitchModel", readSwitchs)
 
         return allSwitchModels
+
+    def getStop(self, uid) -> Optional[GPIOStoppingPoint]:
+        switch = None
+        if self.openDatabase():
+            def readSwitch(lastrowid):
+                nonlocal switch
+                for dataSet in self.curs:
+                    switch = GPIOStoppingPoint(dataSet[0], dataSet[1], dataSet[2])
+
+            self.execute("SELECT * FROM TMStopModel WHERE uid = '%i';" % (uid), readSwitch)
+
+        return switch
 
     def getAllStopModels(self):
         allStopModels = []

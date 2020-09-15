@@ -2,17 +2,17 @@ import RPi.GPIO as GPIO
 import time
 
 
-class GPIORelaisModel(object):
+class GPIORelaisModel():
 
     defaultValue = GPIO.HIGH
 
-    def __init__(self, uid, pin):
+    def __init__(self, uid: int, pin: int):
         self.uid = uid
         self.pin = pin
         GPIO.setup(self.pin, GPIO.OUT)
         self.toDefault()
 
-    def setDefaultValue(self, value):
+    def setDefaultValue(self, value: int):
         self.defaultValue = value
 
     def toDefault(self):
@@ -31,7 +31,7 @@ class GPIORelaisModel(object):
 
 class GPIOStoppingPoint(GPIORelaisModel):
 
-    def __init__(self, uid, pin, measurmentpin):
+    def __init__(self, uid: int, pin: int, measurmentpin: int):
         self.measurmentpin = measurmentpin
         super(GPIOStoppingPoint, self).__init__(uid, pin)
 
@@ -44,13 +44,13 @@ class GPIOStoppingPoint(GPIORelaisModel):
 
 class GPIOSwitchPoint(GPIORelaisModel):
 
-    def __init__(self, uid, switchType, pin):
+    def __init__(self, uid: int, switchType: str, pin: int):
         self.needsPowerOn = True
         self.switchType = switchType
         self.powerRelais = GPIORelaisModel(13, 13)
         super(GPIOSwitchPoint, self).__init__(uid, pin)
 
-    def setStatus(self, value):
+    def setStatus(self, value: int):
         if self.needsPowerOn:
             self.powerRelais.setStatus(GPIO.LOW)
         GPIO.output(self.pin, value)

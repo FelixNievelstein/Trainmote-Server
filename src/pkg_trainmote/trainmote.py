@@ -1,6 +1,5 @@
 from . import gpioservice
 from flask import Flask
-from flask import jsonify
 from flask import request
 from flask import abort
 from flask import Response
@@ -11,12 +10,8 @@ from .libInstaller import LibInstaller
 from .databaseControllerModule import DatabaseController
 from .validator import Validator
 from subprocess import call
-import logging
-import logging.handlers
-import argparse
 import sys
 import os
-import time
 import json
 
 
@@ -74,7 +69,7 @@ def switch(switch_id: str):
 def deleteSwitch(switch_id: str):
     if switch_id is None:
         abort(400)
-    dataBaseController.deleteSwitchModel(switch_id)
+    dataBaseController.deleteSwitchModel(int(switch_id))
 
 
 @app.route('/trainmote/api/v1/switch', methods=["POST"])
@@ -116,7 +111,7 @@ def stop(stop_id: str):
 def deleteStop(stop_id: str):
     if stop_id is None:
         abort(400)
-    dataBaseController.deleteStopModel(stop_id)
+    dataBaseController.deleteStopModel(int(stop_id))
 
 
 @app.route('/trainmote/api/v1/stoppoint', methods=["POST"])
