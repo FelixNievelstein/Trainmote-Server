@@ -122,7 +122,7 @@ def receivedMessage(message):
 
 def getSwitch(id: str):
     for switch in DatabaseController().getAllSwichtModels():
-        if str(switch.id) == id:
+        if str(switch.uid) == id:
             currentValue = getValueForPin(int(switch.pin))
             return json.dumps({"switch": switch.to_dict(), "currentValue": currentValue})
 
@@ -136,7 +136,8 @@ def getAllSwitches():
 def setSwitch(id: str):
     relais = getRelaisWithID(int(id))
     if relais is not None:
-        return json.dumps(CommandResultModel("GET_SWITCH", id, switchPin(relais)).__dict__)
+        switchPin(relais)
+        return getSwitch(id)
     else:
         raise ValueError("{ \"error\":\"Relais not found\"}")
 
