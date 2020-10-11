@@ -80,7 +80,7 @@ def getValueForPin(pin):
 
 
 def getRelaisWithID(id):
-    return next((relais for relais in gpioRelais if relais.id == id), None)
+    return next((relais for relais in gpioRelais if relais.uid == id), None)
 
 
 # Relais Actions
@@ -89,7 +89,7 @@ def getRelaisWithID(id):
 def switchPin(relais):
     if relais.getStatus():
         if isinstance(relais, GPIOStoppingPoint):
-            trackingService = next((tracker for tracker in trackingServices if tracker.stoppingPoint.id == relais.id), None)
+            trackingService = next((tracker for tracker in trackingServices if tracker.stoppingPoint.id == relais.uid), None)
             if trackingService:
                 trackingService.stopTracking()
                 trackingServices.remove(trackingService)
