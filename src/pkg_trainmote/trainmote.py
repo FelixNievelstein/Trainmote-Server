@@ -16,7 +16,6 @@ import json
 
 
 gpioservice.setup()
-gpioservice.loadInitialData()
 stateController = stateControllerModule.StateController()
 dataBaseController = DatabaseController()
 powerThread = PowerThread()
@@ -143,6 +142,10 @@ def addStop():
 def getAllStops():
     return Response(gpioservice.getAllStopPoints(), mimetype="application/json")
 
+@app.teardown_appcontext
+def teardown_appcontext(response_or_exc):
+    print("teardown_appcontext")
+    shutDown()
 
 def restart():
     shutDown()
@@ -154,6 +157,7 @@ def shutDown():
     powerThread.isTurningOff = True
     powerThread.join()
     stateController.setState(stateControllerModule.STATE_SHUTDOWN)
+    gpioservice.clean()
     print("Server going down")
     stateController.stop()
 

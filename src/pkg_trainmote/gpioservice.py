@@ -16,8 +16,10 @@ validGpios = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
 
 
 def setup():
+    GPIO.cleanup()
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
+    loadInitialData()
     setupTrackingDefault()
 
 
@@ -53,6 +55,8 @@ def resetData():
     del gpioRelais[:]
     del trackingServices[:]
 
+def clean():
+    GPIO.cleanup()
 
 def createSwitch(id: int, default: int, switchType: str) -> Optional[GPIOSwitchPoint]:
     if (isValidRaspberryPiGPIO(id)):
