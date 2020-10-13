@@ -66,7 +66,7 @@ def setSwitch(switch_id: str):
     try:
         return gpioservice.setSwitch(switch_id)
     except ValueError as e:
-        return json.dumps(e.args.__dict__)
+        return json.dumps(str(e))
 
 
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["DELETE"])
