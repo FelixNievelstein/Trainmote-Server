@@ -24,9 +24,11 @@ def setup():
 def loadInitialData():
     switchModels = DatabaseController().getAllSwichtModels()
     for model in switchModels:
+        model.setup()
         gpioRelais.append(model)
     stopModels = DatabaseController().getAllStopModels()
     for stop in stopModels:
+        stop.setup()
         gpioRelais.append(stop)
     setAllToDefault()
 
@@ -225,8 +227,7 @@ def performCommand(command):
 
 def setAllToDefault():
     for relais in gpioRelais:
-        print(relais)
-        relais.setup()
+        print(relais)        
         relais.toDefault()
 
 
