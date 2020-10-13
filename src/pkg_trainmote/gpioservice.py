@@ -24,13 +24,16 @@ def setup():
 def loadInitialData():
     switchModels = DatabaseController().getAllSwichtModels()
     for model in switchModels:
-        model.setup()
-        gpioRelais.append(model)
+        addRelais(model)
     stopModels = DatabaseController().getAllStopModels()
     for stop in stopModels:
-        stop.setup()
-        gpioRelais.append(stop)
+        addRelais(stop)
     setAllToDefault()
+
+
+def addRelais(relais: GPIORelaisModel):
+    GPIO.setup(relais.pin, GPIO.OUT)
+    gpioRelais.append(relais)
 
 
 def setupTrackingDefault():
@@ -58,7 +61,7 @@ def createSwitch(id: int, default: int, switchType: str) -> Optional[GPIOSwitchP
         if (result is not None):
             switch = databaseController.getSwitch(result)
             if (switch is not None):
-                gpioRelais.append(switch)
+                addRelais(switch)
                 switch.setDefaultValue(default)
                 switch.toDefault()
                 return switch
@@ -72,7 +75,7 @@ def createStop(id: int, measurmentid: Optional[int]) -> Optional[GPIOStoppingPoi
         if (result is not None):
             stop = databaseController.getStop(result)
             if (stop is not None):
-                gpioRelais.append(stop)
+                addRelais(stop)
                 return stop
     return None
 
