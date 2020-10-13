@@ -9,7 +9,6 @@ class GPIORelaisModel():
     def __init__(self, uid: int, pin: int):
         self.uid = uid
         self.pin = pin
-        self.toDefault()
 
     def setup(self):
         GPIO.setup(self.pin, GPIO.OUT)

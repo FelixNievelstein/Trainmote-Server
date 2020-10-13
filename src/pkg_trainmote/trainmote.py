@@ -99,17 +99,21 @@ def getAllSwitches():
 # Endpoint StopPoint
 
 
-@app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["GET", "PATCH"])
+@app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["GET"])
 def stop(stop_id: str):
     if stop_id is None:
         abort(400)
-    if request.method == "PATCH":
-        try:
-            return gpioservice.setStop(stop_id)
-        except ValueError as e:
-            return e.args, 400
-    else:
-        return gpioservice.getStop(stop_id)
+    return gpioservice.getStop(stop_id)
+
+
+@app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["PATCH"])
+def setStop(stop_id: str):
+    if stop_id is None:
+        abort(400)
+    try:
+        return gpioservice.setStop(stop_id)
+    except ValueError as e:
+        return json.dumps(str(e)), 400
 
 
 @app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["DELETE"])
