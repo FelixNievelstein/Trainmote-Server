@@ -121,11 +121,10 @@ def receivedMessage(message):
 
 
 def getSwitch(id: str):
-    for switch in DatabaseController().getAllSwichtModels():
-        if str(switch.uid) == id:
-            currentValue = getValueForPin(int(switch.pin))
-            return json.dumps({"switch": switch.to_dict(), "currentValue": currentValue})
-
+    switch = getSwitchFor(id)
+    if switch is not None:
+        currentValue = switch.getStatus()
+        return json.dumps({"switch": switch.to_dict(), "currentValue": currentValue})
     return json.dumps({"error": "Switch for id {} not found".format(id)})
 
 
@@ -136,11 +135,17 @@ def getAllSwitches():
 def setSwitch(id: str):
     relais = getRelaisWithID(int(id))
     if relais is not None:
-        switchPin(relais)
-        return getSwitch(id)
-    else:
-        raise ValueError("{ \"error\":\"Relais not found\"}")
+        newValue = switchPin(relais)
+        switch = getSwitchFor(id)
+        if switch is not None:
+            return json.dumps({"switch": switch.to_dict(), "currentValue": newValue})
+    raise ValueError("{ \"error\":\"Relais not found\"}")
 
+def getSwitchFor(uid: str) -> Optional[GPIOSwitchPoint]:
+    for switch in DatabaseController().getAllSwichtModels():
+        if str(switch.uid) == id:
+            return switch
+    return None
 
 def configSwitch(data):
     params = data["params"]
