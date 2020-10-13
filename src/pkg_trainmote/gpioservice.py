@@ -80,6 +80,8 @@ def getValueForPin(pin):
 
 
 def getRelaisWithID(id):
+    print("getRelaisWithID")
+    print("Count relais {}".format(gpioRelais.count))
     for relais in gpioRelais:
         print(relais.uid)
         if relais.uid == id:

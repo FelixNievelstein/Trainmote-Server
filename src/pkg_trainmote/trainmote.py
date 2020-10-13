@@ -57,7 +57,7 @@ def switch(switch_id: str):
     if switch_id is None:
         abort(400)
     return gpioservice.getSwitch(switch_id)
-    
+
 
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["PATCH"])
 def setSwitch(switch_id: str):
@@ -66,7 +66,7 @@ def setSwitch(switch_id: str):
     try:
         return gpioservice.setSwitch(switch_id)
     except ValueError as e:
-        return json.dumps(str(e))
+        return json.dumps(str(e)), 400
 
 
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["DELETE"])
