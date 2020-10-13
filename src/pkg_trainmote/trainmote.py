@@ -41,7 +41,7 @@ def loadPersistentData():
 def main():
     print("Start webserver")
     app.run(debug=True, host="0.0.0.0")
-    stateController.setState(stateControllerModule.STATE_NOT_CONNECTED)    
+    stateController.setState(stateControllerModule.STATE_NOT_CONNECTED)
 
 
 @app.route('/trainmote/api/v1')

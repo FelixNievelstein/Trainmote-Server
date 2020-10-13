@@ -80,7 +80,11 @@ def getValueForPin(pin):
 
 
 def getRelaisWithID(id):
-    return next((relais for relais in gpioRelais if relais.uid == id), None)
+    for relais in gpioRelais:
+        print(relais.uid)
+        if relais.uid == id:
+            return relais
+    return None
 
 
 # Relais Actions
@@ -136,14 +140,14 @@ def setSwitch(id: str) -> str:
     relais = getRelaisWithID(int(id))
     if relais is not None:
         newValue = switchPin(relais)
-        switch = getSwitchFor(id)
+        switch = getSwitchFor(int(id))
         if switch is not None:
             return json.dumps({"switch": switch.to_dict(), "currentValue": newValue})
-    raise ValueError("Relais not found for if {}".format(id))
+    raise ValueError("Relais not found for id {}".format(id))
 
-def getSwitchFor(uid: str) -> Optional[GPIOSwitchPoint]:
+def getSwitchFor(uid: int) -> Optional[GPIOSwitchPoint]:
     for switch in DatabaseController().getAllSwichtModels():
-        if str(switch.uid) == id:
+        if switch.uid == id:
             return switch
     return None
 

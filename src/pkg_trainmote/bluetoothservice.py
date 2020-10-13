@@ -26,7 +26,7 @@ gpioservice.loadInitialData()
 stateController = stateControllerModule.StateController()
 powerThread = PowerThread()
 client_sock = None
-config = ConfigController()        
+config = ConfigController()
 
 def setup_logging():
     # Default logging settings
