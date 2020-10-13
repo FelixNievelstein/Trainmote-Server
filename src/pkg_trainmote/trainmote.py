@@ -52,17 +52,21 @@ def hello_world():
 # Endpoint Switch
 
 
-@app.route('/trainmote/api/v1/switch/<switch_id>', methods=["GET", "PATCH"])
+@app.route('/trainmote/api/v1/switch/<switch_id>', methods=["GET"])
 def switch(switch_id: str):
     if switch_id is None:
         abort(400)
-    if request.method == "PATCH":
-        try:
-            return gpioservice.setSwitch(switch_id)
-        except ValueError as e:
-            return e.args, 400
-    else:
-        return gpioservice.getSwitch(switch_id)
+    return gpioservice.getSwitch(switch_id)
+    
+
+@app.route('/trainmote/api/v1/switch/<switch_id>', methods=["PATCH"])
+def setSwitch(switch_id: str):
+    if switch_id is None:
+        abort(400)
+    try:
+        return gpioservice.setSwitch(switch_id)
+    except ValueError as e:
+        return json.dumps(e.args.__dict__)
 
 
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["DELETE"])
