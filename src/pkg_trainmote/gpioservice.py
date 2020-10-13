@@ -80,8 +80,6 @@ def getValueForPin(pin):
 
 
 def getRelaisWithID(id):
-    print("getRelaisWithID")
-    print("Count relais {}".format(gpioRelais.count))
     for relais in gpioRelais:
         print(relais.uid)
         if relais.uid == id:
@@ -127,7 +125,7 @@ def receivedMessage(message):
 
 
 def getSwitch(id: str) -> str:
-    switch = getSwitchFor(id)
+    switch = getSwitchFor(int(id))
     if switch is not None:
         currentValue = switch.getStatus()
         return json.dumps({"switch": switch.to_dict(), "currentValue": currentValue})
@@ -149,7 +147,7 @@ def setSwitch(id: str) -> str:
 
 def getSwitchFor(uid: int) -> Optional[GPIOSwitchPoint]:
     for switch in DatabaseController().getAllSwichtModels():
-        if switch.uid == id:
+        if switch.uid == uid:
             return switch
     return None
 
@@ -228,6 +226,7 @@ def performCommand(command):
 def setAllToDefault():
     for relais in gpioRelais:
         print(relais)
+        relais.setup()
         relais.toDefault()
 
 
