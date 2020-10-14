@@ -17,7 +17,7 @@ validGpios = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
 
 def setup():
     GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
+    GPIO.setwarnings(True)
     loadInitialData()
     setupTrackingDefault()
 
@@ -29,11 +29,11 @@ def loadInitialData():
     stopModels = DatabaseController().getAllStopModels()
     for stop in stopModels:
         addRelais(stop)
-    #setAllToDefault()
 
 
 def addRelais(relais: GPIORelaisModel):
-    GPIO.setup(relais.pin, GPIO.OUT)
+    print(relais.pin)
+    GPIO.setup(relais.pin, GPIO.OUT, initial=relais.defaultValue)
     gpioRelais.append(relais)
 
 
@@ -233,7 +233,7 @@ def performCommand(command):
 
 def setAllToDefault():
     for relais in gpioRelais:
-        print(relais)        
+        print(relais)
         relais.toDefault()
 
 
