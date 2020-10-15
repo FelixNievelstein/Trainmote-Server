@@ -1,3 +1,4 @@
+from pkg_trainmote.stateControllerModule import StateController
 from . import gpioservice
 from flask import Flask
 from flask import request
@@ -9,18 +10,15 @@ from . import stateControllerModule
 from .libInstaller import LibInstaller
 from .databaseControllerModule import DatabaseController
 from .validator import Validator
-from subprocess import call
+from typing import Optional
 import sys
 import os
 import json
 
-
-gpioservice.setup()
-stateController = stateControllerModule.StateController()
-dataBaseController = DatabaseController()
-powerThread = PowerThread()
-client_sock = None
-config = ConfigController()
+stateController: Optional[StateController]
+dataBaseController: Optional[DatabaseController]
+powerThread: Optional[PowerThread]
+config: Optional[ConfigController]
 app = Flask(__name__)
 
 version: str = '0.3.32'
@@ -38,9 +36,18 @@ def loadPersistentData():
 
 
 def main():
+    gpioservice.setup()
+    global stateController
+    stateController = stateControllerModule.StateController()
+    stateController.setState(stateControllerModule.STATE_NOT_CONNECTED)
+    global dataBaseController
+    dataBaseController = DatabaseController()
+    global powerThread
+    powerThread = PowerThread()
+    global config
+    config = ConfigController()
     print("Start webserver")
     app.run(debug=True, host="0.0.0.0")
-    stateController.setState(stateControllerModule.STATE_NOT_CONNECTED)
 
 
 @app.route('/trainmote/api/v1')
@@ -145,6 +152,7 @@ def getAllStops():
 @app.teardown_appcontext
 def teardown_appcontext(response_or_exc):
     print("teardown_appcontext")
+    print(response_or_exc)
     shutDown()
 
 def restart():
@@ -153,12 +161,12 @@ def restart():
 
 
 def shutDown():
-    powerThread.kill.set()
-    powerThread.isTurningOff = True
-    powerThread.join()
-    stateController.setState(stateControllerModule.STATE_SHUTDOWN)
-    gpioservice.clean()
     print("Server going down")
+    gpioservice.clean()
+    # powerThread.kill.set()
+    # powerThread.isTurningOff = True
+    # powerThread.join()
+    stateController.setState(stateControllerModule.STATE_SHUTDOWN)
     stateController.stop()
 
 
