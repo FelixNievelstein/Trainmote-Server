@@ -50,6 +50,7 @@ def main():
     config = ConfigController()
     print("Start webserver")
     app.run(host="0.0.0.0")
+    signal.signal(signal.SIGINT, handler)
 
 
 @app.route('/trainmote/api/v1')
@@ -179,6 +180,3 @@ def handler(signal, frame):
     print('CTRL-C pressed!')
     shutDown()
     sys.exit(0)
-
-signal.signal(signal.SIGINT, handler)
-signal.pause()
