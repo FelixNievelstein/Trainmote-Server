@@ -171,6 +171,10 @@ def closeClientConnection():
     print("Closing client socket")
 
 
+if __name__ == '__main__':
+    main()
+
+
 def handler(signal, frame):
     print('CTRL-C pressed!')
     shutDown()
@@ -178,7 +182,3 @@ def handler(signal, frame):
 
 signal.signal(signal.SIGINT, handler)
 signal.pause()
-
-
-if __name__ == '__main__':
-    main()
