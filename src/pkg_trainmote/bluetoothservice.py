@@ -164,11 +164,16 @@ def shutDown(server_sock):
     print ("Server going down")
     stateController.stop()
 
+
 def closeClientConnection(client_sock):
     print ("Closing client socket")
     if client_sock is not None:
             client_sock.close()
             client_sock = None
+
+
+
+
 
 if __name__ == '__main__':
     main()

@@ -14,6 +14,8 @@ from typing import Optional
 import sys
 import os
 import json
+import sys
+import signal
 
 stateController: Optional[StateController]
 dataBaseController: Optional[DatabaseController]
@@ -47,8 +49,7 @@ def main():
     global config
     config = ConfigController()
     print("Start webserver")
-    try: app.run(debug=True, host="0.0.0.0")
-    finally: shutDown()    
+    app.run(host="0.0.0.0")
 
 
 @app.route('/trainmote/api/v1')
@@ -150,11 +151,6 @@ def addStop():
 def getAllStops():
     return Response(gpioservice.getAllStopPoints(), mimetype="application/json")
 
-@app.teardown_appcontext
-def teardown_appcontext(response_or_exc):
-    print("teardown_appcontext")
-    print(response_or_exc)
-    shutDown()
 
 def restart():
     shutDown()
@@ -164,15 +160,24 @@ def restart():
 def shutDown():
     print("Server going down")
     gpioservice.clean()
-    # powerThread.kill.set()
-    # powerThread.isTurningOff = True
-    # powerThread.join()
-    # stateController.setState(stateControllerModule.STATE_SHUTDOWN)
-    # stateController.stop()
+    powerThread.kill.set()
+    powerThread.isTurningOff = True
+    powerThread.join()
+    stateController.setState(stateControllerModule.STATE_SHUTDOWN)
+    stateController.stop()
 
 
 def closeClientConnection():
     print("Closing client socket")
+
+
+def handler(signal, frame):
+    print('CTRL-C pressed!')
+    shutDown()
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, handler)
+signal.pause()
 
 
 if __name__ == '__main__':
