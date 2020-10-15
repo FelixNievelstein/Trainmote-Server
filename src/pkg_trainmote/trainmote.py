@@ -47,7 +47,8 @@ def main():
     global config
     config = ConfigController()
     print("Start webserver")
-    app.run(debug=True, host="0.0.0.0")
+    try: app.run(debug=True, host="0.0.0.0")
+    finally: shutDown()    
 
 
 @app.route('/trainmote/api/v1')
@@ -166,8 +167,8 @@ def shutDown():
     # powerThread.kill.set()
     # powerThread.isTurningOff = True
     # powerThread.join()
-    stateController.setState(stateControllerModule.STATE_SHUTDOWN)
-    stateController.stop()
+    # stateController.setState(stateControllerModule.STATE_SHUTDOWN)
+    # stateController.stop()
 
 
 def closeClientConnection():
