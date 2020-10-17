@@ -46,7 +46,7 @@ def main():
     dataBaseController = DatabaseController()
     global powerThread
     powerThread = PowerThread()
-    powerThread.start()
+    # powerThread.start()
     global config
     config = ConfigController()
     print("Start webserver")
@@ -162,9 +162,10 @@ def restart():
 def shutDown():
     print("Server going down")
     gpioservice.clean()
-    powerThread.kill.set()
-    powerThread.isTurningOff = True
-    powerThread.join()
+    if powerThread.is_alive():
+        powerThread.kill.set()
+        powerThread.isTurningOff = True
+        powerThread.join()
     stateController.setState(stateControllerModule.STATE_SHUTDOWN)
     stateController.stop()
 

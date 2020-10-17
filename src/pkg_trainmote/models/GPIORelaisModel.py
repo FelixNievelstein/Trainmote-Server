@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-
+import enum
 
 class GPIORelaisModel():
 
@@ -40,6 +40,14 @@ class GPIOStoppingPoint(GPIORelaisModel):
         return mdict
 
 
+class GPIOSwitchType(enum.Enum):
+    TM_SWITCH_STRAIGHT_LEFT = 1
+    TM_SWITCH_STRAIGHT_RIGHT = 2
+    TM_SWITCH_BORN_LEFT = 3
+    TM_SWITCH_BORN_RIGHT = 4
+    TM_SWITCH_CROSS = 5
+
+
 class GPIOSwitchPoint(GPIORelaisModel):
 
     def __init__(self, uid: int, switchType: str, pin: int):
@@ -69,3 +77,13 @@ class GPIOSwitchPoint(GPIORelaisModel):
         mdict["switchType"] = self.switchType
         mdict["uid"] = self.uid
         return mdict
+
+
+class GPIOSwitchHelper():
+
+    @staticmethod
+    def isValidType(type: str) -> bool:
+        for mType in (GPIOSwitchType):
+            if mType.name == type:
+                return True
+        return False

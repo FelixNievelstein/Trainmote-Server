@@ -2,7 +2,7 @@ import json
 import RPi.GPIO as GPIO
 from .traintrackingservice import TrackingService
 from .models.CommandResultModel import CommandResultModel
-from .models.GPIORelaisModel import GPIORelaisModel
+from .models.GPIORelaisModel import GPIORelaisModel, GPIOSwitchHelper
 from .models.GPIORelaisModel import GPIOStoppingPoint
 from .models.GPIORelaisModel import GPIOSwitchPoint
 from .databaseControllerModule import DatabaseController
@@ -162,12 +162,17 @@ def getSwitchFor(uid: int) -> Optional[GPIOSwitchPoint]:
 
 def configSwitch(data):
     params = data["params"]
-    result = createSwitch(int(data["id"]), int(data["defaultValue"]), params["switchType"])
-    if result is not None:
-        currentValue = getValueForPin(int(result.pin))
-        return json.dumps({"switch": result.to_dict(), "currentValue": currentValue})
+    switchType = params["switchType"]
+    if GPIOSwitchHelper.isValidType(switchType):
+        result = createSwitch(int(data["id"]), int(data["defaultValue"]), params["switchType"])
+        if result is not None:
+            currentValue = getValueForPin(int(result.pin))
+            return json.dumps({"switch": result.to_dict(), "currentValue": currentValue})
+        else:
+            raise ValueError("{ \"error\":\"Could not create switch\"}")
     else:
-        raise ValueError("{ \"error\":\"Could not create switch\"}")
+        raise ValueError("{ \"error\":\"Inavlid switch type\"}")
+
 
 ##
 # Stop Point
