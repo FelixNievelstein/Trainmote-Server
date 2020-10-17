@@ -65,9 +65,8 @@ def createSwitch(id: int, default: int, switchType: str) -> Optional[GPIOSwitchP
         if (result is not None):
             switch = databaseController.getSwitch(result)
             if (switch is not None):
-                addRelais(switch)
                 switch.setDefaultValue(default)
-                switch.toDefault()
+                addRelais(switch)
                 return switch
     return None
 
