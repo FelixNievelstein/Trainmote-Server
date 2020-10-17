@@ -46,6 +46,7 @@ def main():
     dataBaseController = DatabaseController()
     global powerThread
     powerThread = PowerThread()
+    powerThread.start()
     global config
     config = ConfigController()
     print("Start webserver")
