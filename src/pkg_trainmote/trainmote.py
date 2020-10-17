@@ -14,7 +14,6 @@ from typing import Optional
 import sys
 import os
 import json
-import sys
 import signal
 
 stateController: Optional[StateController]
@@ -93,11 +92,10 @@ def addSwitch():
     if mJson is not None:
         if Validator().validateDict(mJson, "switch_scheme") is False:
             abort(400)
-        result = gpioservice.configSwitch(mJson)
-        if result is not None:
-            return result
-        else:
-            abort(406)
+        try:
+            return gpioservice.configSwitch(mJson)
+        except ValueError as e:
+            return json.dumps(str(e)), 400
     else:
         abort(400)
 

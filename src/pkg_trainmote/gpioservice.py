@@ -147,10 +147,10 @@ def getAllSwitches():
 
 def setSwitch(id: str) -> str:
     relais = getRelaisWithID(int(id))
-    if relais is not None:
-        newValue = switchPin(relais)
+    if relais is not None:        
         switch = getSwitchFor(int(id))
         if switch is not None:
+            newValue = switchPin(relais)
             return json.dumps({"switch": switch.to_dict(), "currentValue": newValue})
     raise ValueError("Relais not found for id {}".format(id))
 
