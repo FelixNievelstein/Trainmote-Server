@@ -17,8 +17,11 @@ validGpios = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
 
 def setup():
     print("GPIOService setup")
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(True)
+    try:
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(True)
+    except Exception as identifier:
+        print(identifier)
     loadInitialData()
     setupTrackingDefault()
 
@@ -34,8 +37,11 @@ def loadInitialData():
 
 def addRelais(relais: GPIORelaisModel):
     print(relais.pin)
-    GPIO.setup(relais.pin, GPIO.OUT, initial=relais.defaultValue)
-    gpioRelais.append(relais)
+    try:
+        GPIO.setup(relais.pin, GPIO.OUT, initial=relais.defaultValue)
+        gpioRelais.append(relais)
+    except Exception as e:
+        print(e)
 
 
 def setupTrackingDefault():
