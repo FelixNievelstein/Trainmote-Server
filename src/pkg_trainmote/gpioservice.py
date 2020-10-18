@@ -56,6 +56,7 @@ def resetData():
     del trackingServices[:]
 
 def clean():
+    print("Clean GPIOs")
     GPIO.cleanup()
 
 def createSwitch(id: int, default: int, switchType: str) -> Optional[GPIOSwitchPoint]:
