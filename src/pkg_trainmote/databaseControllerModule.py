@@ -23,6 +23,7 @@ class DatabaseController():
         print("upgrade_0_3_64")
         if self.openDatabase():
             self.execute('CREATE TABLE "TMVersion" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "version" TEXT NOT NULL)', None)
+        if self.openDatabase():
             self.execute('CREATE TABLE "TMConfigModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "switchPowerRelais" INTEGER, "powerRelais" INTEGER)', None)
 
     def openDatabase(self):
