@@ -30,7 +30,7 @@ def loadInitialData():
     config = DatabaseController().getConfig()
     switchModels = DatabaseController().getAllSwichtModels()
     for model in switchModels:
-        if model.needsPowerOn and config.switchPowerRelais is not None:
+        if model.needsPowerOn and config is not None and config.switchPowerRelais is not None:
             model.setPowerRelais(GPIORelaisModel(config.switchPowerRelais, config.switchPowerRelais))
         addRelais(model)
     stopModels = DatabaseController().getAllStopModels()
