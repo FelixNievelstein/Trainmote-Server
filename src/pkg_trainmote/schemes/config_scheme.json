@@ -1,0 +1,7 @@
+{
+    "type" : "object",
+    "properties" : {
+        "switchPowerRelais" : {"type" : "integer"},
+        "powerRelais" : {"type" : "integer"}
+    }
+}

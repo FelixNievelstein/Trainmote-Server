@@ -53,23 +53,28 @@ class GPIOSwitchPoint(GPIORelaisModel):
     def __init__(self, uid: int, switchType: str, pin: int):
         self.needsPowerOn = True
         self.switchType = switchType
-        self.powerRelais = GPIORelaisModel(13, 13)
+        self.powerRelais = None
         super(GPIOSwitchPoint, self).__init__(uid, pin)
 
+    def setPowerRelais(self, relais: GPIORelaisModel):
+        self.powerRelais = relais
+
     def setStatus(self, value: int):
-        if self.needsPowerOn:
+        if self.needsPowerOn and self.powerRelais is not None:
             self.powerRelais.setStatus(GPIO.LOW)
         GPIO.output(self.pin, value)
         time.sleep(0.2)
-        self.powerRelais.setStatus(GPIO.HIGH)
+        if self.needsPowerOn and self.powerRelais is not None:
+            self.powerRelais.setStatus(GPIO.HIGH)
         return self.getStatus()
 
     def toDefault(self):
-        if self.needsPowerOn:
+        if self.needsPowerOn and self.powerRelais is not None:
             self.powerRelais.setStatus(GPIO.LOW)
         GPIO.output(self.pin, self.defaultValue)
         time.sleep(0.2)
-        self.powerRelais.setStatus(GPIO.HIGH)
+        if self.needsPowerOn and self.powerRelais is not None:
+            self.powerRelais.setStatus(GPIO.HIGH)
 
     def to_dict(self):
         mdict = super(GPIOSwitchPoint, self).to_dict()

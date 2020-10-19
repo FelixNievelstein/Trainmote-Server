@@ -27,8 +27,11 @@ def setup():
 
 
 def loadInitialData():
+    config = DatabaseController().getConfig()
     switchModels = DatabaseController().getAllSwichtModels()
     for model in switchModels:
+        if model.needsPowerOn and config.switchPowerRelais is not None:
+            model.setPowerRelais(GPIORelaisModel(config.switchPowerRelais, config.switchPowerRelais))
         addRelais(model)
     stopModels = DatabaseController().getAllStopModels()
     for stop in stopModels:
@@ -153,7 +156,7 @@ def getAllSwitches():
 
 def setSwitch(id: str) -> str:
     relais = getRelaisWithID(int(id))
-    if relais is not None:        
+    if relais is not None:
         switch = getSwitchFor(int(id))
         if switch is not None:
             newValue = switchPin(relais)
@@ -216,7 +219,7 @@ def configStop(data):
         currentValue = getValueForPin(int(result.pin))
         return json.dumps({"stop": result.to_dict(), "currentValue": currentValue})
     else:
-        raise ValueError("{ \"error\":\"Could not create stop\"}")    
+        raise ValueError("{ \"error\":\"Could not create stop\"}")
 
 
 def performCommand(command):

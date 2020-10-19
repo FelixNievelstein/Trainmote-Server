@@ -1,3 +1,4 @@
+from .models.ConfigModel import ConfigModel
 from pkg_trainmote.stateControllerModule import StateController
 from . import gpioservice
 from flask import Flask
@@ -22,7 +23,7 @@ powerThread: Optional[PowerThread]
 config: Optional[ConfigController]
 app = Flask(__name__)
 
-version: str = '0.3.32'
+version: str = '0.3.64'
 
 
 def loadPersistentData():
@@ -43,6 +44,7 @@ def main():
     stateController.setState(stateControllerModule.STATE_NOT_CONNECTED)
     global dataBaseController
     dataBaseController = DatabaseController()
+    dataBaseController.checkUpdate(version)
     global powerThread
     powerThread = PowerThread()
     # powerThread.start()
@@ -58,8 +60,9 @@ def hello_world():
     stateController.setState(stateControllerModule.STATE_CONNECTED)
     return json.dumps({"trainmote": "trainmote.module.felix-nievelstein.de", "version": version})
 
+##
 # Endpoint Switch
-
+##
 
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["GET"])
 def switch(switch_id: str):
@@ -104,8 +107,9 @@ def addSwitch():
 def getAllSwitches():
     return Response(gpioservice.getAllSwitches(), mimetype="application/json")
 
+##
 # Endpoint StopPoint
-
+##
 
 @app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["GET"])
 def stop(stop_id: str):
@@ -151,6 +155,33 @@ def addStop():
 def getAllStops():
     return Response(gpioservice.getAllStopPoints(), mimetype="application/json")
 
+##
+# Endpoints Config
+##
+
+@app.route('/trainmote/api/v1/config', methods=["GET"])
+def getConfig():
+    config = dataBaseController.getConfig()
+    if config is not None:
+        return json.dumps(config.to_dict())
+    else:
+        abort(404)
+
+@app.route('/trainmote/api/v1/config', methods=["POST"])
+def setConfig():
+    mJson = request.get_json()
+    if mJson is not None:
+        if Validator().validateDict(mJson, "config_scheme") is False:
+            abort(400)
+
+        dataBaseController.insertConfig(int(mJson["switchPowerRelais"]), int(mJson["powerRelais"]))
+        config = dataBaseController.getConfig()
+        if config is not None:
+            return json.dumps(config.to_dict())
+        else:
+            abort(500)
+    else:
+        abort(400)
 
 def restart():
     shutDown()
