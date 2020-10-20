@@ -24,7 +24,7 @@ class DatabaseController():
         if self.openDatabase():
             self.execute('CREATE TABLE IF NOT EXISTS "TMVersion" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "version" TEXT NOT NULL)', None)
         if self.openDatabase():
-            self.execute('CREATE TABLE IF NOT EXISTS "TMConfigModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "switchPowerRelais" INTEGER, "powerRelais" INTEGER)', None)
+            self.execute('CREATE TABLE "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER)', None)
 
     def openDatabase(self):
         config = ConfigController()
@@ -59,7 +59,7 @@ class DatabaseController():
         sqlStatementStop = 'CREATE TABLE "TMStopModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "mess_id" INTEGER)'
         sqlStatementSwitch = 'CREATE TABLE "TMSwitchModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "switchType" TEXT, "defaultValue" INTEGER)'
         sqlStatementVersion = 'CREATE TABLE "TMVersion" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "version" TEXT NOT NULL)'
-        sqlStatementConfig = 'CREATE TABLE "TMConfigModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "switchPowerRelais" INTEGER, "powerRelais" INTEGER)'
+        sqlStatementConfig = 'CREATE TABLE "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER)'
         cursor.execute(sqlStatementStop)
         cursor.execute(sqlStatementSwitch)
         cursor.execute(sqlStatementVersion)
@@ -93,7 +93,7 @@ class DatabaseController():
                 nonlocal config
                 for dataSet in self.curs:
                     config = ConfigModel(dataSet[0], dataSet[1], dataSet[2])
-            self.execute("SELECT * FROM TMConfigModel;", getConfigDB)
+            self.execute("SELECT * FROM TMConfigModel", getConfigDB)
         return config
 
     def insertConfig(self, switchPowerRelais: int, powerRelais: int):
