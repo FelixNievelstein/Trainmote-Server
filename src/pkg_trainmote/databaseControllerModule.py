@@ -43,10 +43,14 @@ class DatabaseController():
         return False
 
     def checkTableExists(self, name: str) -> bool:
+        print("checkTableExists: '%s'" % (name))
         tableExists = False
         if self.openDatabase():
             def checkTable(lastrowid):
                 nonlocal tableExists
+                print(lastrowid)
+                print(self.curs)
+                print(self.curs.rowcount)
                 tableExists = self.curs.rowcount > 0
 
             self.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='%s';" % (name), checkTable)
