@@ -53,7 +53,7 @@ class DatabaseController():
                 print(self.curs.rowcount)
                 tableExists = self.curs.rowcount > 0
 
-            self.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='%s';" % (name), checkTable)
+            self.execute("SELECT * FROM sqlite_master WHERE type='table' AND name='%s';" % (name), checkTable)
         return tableExists
 
     def createInitalDatabse(self, dbPath):
