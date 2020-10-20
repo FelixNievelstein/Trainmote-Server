@@ -22,9 +22,9 @@ class DatabaseController():
     def upgradeTo_0_3_64(self):
         print("upgrade_0_3_64")
         if self.openDatabase():
-            self.execute('CREATE TABLE "TMVersion" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "version" TEXT NOT NULL)', None)
+            self.execute('CREATE TABLE IF NOT EXISTS "TMVersion" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "version" TEXT NOT NULL)', None)
         if self.openDatabase():
-            self.execute('CREATE TABLE "TMConfigModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "switchPowerRelais" INTEGER, "powerRelais" INTEGER)', None)
+            self.execute('CREATE TABLE IF NOT EXISTS "TMConfigModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "switchPowerRelais" INTEGER, "powerRelais" INTEGER)', None)
 
     def openDatabase(self):
         config = ConfigController()
@@ -43,17 +43,14 @@ class DatabaseController():
         return False
 
     def checkTableExists(self, name: str) -> bool:
-        print("checkTableExists: '%s'" % (name))
         tableExists = False
         if self.openDatabase():
             def checkTable(lastrowid):
                 nonlocal tableExists
-                print(lastrowid)
-                print(self.curs)
                 print(self.curs.rowcount)
                 tableExists = self.curs.rowcount > 0
 
-            self.execute("SELECT * FROM sqlite_master WHERE type='table' AND name='%s';" % (name), checkTable)
+            self.execute("SELECT * FROM sqlite_master WHERE name ='%s' and type='table';" % (name), checkTable)
         return tableExists
 
     def createInitalDatabse(self, dbPath):
