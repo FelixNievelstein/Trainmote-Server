@@ -42,7 +42,7 @@ def loadInitialData():
         addRelais(stop)
 
 def setupConfig(config: ConfigModel):
-    GPIO.setup(config.powerRelais, GPIO.OUT, initial=GPIO.HIGH)
+    GPIO.setup(config.switchPowerRelais, GPIO.OUT, initial=GPIO.HIGH)
 
 def addRelais(relais: GPIORelaisModel):
     print(relais.pin)
