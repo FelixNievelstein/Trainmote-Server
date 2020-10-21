@@ -22,9 +22,9 @@ class DatabaseController():
     def upgradeTo_0_3_64(self):
         print("upgrade_0_3_64")
         if self.openDatabase():
-            self.execute('CREATE TABLE IF NOT EXISTS "TMVersion" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "version" TEXT NOT NULL)', None)
+            self.execute('CREATE TABLE IF NOT EXISTS "TMVersion" ("uid" INTEGER PRIMARY KEY CHECK (uid = 0), "version" TEXT NOT NULL)', None)
         if self.openDatabase():
-            self.execute('CREATE TABLE "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER)', None)
+            self.execute('CREATE TABLE IF NOT EXISTS "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER)', None)
 
     def openDatabase(self):
         config = ConfigController()
@@ -58,7 +58,7 @@ class DatabaseController():
         cursor = connection.cursor()
         sqlStatementStop = 'CREATE TABLE "TMStopModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "mess_id" INTEGER)'
         sqlStatementSwitch = 'CREATE TABLE "TMSwitchModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "switchType" TEXT, "defaultValue" INTEGER)'
-        sqlStatementVersion = 'CREATE TABLE "TMVersion" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "version" TEXT NOT NULL)'
+        sqlStatementVersion = 'CREATE TABLE "TMVersion" ("uid" INTEGER PRIMARY KEY CHECK (uid = 0), "version" TEXT NOT NULL)'
         sqlStatementConfig = 'CREATE TABLE "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER)'
         cursor.execute(sqlStatementStop)
         cursor.execute(sqlStatementSwitch)
