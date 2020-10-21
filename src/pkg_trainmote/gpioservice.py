@@ -1,5 +1,6 @@
 import json
 import RPi.GPIO as GPIO
+from pkg_trainmote.models.ConfigModel import ConfigModel
 from .traintrackingservice import TrackingService
 from .models.CommandResultModel import CommandResultModel
 from .models.GPIORelaisModel import GPIORelaisModel, GPIOSwitchHelper
@@ -28,6 +29,9 @@ def setup():
 
 def loadInitialData():
     config = DatabaseController().getConfig()
+    if config is not None:
+        setupConfig(config)
+
     switchModels = DatabaseController().getAllSwichtModels()
     for model in switchModels:
         if model.needsPowerOn and config is not None and config.switchPowerRelais is not None:
@@ -37,6 +41,8 @@ def loadInitialData():
     for stop in stopModels:
         addRelais(stop)
 
+def setupConfig(config: ConfigModel):
+    GPIO.setup(config.powerRelais, GPIO.OUT, initial=GPIO.HIGH)
 
 def addRelais(relais: GPIORelaisModel):
     print(relais.pin)

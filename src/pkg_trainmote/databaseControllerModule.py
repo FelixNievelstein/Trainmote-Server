@@ -80,7 +80,7 @@ class DatabaseController():
 
     def setVersion(self, version: str):
         if self.openDatabase():
-            self.execute("INSERT INTO TMVersion(version) VALUES ('%s')" % (version), None)
+            self.execute("INSERT OR REPLACE INTO TMVersion(uid, version) VALUES ('0', '%s')" % (version), None)
 
 ##
 # Configuration
@@ -93,12 +93,12 @@ class DatabaseController():
                 nonlocal config
                 for dataSet in self.curs:
                     config = ConfigModel(dataSet[0], dataSet[1], dataSet[2])
-            self.execute("SELECT * FROM TMConfigModel", getConfigDB)
+            self.execute("SELECT * FROM TMConfigModel WHERE uid = '0';", getConfigDB)
         return config
 
     def insertConfig(self, switchPowerRelais: int, powerRelais: int):
         if self.openDatabase():
-            self.execute("INSERT INTO TMConfigModel(switchPowerRelais, powerRelais) VALUES ('%i','%i')" % (switchPowerRelais, powerRelais), None)
+            self.execute("INSERT OR REPLACE INTO TMConfigModel(uid, switchPowerRelais, powerRelais) VALUES ('0', '%i','%i')" % (switchPowerRelais, powerRelais), None)
 
 ##
 # Switch
