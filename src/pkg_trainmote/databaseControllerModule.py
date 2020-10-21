@@ -89,7 +89,7 @@ class DatabaseController():
     def getConfig(self) -> Optional[ConfigModel]:
         config = None
         if self.openDatabase():
-            def getConfigDB():
+            def getConfigDB(lastrowid):
                 nonlocal config
                 for dataSet in self.curs:
                     config = ConfigModel(dataSet[0], dataSet[1], dataSet[2])
