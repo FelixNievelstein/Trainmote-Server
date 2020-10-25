@@ -208,6 +208,5 @@ if __name__ == '__main__':
 
 
 def handler(signal, frame):
-    print('CTRL-C pressed!')
     shutDown()
     sys.exit(0)

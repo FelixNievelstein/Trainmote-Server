@@ -32,8 +32,7 @@ def loadInitialData():
     switchPowerRelais: Optional[GPIORelaisModel] = None
     if config is not None:
         if config.switchPowerRelais is not None:
-            print(config.switchPowerRelais)
-            ## Initialise GPIO for switch power relais
+            # Initialise GPIO for switch power relais
             switchPowerRelais = GPIORelaisModel(config.switchPowerRelais, config.switchPowerRelais)            
             GPIO.setup(switchPowerRelais.pin, GPIO.OUT, initial=GPIO.HIGH)
 
@@ -48,7 +47,6 @@ def loadInitialData():
 
 
 def addRelais(relais: GPIORelaisModel):
-    print(relais.pin)
     try:
         GPIO.setup(relais.pin, GPIO.OUT, initial=relais.defaultValue)
         gpioRelais.append(relais)
@@ -108,7 +106,6 @@ def getValueForPin(pin):
 
 def getRelaisWithID(id):
     for relais in gpioRelais:
-        print(relais.uid)
         if relais.uid == id:
             return relais
     return None
@@ -257,7 +254,6 @@ def performCommand(command):
 
 def setAllToDefault():
     for relais in gpioRelais:
-        print(relais)
         relais.toDefault()
 
 

@@ -47,7 +47,6 @@ class DatabaseController():
         if self.openDatabase():
             def checkTable(lastrowid):
                 nonlocal tableExists
-                print(self.curs.rowcount)
                 tableExists = self.curs.rowcount > 0
 
             self.execute("SELECT * FROM sqlite_master WHERE name ='%s' and type='table';" % (name), checkTable)
@@ -197,7 +196,6 @@ class DatabaseController():
         try:
             print(query)
             self.curs.execute(query)
-            print(self.curs.lastrowid)
             if _callback is not None:
                 _callback(self.curs.lastrowid)
             self.conn.commit()
