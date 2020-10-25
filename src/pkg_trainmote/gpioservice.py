@@ -29,20 +29,23 @@ def setup():
 
 def loadInitialData():
     config = DatabaseController().getConfig()
+    switchPowerRelais: Optional[GPIORelaisModel] = None
     if config is not None:
-        setupConfig(config)
+        if config.switchPowerRelais is not None:
+            print(config.switchPowerRelais)
+            ## Initialise GPIO for switch power relais
+            switchPowerRelais = GPIORelaisModel(config.switchPowerRelais, config.switchPowerRelais)            
+            GPIO.setup(switchPowerRelais.pin, GPIO.OUT, initial=GPIO.HIGH)
 
     switchModels = DatabaseController().getAllSwichtModels()
     for model in switchModels:
-        if model.needsPowerOn and config is not None and config.switchPowerRelais is not None:
-            model.setPowerRelais(GPIORelaisModel(config.switchPowerRelais, config.switchPowerRelais))
+        if model.needsPowerOn and switchPowerRelais is not None:
+            model.setPowerRelais(switchPowerRelais)
         addRelais(model)
     stopModels = DatabaseController().getAllStopModels()
     for stop in stopModels:
         addRelais(stop)
 
-def setupConfig(config: ConfigModel):
-    GPIO.setup(config.switchPowerRelais, GPIO.OUT, initial=GPIO.HIGH)
 
 def addRelais(relais: GPIORelaisModel):
     print(relais.pin)
