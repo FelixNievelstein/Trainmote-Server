@@ -1,5 +1,7 @@
 from typing import List
 from jsonschema import validate
+
+from pkg_trainmote.models.GPIORelaisModel import GPIORelaisModel
 from . import libInstaller
 import sysconfig
 import os.path
@@ -26,3 +28,9 @@ class Validator:
         except Exception as e:
             print(e)
             return None
+
+    def containsPin(self, pin: int, relais: List[GPIORelaisModel]) -> bool:
+        for rel in relais:
+            if rel.pin == pin:
+                return True
+        return False

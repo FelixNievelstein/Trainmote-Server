@@ -95,6 +95,10 @@ def addSwitch():
     if mJson is not None:
         if Validator().validateDict(mJson, "switch_scheme") is False:
             abort(400)
+        config = dataBaseController.getConfig()
+        if config is not None and config.containsPin(mJson["id"]):
+            return json.dumps({"error": "Pin is already in use as power relais"}), 409
+
         try:
             return gpioservice.configSwitch(mJson)
         except ValueError as e:
@@ -142,6 +146,11 @@ def addStop():
     if mJson is not None:
         if Validator().validateDict(mJson, "stop_scheme") is False:
             abort(400)
+
+        config = dataBaseController.getConfig()
+        if config is not None and config.containsPin(mJson["id"]):
+            return json.dumps({"error": "Pin is already in use as power relais"}), 409
+
         result = gpioservice.configStop(mJson)
         if result is not None:
             return result
@@ -171,8 +180,21 @@ def getConfig():
 def setConfig():
     mJson = request.get_json()
     if mJson is not None:
-        if Validator().validateDict(mJson, "config_scheme") is False:
+        validator = Validator()
+        if validator.validateDict(mJson, "config_scheme") is False:
             abort(400)
+
+        stops = dataBaseController.getAllStopModels()
+        switchs = dataBaseController.getAllSwichtModels()
+        switchPowerRelaisIsStop = validator.containsPin(int(mJson["switchPowerRelais"]), stops)
+        switchPowerRelaisIsSwitch = validator.containsPin(int(mJson["switchPowerRelais"]), switchs)
+        if switchPowerRelaisIsStop or switchPowerRelaisIsSwitch:
+            return json.dumps({"error": "Switch power relais pin is already in use"}), 409
+
+        powerRelaisIsStop = validator.containsPin(int(mJson["powerRelais"]), stops)
+        powerRelaisIsSwitch = validator.containsPin(int(mJson["powerRelais"]), switchs)
+        if powerRelaisIsStop or powerRelaisIsSwitch:
+            return json.dumps({"error": "Switch power relais pin is already in use"}), 409
 
         dataBaseController.insertConfig(int(mJson["switchPowerRelais"]), int(mJson["powerRelais"]))
         config = dataBaseController.getConfig()
