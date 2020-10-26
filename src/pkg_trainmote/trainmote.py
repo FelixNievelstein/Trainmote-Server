@@ -194,7 +194,7 @@ def setConfig():
         powerRelaisIsStop = validator.containsPin(int(mJson["powerRelais"]), stops)
         powerRelaisIsSwitch = validator.containsPin(int(mJson["powerRelais"]), switchs)
         if powerRelaisIsStop or powerRelaisIsSwitch:
-            return json.dumps({"error": "Switch power relais pin is already in use"}), 409
+            return json.dumps({"error": "Power relais pin is already in use"}), 409
 
         dataBaseController.insertConfig(int(mJson["switchPowerRelais"]), int(mJson["powerRelais"]))
         config = dataBaseController.getConfig()
