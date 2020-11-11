@@ -124,7 +124,7 @@ def getStopWithID(id):
 def switchPin(relais):
     if relais.getStatus():
         if isinstance(relais, GPIOStoppingPoint):
-            trackingService = next((tracker for tracker in trackingServices if tracker.stoppingPoint.id == relais.uid), None)
+            trackingService = next((tracker for tracker in trackingServices if tracker.stoppingPoint.uid == relais.uid), None)
             if trackingService:
                 trackingService.stopTracking()
                 trackingServices.remove(trackingService)
