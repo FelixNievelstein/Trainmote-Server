@@ -104,12 +104,19 @@ def getValueForPin(pin):
     return GPIO.input(pin)
 
 
-def getRelaisWithID(id):
+def getSwitchWithID(id):
     for relais in gpioRelais:
-        if relais.uid == id:
-            return relais
+        if isinstance(relais, GPIOSwitchPoint):
+            if relais.uid == id:
+                return relais
     return None
 
+def getStopWithID(id):
+    for relais in gpioRelais:
+        if isinstance(relais, GPIOStoppingPoint):
+            if relais.uid == id:
+                return relais
+    return None
 
 # Relais Actions
 
@@ -161,7 +168,7 @@ def getAllSwitches():
 
 
 def setSwitch(id: str) -> str:
-    relais = getRelaisWithID(int(id))
+    relais = getSwitchWithID(int(id))
     if relais is not None:
         switch = getSwitchFor(int(id))
         if switch is not None:
@@ -207,7 +214,7 @@ def getAllStopPoints():
     return json.dumps([ob.to_dict() for ob in DatabaseController().getAllStopModels()])
 
 def setStop(id: str):
-    relais = getRelaisWithID(int(id))
+    relais = getStopWithID(int(id))
     if relais is not None:
         stop = getStopFor(int(id))
         if stop is not None:
@@ -237,11 +244,7 @@ def configStop(data):
 def performCommand(command):
     commandType = command["commandType"]
     if commandType == "SET_SWITCH" or commandType == "SET_STOPPING_POINT":
-        relais = getRelaisWithID(int(command["id"]))
-        if relais is not None:
-            return json.dumps(CommandResultModel(commandType, command["id"], switchPin(relais)).__dict__)
-        else:
-            return "{ \"error\":\"Relais not found\"}"
+        return "{ \"error\":\"Relais not found\"}"
     elif commandType == "CONFIG_SWITCH":
         params = command["params"]
         resultId = createSwitch(int(command["id"]), int(command["defaultValue"]), params["switchType"])

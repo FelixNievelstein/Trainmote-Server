@@ -23,7 +23,7 @@ powerThread: Optional[PowerThread]
 config: Optional[ConfigController]
 app = Flask(__name__)
 
-version: str = '0.3.76'
+version: str = '0.3.77'
 
 
 def loadPersistentData():
