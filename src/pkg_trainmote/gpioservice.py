@@ -152,7 +152,7 @@ def getSwitch(id: str) -> str:
     switch = getSwitchFor(int(id))
     if switch is not None:
         currentValue = switch.getStatus()
-        return json.dumps({"switch": switch.to_dict(), "currentValue": currentValue})
+        return json.dumps({"model": switch.to_dict(), "currentValue": currentValue})
     return json.dumps({"error": "Switch for id {} not found".format(id)})
 
 
@@ -166,7 +166,7 @@ def setSwitch(id: str) -> str:
         switch = getSwitchFor(int(id))
         if switch is not None:
             newValue = switchPin(relais)
-            return json.dumps({"switch": switch.to_dict(), "currentValue": newValue})
+            return json.dumps({"model": switch.to_dict(), "currentValue": newValue})
     raise ValueError("Relais not found for id {}".format(id))
 
 def getSwitchFor(uid: int) -> Optional[GPIOSwitchPoint]:
@@ -182,7 +182,7 @@ def configSwitch(data):
         result = createSwitch(int(data["id"]), int(data["defaultValue"]), params["switchType"])
         if result is not None:
             currentValue = getValueForPin(int(result.pin))
-            return json.dumps({"switch": result.to_dict(), "currentValue": currentValue})
+            return json.dumps({"model": result.to_dict(), "currentValue": currentValue})
         else:
             raise ValueError("{ \"error\":\"Could not create switch\"}")
     else:
@@ -198,7 +198,7 @@ def getStop(id: str):
     for stop in DatabaseController().getAllStopModels():
         if str(stop.id) == id:
             currentValue = getValueForPin(int(stop.id))
-            return json.dumps({"stop": stop.to_dict(), "currentValue": currentValue})
+            return json.dumps({"model": stop.to_dict(), "currentValue": currentValue})
 
     return json.dumps({"error": "Stop for id {} not found".format(id)})
 
@@ -206,14 +206,20 @@ def getStop(id: str):
 def getAllStopPoints():
     return json.dumps([ob.to_dict() for ob in DatabaseController().getAllStopModels()])
 
-
 def setStop(id: str):
     relais = getRelaisWithID(int(id))
     if relais is not None:
-        return json.dumps(CommandResultModel("GET_STOPPING_POINT", id, switchPin(relais)).__dict__)
-    else:
-        raise ValueError("{ \"error\":\"Relais not found\"}")
+        stop = getStopFor(int(id))
+        if stop is not None:
+            newValue = switchPin(relais)
+            return json.dumps({"model": stop.to_dict(), "currentValue": newValue})
+    raise ValueError("Relais not found for id {}".format(id))
 
+def getStopFor(uid: int) -> Optional[GPIOStoppingPoint]:
+    for stop in DatabaseController().getAllStopModels():
+        if stop.uid == uid:
+            return stop
+    return None
 
 def configStop(data):
     if "measurmentId" in data:
@@ -223,7 +229,7 @@ def configStop(data):
 
     if result is not None:
         currentValue = getValueForPin(int(result.pin))
-        return json.dumps({"stop": result.to_dict(), "currentValue": currentValue})
+        return json.dumps({"model": result.to_dict(), "currentValue": currentValue})
     else:
         raise ValueError("{ \"error\":\"Could not create stop\"}")
 
