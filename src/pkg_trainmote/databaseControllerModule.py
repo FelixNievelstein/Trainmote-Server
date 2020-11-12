@@ -17,14 +17,15 @@ class DatabaseController():
         if parse_version(currentVersion) > parse_version("0.3.63") and not self.checkTableExists("TMVersion"):
             print("Needs Database Update")
             self.upgradeTo_0_3_64()
-            self.setVersion(currentVersion)
+            self.setVersion("0.3.64")
 
         dbVersion = self.getVersion()
-        if dbVersion is not None and parse_version(dbVersion) < parse_version("0.3.79"):
-            self.upgradeTo_0_3_79()
+        if dbVersion is not None and parse_version(dbVersion) < parse_version("0.3.80"):
+            self.upgradeTo_0_3_80()
+            self.setVersion("0.3.80")
 
-    def upgradeTo_0_3_79(self):
-        print("upgrade_0_3_79")
+    def upgradeTo_0_3_80(self):
+        print("upgrade_0_3_80")
         sqlStatements = [
             'ALTER TABLE "TMStopModel" ADD name TEXT DEFAULT ' '',
             'ALTER TABLE "TMStopModel" ADD description TEXT DEFAULT ' '',
