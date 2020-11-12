@@ -6,7 +6,9 @@
         "params" : {
             "type" : "object",
             "properties" : {
-                "switchType": {"type" : "string"}
+                "switchType": {"type" : "string"},
+                "name": {"type": "string"},
+                "description": {"type": "string"}
             },
             "required": ["switchType"]
         }

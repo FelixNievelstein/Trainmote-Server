@@ -3,7 +3,16 @@
     "properties" : {
         "id" : {"type" : "integer"},
         "defaultValue" : {"type" : "integer"},
-        "measurmentId" : {"type" : "integer"}
+        "measurmentId" : {"type" : "integer"},
+        "params" : {
+            "type" : "object",
+            "properties" : {
+                "name": {"type": "string"},
+                "description": {"type": "string"}
+            },
+            "required": []
+        }
+        
     },
     "required": ["id", "defaultValue"]
 }

@@ -33,7 +33,7 @@ def loadInitialData():
     if config is not None:
         if config.switchPowerRelais is not None:
             # Initialise GPIO for switch power relais
-            switchPowerRelais = GPIORelaisModel(config.switchPowerRelais, config.switchPowerRelais)            
+            switchPowerRelais = GPIORelaisModel(config.switchPowerRelais, config.switchPowerRelais)
             GPIO.setup(switchPowerRelais.pin, GPIO.OUT, initial=GPIO.HIGH)
 
     switchModels = DatabaseController().getAllSwichtModels()
@@ -75,10 +75,16 @@ def clean():
     print("Clean GPIOs")
     GPIO.cleanup()
 
-def createSwitch(id: int, default: int, switchType: str) -> Optional[GPIOSwitchPoint]:
+def createSwitch(
+    id: int,
+    default: int,
+    switchType: str,
+    name: Optional[str],
+    description: Optional[str]
+) -> Optional[GPIOSwitchPoint]:
     if (isValidRaspberryPiGPIO(id)):
         databaseController = DatabaseController()
-        result = databaseController.insertSwitchModel(id, switchType, default)
+        result = databaseController.insertSwitchModel(id, switchType, default, name, description)
         if (result is not None):
             switch = databaseController.getSwitch(result)
             if (switch is not None):
@@ -88,10 +94,15 @@ def createSwitch(id: int, default: int, switchType: str) -> Optional[GPIOSwitchP
     return None
 
 
-def createStop(id: int, measurmentid: Optional[int]) -> Optional[GPIOStoppingPoint]:
+def createStop(
+    id: int,
+    measurmentid: Optional[int],
+    name: Optional[str],
+    description: Optional[str]
+) -> Optional[GPIOStoppingPoint]:
     if (isValidRaspberryPiGPIO(id)):
         databaseController = DatabaseController()
-        result = databaseController.insertStopModel(id, measurmentid)
+        result = databaseController.insertStopModel(id, measurmentid, name, description)
         if (result is not None):
             stop = databaseController.getStop(result)
             if (stop is not None):
@@ -124,7 +135,10 @@ def getStopWithID(id):
 def switchPin(relais):
     if relais.getStatus():
         if isinstance(relais, GPIOStoppingPoint):
-            trackingService = next((tracker for tracker in trackingServices if tracker.stoppingPoint.uid == relais.uid), None)
+            trackingService = next(
+                (tracker for tracker in trackingServices if tracker.stoppingPoint.uid == relais.uid),
+                None
+            )
             if trackingService:
                 trackingService.stopTracking()
                 trackingServices.remove(trackingService)
@@ -136,19 +150,7 @@ def switchPin(relais):
 
 
 def receivedMessage(message):
-    if is_json(message):
-        jsonData = json.loads(message)
-        results = "["
-        if "CONFIG" in jsonData[0]["commandType"]:
-            resetData()
-        for commandData in jsonData:
-            results = results + performCommand(commandData) + ","
-
-        results = results[:-1] + "]"
-        return results
-    # Insert more here
-    else:
-        return "msg:Not valid json"
+    return "msg:Not valid json"
 
 ##
 # Switch
@@ -186,7 +188,13 @@ def configSwitch(data):
     params = data["params"]
     switchType = params["switchType"]
     if GPIOSwitchHelper.isValidType(switchType):
-        result = createSwitch(int(data["id"]), int(data["defaultValue"]), params["switchType"])
+        result = createSwitch(
+            int(data["id"]),
+            int(data["defaultValue"]),
+            params["switchType"],
+            params["name"],
+            params["description"]
+        )
         if result is not None:
             currentValue = getValueForPin(int(result.pin))
             return json.dumps({"model": result.to_dict(), "currentValue": currentValue})
@@ -229,10 +237,21 @@ def getStopFor(uid: int) -> Optional[GPIOStoppingPoint]:
     return None
 
 def configStop(data):
+    params = data["params"]
     if "measurmentId" in data:
-        result = createStop(int(data["id"]), int(data["measurmentId"]))
+        result = createStop(
+            int(data["id"]),
+            int(data["measurmentId"]),
+            params["name"],
+            params["description"]
+        )
     else:
-        result = createStop(int(data["id"]), None)
+        result = createStop(
+            int(data["id"]),
+            None,
+            data["name"],
+            data["description"]
+        )
 
     if result is not None:
         currentValue = getValueForPin(int(result.pin))
@@ -240,42 +259,11 @@ def configStop(data):
     else:
         raise ValueError("{ \"error\":\"Could not create stop\"}")
 
-
-def performCommand(command):
-    commandType = command["commandType"]
-    if commandType == "SET_SWITCH" or commandType == "SET_STOPPING_POINT":
-        return "{ \"error\":\"Relais not found\"}"
-    elif commandType == "CONFIG_SWITCH":
-        params = command["params"]
-        resultId = createSwitch(int(command["id"]), int(command["defaultValue"]), params["switchType"])
-        return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
-    elif commandType == "CONFIG_STOPPING_POINT":
-        if 'measurmentId' in command:
-            resultId = createStop(int(command["id"]), int(command["measurmentId"]))
-        else:
-            resultId = createStop(int(command["id"]), None)
-        return json.dumps(CommandResultModel(commandType, resultId, "success").__dict__)
-    elif commandType == "PERFORM_GIT_UPDATE":
-        return json.dumps(CommandResultModel(commandType, 0, 'success').__dict__)
-    else:
-        return "{ \"error\":\"Command not supported\"}"
-
-
 def setAllToDefault():
     for relais in gpioRelais:
         relais.toDefault()
 
-
 # Validation
-
-
-def is_json(myjson):
-    try:
-        json_object = json.loads(myjson)
-    except ValueError:
-        return False
-    return True
-
 
 def isValidRaspberryPiGPIO(pinNumber: int):
     return pinNumber in validGpios

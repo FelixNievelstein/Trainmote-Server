@@ -1,14 +1,22 @@
 import RPi.GPIO as GPIO
 import time
 import enum
+from typing import Optional
 
 class GPIORelaisModel():
 
     defaultValue = GPIO.HIGH
 
-    def __init__(self, uid: int, pin: int):
+    def __init__(
+        self, uid: int,
+        pin: int,
+        name: Optional[str] = None,
+        description: Optional[str] = None
+    ):
         self.uid = uid
         self.pin = pin
+        self.name = name
+        self.description = description
 
     def setDefaultValue(self, value: int):
         self.defaultValue = value
@@ -29,9 +37,13 @@ class GPIORelaisModel():
 
 class GPIOStoppingPoint(GPIORelaisModel):
 
-    def __init__(self, uid: int, pin: int, measurmentpin: int):
+    def __init__(
+        self, uid: int,
+        pin: int, measurmentpin: int,
+        name: Optional[str], description: Optional[str]
+    ):
         self.measurmentpin = measurmentpin
-        super(GPIOStoppingPoint, self).__init__(uid, pin)
+        super(GPIOStoppingPoint, self).__init__(uid, pin, name, description)
 
     def to_dict(self):
         mdict = super(GPIOStoppingPoint, self).to_dict()
@@ -50,11 +62,15 @@ class GPIOSwitchType(enum.Enum):
 
 class GPIOSwitchPoint(GPIORelaisModel):
 
-    def __init__(self, uid: int, switchType: str, pin: int):
+    def __init__(
+        self, uid: int,
+        switchType: str, pin: int,
+        name: Optional[str], description: Optional[str]
+    ):
         self.needsPowerOn = True
         self.switchType = switchType
         self.powerRelais = None
-        super(GPIOSwitchPoint, self).__init__(uid, pin)
+        super(GPIOSwitchPoint, self).__init__(uid, pin, name, description)
 
     def setPowerRelais(self, relais: GPIORelaisModel):
         self.powerRelais = relais

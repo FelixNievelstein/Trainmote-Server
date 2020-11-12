@@ -19,12 +19,40 @@ class DatabaseController():
             self.upgradeTo_0_3_64()
             self.setVersion(currentVersion)
 
+        dbVersion = self.getVersion()
+        if dbVersion is not None and parse_version(dbVersion) < parse_version("0.3.79"):
+            self.upgradeTo_0_3_79()
+
+    def upgradeTo_0_3_79(self):
+        print("upgrade_0_3_79")
+        sqlStatements = [
+            'ALTER TABLE "TMStopModel" ADD name TEXT DEFAULT ' '',
+            'ALTER TABLE "TMStopModel" ADD description TEXT DEFAULT ' '',
+            "ALTER TABLE 'TMStopModel' ADD updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL",
+            "ALTER TABLE 'TMStopModel' ADD created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL",
+            'ALTER TABLE "TMSwitchModel" ADD name TEXT DEFAULT ' '',
+            'ALTER TABLE "TMSwitchModel" ADD description TEXT DEFAULT ' ''
+            "ALTER TABLE 'TMSwitchModel' ADD updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL",
+            "ALTER TABLE 'TMSwitchModel' ADD created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL",
+            "ALTER TABLE 'TMConfigModel' ADD updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL",
+            "ALTER TABLE 'TMConfigModel' ADD created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL"
+        ]
+        for statement in sqlStatements:
+            if self.openDatabase():
+                self.execute(statement, None)
+
     def upgradeTo_0_3_64(self):
         print("upgrade_0_3_64")
         if self.openDatabase():
-            self.execute('CREATE TABLE IF NOT EXISTS "TMVersion" ("uid" INTEGER PRIMARY KEY CHECK (uid = 0), "version" TEXT NOT NULL)', None)
+            self.execute(
+                'CREATE TABLE IF NOT EXISTS "TMVersion" ("uid" INTEGER PRIMARY KEY CHECK (uid = 0), "version" TEXT NOT NULL)',
+                None
+            )
         if self.openDatabase():
-            self.execute('CREATE TABLE IF NOT EXISTS "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER)', None)
+            self.execute(
+                'CREATE TABLE IF NOT EXISTS "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER)',
+                None
+            )
 
     def openDatabase(self):
         config = ConfigController()
@@ -55,10 +83,10 @@ class DatabaseController():
     def createInitalDatabse(self, dbPath):
         connection = sqlite3.connect(dbPath)
         cursor = connection.cursor()
-        sqlStatementStop = 'CREATE TABLE "TMStopModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "mess_id" INTEGER)'
-        sqlStatementSwitch = 'CREATE TABLE "TMSwitchModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "switchType" TEXT, "defaultValue" INTEGER)'
+        sqlStatementStop = 'CREATE TABLE "TMStopModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "mess_id" INTEGER, "name" TEXT DEFAULT ' ', "description" TEXT DEFAULT ' ', "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
+        sqlStatementSwitch = 'CREATE TABLE "TMSwitchModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "switchType" TEXT, "defaultValue" INTEGER, "name" TEXT DEFAULT ' ', "description" TEXT DEFAULT ' ', "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
         sqlStatementVersion = 'CREATE TABLE "TMVersion" ("uid" INTEGER PRIMARY KEY CHECK (uid = 0), "version" TEXT NOT NULL)'
-        sqlStatementConfig = 'CREATE TABLE "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER)'
+        sqlStatementConfig = 'CREATE TABLE "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
         cursor.execute(sqlStatementStop)
         cursor.execute(sqlStatementSwitch)
         cursor.execute(sqlStatementVersion)
@@ -81,6 +109,16 @@ class DatabaseController():
         if self.openDatabase():
             self.execute("INSERT OR REPLACE INTO TMVersion(uid, version) VALUES ('0', '%s')" % (version), None)
 
+    def getVersion(self) -> Optional[str]:
+        version = None
+        if self.openDatabase():
+            def getVersionDB(lastrowid):
+                nonlocal version
+                for dataSet in self.curs:
+                    version = dataSet[1]
+            self.execute("SELECT * FROM TMVersion WHERE uid = '0';", getVersionDB)
+        return version
+
 ##
 # Configuration
 ##
@@ -97,20 +135,33 @@ class DatabaseController():
 
     def insertConfig(self, switchPowerRelais: int, powerRelais: int):
         if self.openDatabase():
-            self.execute("INSERT OR REPLACE INTO TMConfigModel(uid, switchPowerRelais, powerRelais) VALUES ('0', '%i','%i')" % (switchPowerRelais, powerRelais), None)
+            self.execute(
+                "INSERT OR REPLACE INTO TMConfigModel(uid, switchPowerRelais, powerRelais) VALUES ('0', '%i','%i')"
+                % (switchPowerRelais, powerRelais), None
+            )
 
 ##
 # Switch
 ##
 
-    def insertSwitchModel(self, pin: int, switchType: str, defaultValue: int) -> Optional[int]:
+    def insertSwitchModel(
+        self,
+        pin: int,
+        switchType: str,
+        defaultValue: int,
+        name: Optional[str],
+        description: Optional[str]
+    ) -> Optional[int]:
         resultUid = None
         if self.openDatabase():
             # Insert a row of data
             def createdSwitch(uid):
                 nonlocal resultUid
                 resultUid = uid
-            self.execute("INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue) VALUES ('%i','%s', '%i')" % (pin, switchType, defaultValue), createdSwitch)
+            self.execute(
+                "INSERT INTO TMSwitchModel(relais_id, switchType, defaultValue, name, description) VALUES ('%i', '%s', '%i', '%s', '%s')"
+                % (pin, switchType, defaultValue, name, description), createdSwitch
+            )
 
         return resultUid
 
@@ -125,7 +176,8 @@ class DatabaseController():
             def readSwitch(lastrowid):
                 nonlocal switch
                 for dataSet in self.curs:
-                    switch = GPIOSwitchPoint(dataSet[0], dataSet[2], dataSet[1])
+                    switch = GPIOSwitchPoint(dataSet[0], dataSet[2], dataSet[1], dataSet[4], dataSet[5])
+                    switch.setDefaultValue(dataSet[3])
 
             self.execute("SELECT * FROM TMSwitchModel WHERE uid = '%i';" % (uid), readSwitch)
 
@@ -137,7 +189,7 @@ class DatabaseController():
             def readSwitchs(lastrowid):
                 nonlocal allSwitchModels
                 for dataSet in self.curs:
-                    switchModel = GPIOSwitchPoint(dataSet[0], dataSet[2], dataSet[1])
+                    switchModel = GPIOSwitchPoint(dataSet[0], dataSet[2], dataSet[1], dataSet[4], dataSet[5])
                     switchModel.setDefaultValue(dataSet[3])
                     allSwitchModels.append(switchModel)
 
@@ -149,16 +201,16 @@ class DatabaseController():
 # Stops
 ##
     def getStop(self, uid) -> Optional[GPIOStoppingPoint]:
-        switch = None
+        stop = None
         if self.openDatabase():
-            def readSwitch(lastrowid):
-                nonlocal switch
+            def readStop(lastrowid):
+                nonlocal stop
                 for dataSet in self.curs:
-                    switch = GPIOStoppingPoint(dataSet[0], dataSet[1], dataSet[2])
+                    stop = GPIOStoppingPoint(dataSet[0], dataSet[1], dataSet[2], dataSet[3], dataSet[4])
 
-            self.execute("SELECT * FROM TMStopModel WHERE uid = '%i';" % (uid), readSwitch)
+            self.execute("SELECT * FROM TMStopModel WHERE uid = '%i';" % (uid), readStop)
 
-        return switch
+        return stop
 
     def getAllStopModels(self):
         allStopModels = []
@@ -166,14 +218,20 @@ class DatabaseController():
             def readStops(lastrowid):
                 nonlocal allStopModels
                 for dataSet in self.curs:
-                    stop = GPIOStoppingPoint(dataSet[0], dataSet[1], dataSet[2])
+                    stop = GPIOStoppingPoint(dataSet[0], dataSet[1], dataSet[2], dataSet[3], dataSet[4])
                     allStopModels.append(stop)
 
             self.execute("SELECT * FROM TMStopModel", readStops)
 
         return allStopModels
 
-    def insertStopModel(self, relaisId: int, messId: Optional[int]) -> Optional[int]:
+    def insertStopModel(
+        self,
+        relaisId: int,
+        messId: Optional[int],
+        name: Optional[str],
+        description: Optional[str]
+    ) -> Optional[int]:
         resultUid = None
         if self.openDatabase():
             # Insert a row of data
@@ -182,9 +240,15 @@ class DatabaseController():
                 resultUid = uid
 
             if messId is not None:
-                self.execute("INSERT INTO TMStopModel(relais_id, mess_id) VALUES ('%i','%i')" % (relaisId, messId), createdStop)
+                self.execute(
+                    "INSERT INTO TMStopModel(relais_id, mess_id, name, description) VALUES ('%i','%i', '%s', '%s')"
+                    % (relaisId, messId, name, description), createdStop
+                )
             else:
-                self.execute("INSERT INTO TMStopModel(relais_id) VALUES ('%i')" % (relaisId), createdStop)
+                self.execute(
+                    "INSERT INTO TMStopModel(relais_id, name, description) VALUES ('%i', '%s', '%s')"
+                    % (relaisId, name, description), createdStop
+                )
         return resultUid
 
     def deleteStopModel(self, id: int):
