@@ -14,46 +14,9 @@ class DatabaseController():
     conn = None
 
     def checkUpdate(self, currentVersion: str):
-        if parse_version(currentVersion) > parse_version("0.3.63") and not self.checkTableExists("TMVersion"):
-            print("Needs Database Update")
-            self.upgradeTo_0_3_64()
-            self.setVersion("0.3.64")
-
         dbVersion = self.getVersion()
-        if dbVersion is not None and parse_version(dbVersion) < parse_version("0.3.80"):
-            self.upgradeTo_0_3_80()
-            self.setVersion("0.3.80")
-
-    def upgradeTo_0_3_80(self):
-        print("upgrade_0_3_80")
-        sqlStatements = [
-            'ALTER TABLE "TMStopModel" ADD name TEXT DEFAULT ' '',
-            'ALTER TABLE "TMStopModel" ADD description TEXT DEFAULT ' '',
-            "ALTER TABLE 'TMStopModel' ADD updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL",
-            "ALTER TABLE 'TMStopModel' ADD created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL",
-            'ALTER TABLE "TMSwitchModel" ADD name TEXT DEFAULT ' '',
-            'ALTER TABLE "TMSwitchModel" ADD description TEXT DEFAULT ' ''
-            "ALTER TABLE 'TMSwitchModel' ADD updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL",
-            "ALTER TABLE 'TMSwitchModel' ADD created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL",
-            "ALTER TABLE 'TMConfigModel' ADD updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL",
-            "ALTER TABLE 'TMConfigModel' ADD created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL"
-        ]
-        for statement in sqlStatements:
-            if self.openDatabase():
-                self.execute(statement, None)
-
-    def upgradeTo_0_3_64(self):
-        print("upgrade_0_3_64")
-        if self.openDatabase():
-            self.execute(
-                'CREATE TABLE IF NOT EXISTS "TMVersion" ("uid" INTEGER PRIMARY KEY CHECK (uid = 0), "version" TEXT NOT NULL)',
-                None
-            )
-        if self.openDatabase():
-            self.execute(
-                'CREATE TABLE IF NOT EXISTS "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER)',
-                None
-            )
+        if dbVersion is not None and parse_version(dbVersion) < parse_version("0.3.81"):
+            self.setVersion("0.3.81")
 
     def openDatabase(self):
         config = ConfigController()
