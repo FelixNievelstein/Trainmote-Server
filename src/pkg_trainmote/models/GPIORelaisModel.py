@@ -32,7 +32,14 @@ class GPIORelaisModel():
         return self.getStatus()
 
     def to_dict(self):
-        return {"uid": self.uid, "pin": self.pin, "defaultValue": self.defaultValue, "status": self.getStatus()}
+        return {
+            "uid": self.uid,
+            "pin": self.pin,
+            "defaultValue": self.defaultValue,
+            "status": self.getStatus(),
+            "name": self.name,
+            "description": self.description
+        }
 
 
 class GPIOStoppingPoint(GPIORelaisModel):
