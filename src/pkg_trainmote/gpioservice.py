@@ -188,12 +188,18 @@ def configSwitch(data):
     params = data["params"]
     switchType = params["switchType"]
     if GPIOSwitchHelper.isValidType(switchType):
+        name = None
+        if "name" in params:
+            name = params["name"]
+        description = None
+        if "description" in params:
+            description = params["description"]
         result = createSwitch(
             int(data["id"]),
             int(data["defaultValue"]),
             params["switchType"],
-            params["name"],
-            params["description"]
+            name,
+            description
         )
         if result is not None:
             currentValue = getValueForPin(int(result.pin))
@@ -237,20 +243,27 @@ def getStopFor(uid: int) -> Optional[GPIOStoppingPoint]:
     return None
 
 def configStop(data):
-    params = data["params"]
+    name = None
+    description = None
+    if "params" in data:
+        params = data["params"]
+        if "name" in params:
+            name = params["name"]
+        if "description" in params:
+            description = params["description"]
     if "measurmentId" in data:
         result = createStop(
             int(data["id"]),
             int(data["measurmentId"]),
-            params["name"],
-            params["description"]
+            name,
+            description
         )
     else:
         result = createStop(
             int(data["id"]),
             None,
-            data["name"],
-            data["description"]
+            name,
+            description
         )
 
     if result is not None:
