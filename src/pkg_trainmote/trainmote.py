@@ -150,12 +150,11 @@ def addStop():
         config = dataBaseController.getConfig()
         if config is not None and config.containsPin(mJson["id"]):
             return json.dumps({"error": "Pin is already in use as power relais"}), 409
-
-        result = gpioservice.configStop(mJson)
-        if result is not None:
-            return result
-        else:
-            abort(406)
+            
+        try:
+            return gpioservice.configStop(mJson)
+        except ValueError as e:
+            return json.dumps(str(e)), 400
     else:
         abort(400)
 

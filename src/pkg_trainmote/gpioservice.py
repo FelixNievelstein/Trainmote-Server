@@ -91,7 +91,8 @@ def createSwitch(
                 switch.setDefaultValue(default)
                 addRelais(switch)
                 return switch
-    return None
+    else:
+        raise ValueError("{ \"error\":\"Invalid gpio\"}")
 
 
 def createStop(
@@ -108,7 +109,8 @@ def createStop(
             if (stop is not None):
                 addRelais(stop)
                 return stop
-    return None
+    else:
+        raise ValueError("{ \"error\":\"Invalid gpio\"}")
 
 
 def getValueForPin(pin):
