@@ -100,7 +100,7 @@ def addSwitch():
             return json.dumps({"error": "Pin is already in use as power relais"}), 409
 
         try:
-            return gpioservice.configSwitch(mJson)
+            return gpioservice.createSwitch(mJson)
         except ValueError as e:
             return json.dumps(str(e)), 400
     else:
@@ -150,9 +150,9 @@ def addStop():
         config = dataBaseController.getConfig()
         if config is not None and config.containsPin(mJson["id"]):
             return json.dumps({"error": "Pin is already in use as power relais"}), 409
-            
+
         try:
-            return gpioservice.configStop(mJson)
+            return gpioservice.createStop(mJson)
         except ValueError as e:
             return json.dumps(str(e)), 400
     else:

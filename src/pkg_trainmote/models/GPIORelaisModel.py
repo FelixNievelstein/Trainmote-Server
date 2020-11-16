@@ -42,11 +42,30 @@ class GPIORelaisModel():
         }
 
 
+class GPIORelaisAdapter():
+    @staticmethod
+    def getGPIORelaisFor(data) -> Optional[GPIORelaisModel]:
+        if "params" in data:
+            name = None
+            description = None
+            params = data["params"]
+            if "name" in params:
+                name = params["name"]
+            if "description" in params:
+                description = params["description"]
+
+            model = GPIORelaisModel(0, int(data["id"]), name, description)
+            model.setDefaultValue(int(data["defaultValue"]))
+            return model
+        else:
+            return None
+
+
 class GPIOStoppingPoint(GPIORelaisModel):
 
     def __init__(
         self, uid: int,
-        pin: int, measurmentpin: int,
+        pin: int, measurmentpin: Optional[int],
         name: Optional[str], description: Optional[str]
     ):
         self.measurmentpin = measurmentpin
@@ -57,6 +76,12 @@ class GPIOStoppingPoint(GPIORelaisModel):
         mdict["measurmentpin"] = self.measurmentpin
         mdict["uid"] = self.uid
         return mdict
+
+    @classmethod
+    def fromParent(cls, parent: GPIORelaisModel, measurmentpin: Optional[int]):
+        classInstance = cls(parent.uid, parent.pin, measurmentpin, parent.name, parent.description)
+        classInstance.setDefaultValue(parent.defaultValue)
+        return classInstance
 
 
 class GPIOSwitchType(enum.Enum):
@@ -105,6 +130,12 @@ class GPIOSwitchPoint(GPIORelaisModel):
         mdict["switchType"] = self.switchType
         mdict["uid"] = self.uid
         return mdict
+
+    @classmethod
+    def fromParent(cls, parent: GPIORelaisModel, switchType: str):
+        classInstance = cls(parent.uid, switchType, parent.pin, parent.name, parent.description)
+        classInstance.setDefaultValue(parent.defaultValue)
+        return classInstance
 
 
 class GPIOSwitchHelper():
