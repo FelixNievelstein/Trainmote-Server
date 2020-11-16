@@ -44,21 +44,19 @@ class GPIORelaisModel():
 
 class GPIORelaisAdapter():
     @staticmethod
-    def getGPIORelaisFor(data) -> Optional[GPIORelaisModel]:
-        if "params" in data:
-            name = None
-            description = None
+    def getGPIORelaisFor(data) -> GPIORelaisModel:
+        name = None
+        description = None
+        if "params" in data:            
             params = data["params"]
             if "name" in params:
                 name = params["name"]
             if "description" in params:
                 description = params["description"]
 
-            model = GPIORelaisModel(0, int(data["id"]), name, description)
-            model.setDefaultValue(int(data["defaultValue"]))
-            return model
-        else:
-            return None
+        model = GPIORelaisModel(0, int(data["id"]), name, description)
+        model.setDefaultValue(int(data["defaultValue"]))
+        return model
 
 
 class GPIOStoppingPoint(GPIORelaisModel):

@@ -138,7 +138,7 @@ def setSwitch(id: str) -> str:
         if switch is not None:
             newValue = switchPin(relais)
             return json.dumps({"model": switch.to_dict(), "currentValue": newValue})
-    raise ValueError("Relais not found for id {}".format(id))
+    raise ValueError({"error": "Relais not found for id {}".format(id)})
 
 def getSwitchFor(uid: int) -> Optional[GPIOSwitchPoint]:
     for switch in DatabaseController().getAllSwichtModels():
@@ -210,7 +210,7 @@ def setStop(id: str):
         if stop is not None:
             newValue = switchPin(relais)
             return json.dumps({"model": stop.to_dict(), "currentValue": newValue})
-    raise ValueError("Relais not found for id {}".format(id))
+    raise ValueError({"error": "Relais not found for id {}".format(id)})
 
 def getStopFor(uid: int) -> Optional[GPIOStoppingPoint]:
     for stop in DatabaseController().getAllStopModels():
@@ -223,7 +223,7 @@ def createStop(data):
     if gpioRelais is not None:
         measurmentId = None
         if "measurmentId" in data:
-            int(data["measurmentId"])
+            measurmentId = int(data["measurmentId"])
         stop = GPIOStoppingPoint.fromParent(gpioRelais, measurmentId)
         result = storeStop(stop)
         if result is not None:

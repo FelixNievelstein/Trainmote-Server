@@ -78,7 +78,7 @@ def setSwitch(switch_id: str):
     try:
         return gpioservice.setSwitch(switch_id)
     except ValueError as e:
-        return json.dumps(str(e)), 400
+        return json.dumps(e), 400
 
 
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["DELETE"])
@@ -102,7 +102,7 @@ def addSwitch():
         try:
             return gpioservice.createSwitch(mJson)
         except ValueError as e:
-            return json.dumps(str(e)), 400
+            return json.dumps(e), 400
     else:
         abort(400)
 
@@ -129,7 +129,7 @@ def setStop(stop_id: str):
     try:
         return gpioservice.setStop(stop_id)
     except ValueError as e:
-        return json.dumps(str(e)), 400
+        return json.dumps(e), 400
 
 
 @app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["DELETE"])
@@ -154,7 +154,7 @@ def addStop():
         try:
             return gpioservice.createStop(mJson)
         except ValueError as e:
-            return json.dumps(str(e)), 400
+            return json.dumps(e), 400
     else:
         abort(400)
 
