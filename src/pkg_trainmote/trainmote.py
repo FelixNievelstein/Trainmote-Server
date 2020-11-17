@@ -23,7 +23,7 @@ powerThread: Optional[PowerThread]
 config: Optional[ConfigController]
 app = Flask(__name__)
 
-version: str = '0.3.81'
+version: str = '0.3.89'
 
 
 def loadPersistentData():
@@ -54,6 +54,8 @@ def main():
     app.run(host="0.0.0.0")
     signal.signal(signal.SIGINT, handler)
 
+def defaultHeader() -> dict:
+    return {'Content-Type': 'application/json'}
 
 @app.route('/trainmote/api/v1')
 def hello_world():
@@ -68,7 +70,7 @@ def hello_world():
 def switch(switch_id: str):
     if switch_id is None:
         abort(400)
-    return gpioservice.getSwitch(switch_id)
+    return gpioservice.getSwitch(switch_id), 200, defaultHeader()
 
 
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["PATCH"])
@@ -76,16 +78,16 @@ def setSwitch(switch_id: str):
     if switch_id is None:
         abort(400)
     try:
-        return gpioservice.setSwitch(switch_id)
+        return gpioservice.setSwitch(switch_id), 200, defaultHeader()
     except ValueError as e:
-        return json.dumps({"error": str(e)}), 400
+        return json.dumps({"error": str(e)}), 400, defaultHeader()
 
 
 @app.route('/trainmote/api/v1/switch/<switch_id>', methods=["DELETE"])
 def deleteSwitch(switch_id: str):
     if switch_id is None:
         abort(400)
-    dataBaseController.deleteSwitchModel(int(switch_id))
+    dataBaseController.deleteSwitchModel(int(switch_id)), 205, defaultHeader()
     return 'ok'
 
 
@@ -97,19 +99,19 @@ def addSwitch():
             abort(400)
         config = dataBaseController.getConfig()
         if config is not None and config.containsPin(mJson["id"]):
-            return json.dumps({"error": "Pin is already in use as power relais"}), 409
+            return json.dumps({"error": "Pin is already in use as power relais"}), 409, defaultHeader()
 
         try:
-            return gpioservice.createSwitch(mJson)
+            return gpioservice.createSwitch(mJson), 201, defaultHeader()
         except ValueError as e:
-            return json.dumps({"error": str(e)}), 400
+            return json.dumps({"error": str(e)}), 400, defaultHeader()
     else:
         abort(400)
 
 
 @app.route('/trainmote/api/v1/switch/all')
 def getAllSwitches():
-    return Response(gpioservice.getAllSwitches(), mimetype="application/json")
+    return Response(gpioservice.getAllSwitches(), mimetype="application/json"), 200, defaultHeader()
 
 ##
 # Endpoint StopPoint
@@ -119,7 +121,7 @@ def getAllSwitches():
 def stop(stop_id: str):
     if stop_id is None:
         abort(400)
-    return gpioservice.getStop(stop_id)
+    return gpioservice.getStop(stop_id), 200, defaultHeader()
 
 
 @app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["PATCH"])
@@ -127,16 +129,16 @@ def setStop(stop_id: str):
     if stop_id is None:
         abort(400)
     try:
-        return gpioservice.setStop(stop_id)
+        return gpioservice.setStop(stop_id), 200, defaultHeader()
     except ValueError as e:
-        return json.dumps({"error": str(e)}), 400
+        return json.dumps({"error": str(e)}), 400, defaultHeader()
 
 
 @app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["DELETE"])
 def deleteStop(stop_id: str):
     if stop_id is None:
         abort(400)
-    dataBaseController.deleteStopModel(int(stop_id))
+    dataBaseController.deleteStopModel(int(stop_id)), 205, defaultHeader()
     return 'ok'
 
 
@@ -149,19 +151,19 @@ def addStop():
 
         config = dataBaseController.getConfig()
         if config is not None and config.containsPin(mJson["id"]):
-            return json.dumps({"error": "Pin is already in use as power relais"}), 409
+            return json.dumps({"error": "Pin is already in use as power relais"}), 409, defaultHeader()
 
         try:
-            return gpioservice.createStop(mJson)
+            return gpioservice.createStop(mJson), 201, defaultHeader()
         except ValueError as e:
-            return json.dumps({"error": str(e)}), 400
+            return json.dumps({"error": str(e)}), 400, defaultHeader()
     else:
         abort(400)
 
 
 @app.route('/trainmote/api/v1/stoppoint/all')
 def getAllStops():
-    return Response(gpioservice.getAllStopPoints(), mimetype="application/json")
+    return Response(gpioservice.getAllStopPoints(), mimetype="application/json"), 200, defaultHeader()
 
 ##
 # Endpoints Config
@@ -171,7 +173,7 @@ def getAllStops():
 def getConfig():
     config = dataBaseController.getConfig()
     if config is not None:
-        return json.dumps(config.to_dict())
+        return json.dumps(config.to_dict()), 200, defaultHeader()
     else:
         abort(404)
 
@@ -188,17 +190,17 @@ def setConfig():
         switchPowerRelaisIsStop = validator.containsPin(int(mJson["switchPowerRelais"]), stops)
         switchPowerRelaisIsSwitch = validator.containsPin(int(mJson["switchPowerRelais"]), switchs)
         if switchPowerRelaisIsStop or switchPowerRelaisIsSwitch:
-            return json.dumps({"error": "Switch power relais pin is already in use"}), 409
+            return json.dumps({"error": "Switch power relais pin is already in use"}), 409, defaultHeader()
 
         powerRelaisIsStop = validator.containsPin(int(mJson["powerRelais"]), stops)
         powerRelaisIsSwitch = validator.containsPin(int(mJson["powerRelais"]), switchs)
         if powerRelaisIsStop or powerRelaisIsSwitch:
-            return json.dumps({"error": "Power relais pin is already in use"}), 409
+            return json.dumps({"error": "Power relais pin is already in use"}), 409, defaultHeader()
 
         dataBaseController.insertConfig(int(mJson["switchPowerRelais"]), int(mJson["powerRelais"]))
         config = dataBaseController.getConfig()
         if config is not None:
-            return json.dumps(config.to_dict())
+            return json.dumps(config.to_dict()), 201, defaultHeader()
         else:
             abort(500)
     else:
