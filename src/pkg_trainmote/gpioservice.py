@@ -138,7 +138,7 @@ def setSwitch(id: str) -> str:
         if switch is not None:
             newValue = switchPin(relais)
             return json.dumps({"model": switch.to_dict(), "currentValue": newValue})
-    raise ValueError({"error": "Relais not found for id {}".format(id)})
+    raise ValueError("Relais not found for id {}".format(id))
 
 def getSwitchFor(uid: int) -> Optional[GPIOSwitchPoint]:
     for switch in DatabaseController().getAllSwichtModels():
@@ -158,11 +158,11 @@ def createSwitch(data):
                 currentValue = getValueForPin(int(result.pin))
                 return json.dumps({"model": result.to_dict(), "currentValue": currentValue})
             else:
-                raise ValueError({"error": "Could not create switch"})
+                raise ValueError("Could not create switch")
         else:
-            raise ValueError({"error": "Inavlid switch type"})
+            raise ValueError("Inavlid switch type")
     else:
-        raise ValueError({"error": "Could not create switch"})
+        raise ValueError("Could not create switch")
 
 # Stores a Switch Point to the database if is a valid pin number.
 # Throws error if not valid. Adds the relais to the gpioservice relais.
@@ -183,7 +183,7 @@ def storeSwitch(model: GPIOSwitchPoint) -> Optional[GPIOSwitchPoint]:
                 addRelais(switch)
                 return switch
     else:
-        raise ValueError({"error": "Invalid gpio"})
+        raise ValueError("Invalid gpio")
 
 
 ##
@@ -210,7 +210,7 @@ def setStop(id: str):
         if stop is not None:
             newValue = switchPin(relais)
             return json.dumps({"model": stop.to_dict(), "currentValue": newValue})
-    raise ValueError({"error": "Relais not found for id {}".format(id)})
+    raise ValueError("Relais not found for id {}".format(id))
 
 def getStopFor(uid: int) -> Optional[GPIOStoppingPoint]:
     for stop in DatabaseController().getAllStopModels():
@@ -230,9 +230,9 @@ def createStop(data):
             currentValue = getValueForPin(int(result.pin))
             return json.dumps({"model": result.to_dict(), "currentValue": currentValue})
         else:
-            raise ValueError({"error": "Could not create stop"})
+            raise ValueError("Could not create stop")
     else:
-        raise ValueError({"error": "Could not create stop"})
+        raise ValueError("Could not create stop")
 
 # Stores a Stop Point to the database if is a valid pin number.
 # Throws error if not valid. Adds the relais to the gpioservice relais.
@@ -246,7 +246,7 @@ def storeStop(model: GPIOStoppingPoint) -> Optional[GPIOStoppingPoint]:
                 addRelais(stop)
                 return stop
     else:
-        raise ValueError({"error": "Invalid gpio"})
+        raise ValueError("Invalid gpio")
 
 def setAllToDefault():
     for relais in gpioRelais:
