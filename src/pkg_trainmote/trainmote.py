@@ -45,15 +45,27 @@ def main():
     global dataBaseController
     dataBaseController = DatabaseController()
     dataBaseController.checkUpdate(version)
+    conf = DatabaseController().getConfig()
     global powerThread
-    powerThread = PowerThread()
-    # powerThread.start()
+    if conf.powerRelais is not None:
+        setupPowerGPIO(conf.powerRelais)
+
     global config
     config = ConfigController()
     print("Start webserver")
     app.run(host="0.0.0.0")
     signal.signal(signal.SIGINT, handler)
 
+##
+# Setup PowerThread to track user event to shut down.
+##
+def setupPowerGPIO(pin: int):
+    powerThread = PowerThread(pin)
+    powerThread.start()
+
+##
+# Create default header for json response
+##
 def defaultHeader() -> dict:
     return {'Content-Type': 'application/json'}
 
@@ -198,7 +210,12 @@ def setConfig():
             return json.dumps({"error": "Power relais pin is already in use"}), 409, defaultHeader()
 
         dataBaseController.insertConfig(int(mJson["switchPowerRelais"]), int(mJson["powerRelais"]))
+        if powerThread is not None:
+            powerThread.stop()
+
         config = dataBaseController.getConfig()
+        if config.powerRelais is not None:
+            setupPowerGPIO(config.powerRelais)
         if config is not None:
             return json.dumps(config.to_dict()), 201, defaultHeader()
         else:
