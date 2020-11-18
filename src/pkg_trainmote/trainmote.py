@@ -26,7 +26,7 @@ config: Optional[ConfigController]
 app = Flask(__name__)
 app.register_blueprint(stopPointApi)
 
-version: str = '0.3.91'
+version: str = '0.3.92'
 
 
 def loadPersistentData():
@@ -50,6 +50,7 @@ def main():
     dataBaseController.checkUpdate(version)
 
     global powerThread
+    powerThread: Optional[PowerThread] = None
     conf = DatabaseController().getConfig()
     if conf is not None and conf.powerRelais is not None:
         setupPowerGPIO(conf.powerRelais)
