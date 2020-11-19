@@ -26,7 +26,7 @@ config: Optional[ConfigController]
 app = Flask(__name__)
 app.register_blueprint(stopPointApi)
 
-version: str = '0.3.93'
+version: str = '0.3.94'
 
 
 def loadPersistentData():
@@ -41,19 +41,24 @@ def loadPersistentData():
 
 
 def main():
-    gpioservice.setup()
-    global stateController
-    stateController = stateControllerModule.StateController()
-    stateController.setState(stateControllerModule.STATE_NOT_CONNECTED)
+    gpioservice.setup()    
     global dataBaseController
     dataBaseController = DatabaseController()
     dataBaseController.checkUpdate(version)
 
     global powerThread
     powerThread = None
+
+    global stateController
+    stateController = None
+
     conf = DatabaseController().getConfig()
-    if conf is not None and conf.powerRelais is not None:
-        setupPowerGPIO(conf.powerRelais)
+    if conf is not None:
+        if conf.powerRelais is not None:
+            setupPowerGPIO(conf.powerRelais)
+        if conf.stateRelais is not None:
+            stateController = stateControllerModule.StateController(conf.stateRelais)
+            stateController.setState(stateControllerModule.STATE_NOT_CONNECTED)
 
     global config
     config = ConfigController()
@@ -201,7 +206,17 @@ def setConfig():
         if powerRelaisIsStop or powerRelaisIsSwitch:
             return json.dumps({"error": "Power relais pin is already in use"}), 409, baseAPI.defaultHeader()
 
-        dataBaseController.insertConfig(int(mJson["switchPowerRelais"]), int(mJson["powerRelais"]))
+        stateRelaisIsStop = validator.containsPin(int(mJson["stateRelais"]), stops)
+        stateRelaisIsSwitch = validator.containsPin(int(mJson["stateRelais"]), switchs)
+        if stateRelaisIsStop or stateRelaisIsSwitch:
+            return json.dumps({"error": "State relais pin is already in use"}), 409, baseAPI.defaultHeader()
+
+        dataBaseController.insertConfig(
+            int(mJson["switchPowerRelais"]),
+            int(mJson["powerRelais"]),
+            int(mJson["stateRelais"])
+        )
+
         if powerThread is not None:
             powerThread.stop()
 

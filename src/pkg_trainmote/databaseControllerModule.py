@@ -50,7 +50,7 @@ class DatabaseController():
         sqlStatementStop = 'CREATE TABLE "TMStopModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "mess_id" INTEGER, "name" TEXT DEFAULT " ", "description" TEXT DEFAULT " ", "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
         sqlStatementSwitch = 'CREATE TABLE "TMSwitchModel" ("uid" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "switchType" TEXT, "defaultValue" INTEGER, "name" TEXT DEFAULT " ", "description" TEXT DEFAULT " ", "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
         sqlStatementVersion = 'CREATE TABLE "TMVersion" ("uid" INTEGER PRIMARY KEY CHECK (uid = 0), "version" TEXT NOT NULL)'
-        sqlStatementConfig = 'CREATE TABLE "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
+        sqlStatementConfig = 'CREATE TABLE "TMConfigModel" (uid INTEGER PRIMARY KEY CHECK (uid = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER, "stateRelais" INTEGER, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
         cursor.execute(sqlStatementStop)
         cursor.execute(sqlStatementSwitch)
         cursor.execute(sqlStatementVersion)
@@ -93,15 +93,15 @@ class DatabaseController():
             def getConfigDB(lastrowid):
                 nonlocal config
                 for dataSet in self.curs:
-                    config = ConfigModel(dataSet[0], dataSet[1], dataSet[2])
+                    config = ConfigModel(dataSet[0], dataSet[1], dataSet[2], dataSet[3])
             self.execute("SELECT * FROM TMConfigModel WHERE uid = '0';", getConfigDB)
         return config
 
-    def insertConfig(self, switchPowerRelais: int, powerRelais: int):
+    def insertConfig(self, switchPowerRelais: int, powerRelais: int, stateRelais: int):
         if self.openDatabase():
             self.execute(
-                "INSERT OR REPLACE INTO TMConfigModel(uid, switchPowerRelais, powerRelais) VALUES ('0', '%i','%i')"
-                % (switchPowerRelais, powerRelais), None
+                "INSERT OR REPLACE INTO TMConfigModel(uid, switchPowerRelais, powerRelais, stateRelais) VALUES ('0', '%i','%i', '%i')"
+                % (switchPowerRelais, powerRelais, stateRelais), None
             )
 
 ##
