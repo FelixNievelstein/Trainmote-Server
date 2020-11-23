@@ -1,24 +1,23 @@
-from typing import Optional
 from . import apiController
 import os
 import argparse
+from subprocess import call
 
 
-version: str = '0.3.96'
+version: str = '0.3.97'
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-a", "--autostart", help="sets trainmote to start on every device boot.", action="store_true")
+    parser.add_argument("-a", "--autostart", help="Adds trainmote to boot process. Please note that you need to use sudo for this option.", action="store_true")
     args = parser.parse_args()
     if args.autostart:
-        print("write to rc.local")
         setAutoStart()
     apiController.setup(version)
 
 
 def setAutoStart():
-    lineToAdd = 'sudo trainmote &\n'
+    lineToAdd = 'trainmote &\n'
 
     with open('/etc/rc.local') as fin:
         with open('/etc/rc.local.TMP', 'w+') as fout:
@@ -31,6 +30,7 @@ def setAutoStart():
                 fout.write(line)
             os.rename('/etc/rc.local', '/etc/rc.local.jic')
             os.rename('/etc/rc.local.TMP', '/etc/rc.local')
+            call("sudo chmod +x /etc/rc.local", shell=True)
 
 
 if __name__ == '__main__':
