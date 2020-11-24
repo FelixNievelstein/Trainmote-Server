@@ -4,12 +4,17 @@ import argparse
 from subprocess import call
 
 
-version: str = '0.3.97'
+version: str = '0.3.98'
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-a", "--autostart", help="Adds trainmote to boot process. Please note that you need to use sudo for this option.", action="store_true")
+    parser.add_argument(
+        "-a",
+        "--autostart",
+        help="Adds trainmote to boot process. Please note that you need to use sudo for this option.",
+        action="store_true"
+    )
     args = parser.parse_args()
     if args.autostart:
         setAutoStart()

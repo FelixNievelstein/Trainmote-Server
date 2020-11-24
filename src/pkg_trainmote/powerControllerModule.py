@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import threading
+from . import deviceController
 
 class PowerThread(threading.Thread):
 
@@ -21,8 +22,6 @@ class PowerThread(threading.Thread):
         while not self.isTurningOff and not self.kill.is_set():
             if GPIO.input(self.pin):
                 self.isTurningOff = True
-                print("Power off")
-                from subprocess import call
-                call("sudo nohup shutdown -h now", shell=True)
+                deviceController.shutdown()
             else:
                 time.sleep(0.5)

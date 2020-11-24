@@ -11,6 +11,7 @@ from . import stateControllerModule
 from .libInstaller import LibInstaller
 from .databaseControllerModule import DatabaseController
 from .stopPointAPI import stopPointApi
+from .deviceApiController import deviceApiBlueprint
 from .validator import Validator
 from . import baseAPI
 from typing import Optional
@@ -25,6 +26,7 @@ powerThread: Optional[PowerThread]
 config: Optional[ConfigController]
 app = Flask(__name__)
 app.register_blueprint(stopPointApi)
+app.register_blueprint(deviceApiBlueprint)
 mVersion: Optional[str] = None
 
 def loadPersistentData():
