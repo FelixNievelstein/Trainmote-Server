@@ -7,7 +7,7 @@ from . import deviceController
 from . import gpioservice
 
 
-deviceApiBlueprint = Blueprint('stopPointApi', __name__)
+deviceApiBlueprint = Blueprint('deviceApi', __name__)
 
 @deviceApiBlueprint.route('/trainmote/api/v1/device/restart', methods=["POST"])
 def restartDevice():
