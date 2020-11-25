@@ -10,7 +10,7 @@ from .configControllerModule import ConfigController
 from . import stateControllerModule
 from .libInstaller import LibInstaller
 from .databaseControllerModule import DatabaseController
-from .stopPointAPI import stopPointApi
+from .stopPointApiController import stopPointApi
 from .deviceApiController import deviceApiBlueprint
 from .validator import Validator
 from . import baseAPI
@@ -130,51 +130,6 @@ def addSwitch():
 @app.route('/trainmote/api/v1/switch/all')
 def getAllSwitches():
     return Response(gpioservice.getAllSwitches(), mimetype="application/json"), 200, baseAPI.defaultHeader()
-
-##
-# Endpoint StopPoint
-##
-
-@app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["PATCH"])
-def setStop(stop_id: str):
-    if stop_id is None:
-        abort(400)
-    try:
-        return gpioservice.setStop(stop_id), 200, baseAPI.defaultHeader()
-    except ValueError as e:
-        return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
-
-
-@app.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["DELETE"])
-def deleteStop(stop_id: str):
-    if stop_id is None:
-        abort(400)
-    dataBaseController.deleteStopModel(int(stop_id)), 205, baseAPI.defaultHeader()
-    return 'ok'
-
-
-@app.route('/trainmote/api/v1/stoppoint', methods=["POST"])
-def addStop():
-    mJson = request.get_json()
-    if mJson is not None:
-        if Validator().validateDict(mJson, "stop_scheme") is False:
-            abort(400)
-
-        config = dataBaseController.getConfig()
-        if config is not None and config.containsPin(mJson["id"]):
-            return json.dumps({"error": "Pin is already in use as power relais"}), 409, baseAPI.defaultHeader()
-
-        try:
-            return gpioservice.createStop(mJson), 201, baseAPI.defaultHeader()
-        except ValueError as e:
-            return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
-    else:
-        abort(400)
-
-
-@app.route('/trainmote/api/v1/stoppoint/all')
-def getAllStops():
-    return Response(gpioservice.getAllStopPoints(), mimetype="application/json"), 200, baseAPI.defaultHeader()
 
 ##
 # Endpoints Config
