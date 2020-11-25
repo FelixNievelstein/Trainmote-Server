@@ -4,7 +4,7 @@ import argparse
 from subprocess import call
 
 
-version: str = '0.4.01'
+version: str = '0.4.11'
 
 
 def main():
