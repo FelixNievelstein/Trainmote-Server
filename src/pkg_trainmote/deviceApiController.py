@@ -22,3 +22,9 @@ def shutdownDevice():
     timer = deviceController.ShutDownTimer()
     timer.start()
     return "", 200
+
+@deviceApiBlueprint.route('/trainmote/api/v1/device/update', methods=["POST"])
+def updateDevice():
+    gpioservice.clean()
+    deviceController.update()
+    return "", 200
