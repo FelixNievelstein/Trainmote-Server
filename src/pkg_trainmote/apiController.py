@@ -12,6 +12,7 @@ from .libInstaller import LibInstaller
 from .databaseControllerModule import DatabaseController
 from .stopPointApiController import stopPointApi
 from .deviceApiController import deviceApiBlueprint
+from .switchApiController import switchApiBlueprint
 from .validator import Validator
 from . import baseAPI
 from typing import Optional
@@ -27,6 +28,7 @@ config: Optional[ConfigController]
 app = Flask(__name__)
 app.register_blueprint(stopPointApi)
 app.register_blueprint(deviceApiBlueprint)
+app.register_blueprint(switchApiBlueprint)
 mVersion: Optional[str] = None
 
 def loadPersistentData():
@@ -80,56 +82,6 @@ def hello_world():
     stateController.setState(stateControllerModule.STATE_CONNECTED)
     return json.dumps({"trainmote": "trainmote.module.felix-nievelstein.de", "version": mVersion})
 
-##
-# Endpoint Switch
-##
-
-@app.route('/trainmote/api/v1/switch/<switch_id>', methods=["GET"])
-def switch(switch_id: str):
-    if switch_id is None:
-        abort(400)
-    return gpioservice.getSwitch(switch_id), 200, baseAPI.defaultHeader()
-
-
-@app.route('/trainmote/api/v1/switch/<switch_id>', methods=["PATCH"])
-def setSwitch(switch_id: str):
-    if switch_id is None:
-        abort(400)
-    try:
-        return gpioservice.setSwitch(switch_id), 200, baseAPI.defaultHeader()
-    except ValueError as e:
-        return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
-
-
-@app.route('/trainmote/api/v1/switch/<switch_id>', methods=["DELETE"])
-def deleteSwitch(switch_id: str):
-    if switch_id is None:
-        abort(400)
-    dataBaseController.deleteSwitchModel(int(switch_id)), 205, baseAPI.defaultHeader()
-    return 'ok'
-
-
-@app.route('/trainmote/api/v1/switch', methods=["POST"])
-def addSwitch():
-    mJson = request.get_json()
-    if mJson is not None:
-        if Validator().validateDict(mJson, "switch_scheme") is False:
-            abort(400)
-        config = dataBaseController.getConfig()
-        if config is not None and config.containsPin(mJson["id"]):
-            return json.dumps({"error": "Pin is already in use as power relais"}), 409, baseAPI.defaultHeader()
-
-        try:
-            return gpioservice.createSwitch(mJson), 201, baseAPI.defaultHeader()
-        except ValueError as e:
-            return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
-    else:
-        abort(400)
-
-
-@app.route('/trainmote/api/v1/switch/all')
-def getAllSwitches():
-    return Response(gpioservice.getAllSwitches(), mimetype="application/json"), 200, baseAPI.defaultHeader()
 
 ##
 # Endpoints Config
