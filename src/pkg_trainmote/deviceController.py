@@ -9,7 +9,7 @@ def shutdownAfter(seconds: int):
     if is_root:
         timer = ShutDownTimer(seconds)
         timer.start()
-    else:        
+    else:
         raise PermissionError("No root permission")
 
 def shutdown():
@@ -29,7 +29,7 @@ def restartAfter(seconds: int):
     if is_root:
         timer = RestartTimer(seconds)
         timer.start()
-    else:        
+    else:
         raise PermissionError("No root permission")
 
 
@@ -46,7 +46,7 @@ class RestartTimer(Thread):
         restart()
 
 def __performUpdate():
-    call("pip3 install trainmote-module-felix-nievelstein-de -U", shell=True)
+    call("sudo pip3 install trainmote-module-felix-nievelstein-de -U", shell=True)
     os.execv(sys.argv[0], [sys.argv[0]])
 
 def update():
