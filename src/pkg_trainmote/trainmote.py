@@ -4,7 +4,7 @@ import argparse
 from subprocess import call
 
 
-version: str = '0.4.12'
+version: str = '0.4.13'
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
 
 
 def setAutoStart():
-    lineToAdd = 'trainmote &\n'
+    lineToAdd = 'sudo trainmote & > /content/log.txt 2>&1\n'
 
     with open('/etc/rc.local') as fin:
         with open('/etc/rc.local.TMP', 'w+') as fout:

@@ -5,24 +5,29 @@ from flask import Response
 from . import baseAPI
 from . import deviceController
 from . import gpioservice
+import json
 
 
 deviceApiBlueprint = Blueprint('deviceApi', __name__)
 
 @deviceApiBlueprint.route('/trainmote/api/v1/device/restart', methods=["POST"])
 def restartDevice():
-    gpioservice.clean()
-    timer = deviceController.RestartTimer()
-    timer.start()
-    return "", 200
+    try:
+        deviceController.restartAfter(2)
+        gpioservice.clean()
+        return "", 200
+    except PermissionError as e:
+        return json.dumps({"error": str(e)}), 401, baseAPI.defaultHeader()
 
 @deviceApiBlueprint.route('/trainmote/api/v1/device/shutdown', methods=["POST"])
 def shutdownDevice():
-    gpioservice.clean()
-    timer = deviceController.ShutDownTimer()
-    timer.start()
-    return "", 200
-
+    try:
+        deviceController.shutdownAfter(2)
+        gpioservice.clean()
+        return "", 200
+    except PermissionError as e:
+        return json.dumps({"error": str(e)}), 401, baseAPI.defaultHeader()
+        
 @deviceApiBlueprint.route('/trainmote/api/v1/device/update', methods=["POST"])
 def updateDevice():
     gpioservice.clean()
