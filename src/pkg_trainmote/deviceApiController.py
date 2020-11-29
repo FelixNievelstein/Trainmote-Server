@@ -2,7 +2,7 @@ from flask import Blueprint
 from . import baseAPI
 from . import deviceController
 from . import gpioservice
-from .apiController import stateController, powerThread
+from .apiController import stopRunningThreads
 
 import json
 
@@ -35,9 +35,3 @@ def updateDevice():
     stopRunningThreads()
     gpioservice.clean()
     return "", 200
-
-def stopRunningThreads():
-    if stateController is not None:
-        stateController.stop()
-    if powerThread is not None:
-        powerThread.stop()

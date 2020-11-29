@@ -1,10 +1,8 @@
-from .models.ConfigModel import ConfigModel
 from pkg_trainmote.stateControllerModule import StateController
 from . import gpioservice
 from flask import Flask
 from flask import request
 from flask import abort
-from flask import Response
 from .powerControllerModule import PowerThread
 from .configControllerModule import ConfigController
 from . import stateControllerModule
@@ -147,12 +145,6 @@ def restart():
 def shutDown():
     print("Server going down")
     gpioservice.clean()
-    if powerThread.is_alive():
-        powerThread.kill.set()
-        powerThread.isTurningOff = True
-        powerThread.join()
-    stateController.setState(stateControllerModule.STATE_SHUTDOWN)
-    stateController.stop()
 
 
 def closeClientConnection():
@@ -162,3 +154,13 @@ def closeClientConnection():
 def handler(signal, frame):
     shutDown()
     sys.exit(0)
+
+def stopRunningThreads():
+    if powerThread is not None:
+        if powerThread.is_alive():
+            powerThread.kill.set()
+            powerThread.isTurningOff = True
+            powerThread.join()
+    if stateController is not None:
+        stateController.setState(stateControllerModule.STATE_SHUTDOWN)
+        stateController.stop()
