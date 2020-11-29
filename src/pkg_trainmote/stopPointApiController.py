@@ -14,7 +14,7 @@ stopPointApi = Blueprint('stopPointApi', __name__)
 # Endpoint StopPoint
 ##
 
-@stopPointApi.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["PATCH"])
+@stopPointApi.route('/trainmote/api/v1/control/stoppoint/<stop_id>', methods=["PATCH"])
 def setStop(stop_id: str):
     if stop_id is None:
         abort(400)
@@ -22,6 +22,15 @@ def setStop(stop_id: str):
         return gpioservice.setStop(stop_id), 200, baseAPI.defaultHeader()
     except ValueError as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
+
+
+@stopPointApi.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["PATCH"])
+def updateStop(stop_id: str):
+    mJson = request.get_json()
+    if mJson is not None:
+        abort(501)
+    else:
+        abort(400)
 
 
 @stopPointApi.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["DELETE"])

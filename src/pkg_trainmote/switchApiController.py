@@ -21,7 +21,7 @@ def switch(switch_id: str):
     return gpioservice.getSwitch(switch_id), 200, baseAPI.defaultHeader()
 
 
-@switchApiBlueprint.route('/trainmote/api/v1/switch/<switch_id>', methods=["PATCH"])
+@switchApiBlueprint.route('/trainmote/api/v1/control/switch/<switch_id>', methods=["PATCH"])
 def setSwitch(switch_id: str):
     if switch_id is None:
         abort(400)
@@ -29,6 +29,15 @@ def setSwitch(switch_id: str):
         return gpioservice.setSwitch(switch_id), 200, baseAPI.defaultHeader()
     except ValueError as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
+
+
+@switchApiBlueprint.route('/trainmote/api/v1/switch/<switch_id>', methods=["PATCH"])
+def updateSwitch(switch_id: str):
+    mJson = request.get_json()
+    if mJson is not None:
+        abort(501)
+    else:
+        abort(400)
 
 
 @switchApiBlueprint.route('/trainmote/api/v1/switch/<switch_id>', methods=["DELETE"])
