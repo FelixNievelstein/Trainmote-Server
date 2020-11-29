@@ -2,7 +2,7 @@ from flask import Blueprint
 from . import baseAPI
 from . import deviceController
 from . import gpioservice
-from .apiController import stopRunningThreads
+from . import apiController
 
 import json
 
@@ -13,7 +13,7 @@ deviceApiBlueprint = Blueprint('deviceApi', __name__)
 def restartDevice():
     try:
         deviceController.restartAfter(2)
-        stopRunningThreads()
+        apiController.stopRunningThreads()
         gpioservice.clean()
         return "", 200
     except PermissionError as e:
@@ -23,7 +23,7 @@ def restartDevice():
 def shutdownDevice():
     try:
         deviceController.shutdownAfter(2)
-        stopRunningThreads()
+        apiController.stopRunningThreads()
         gpioservice.clean()
         return "", 200
     except PermissionError as e:
@@ -32,6 +32,6 @@ def shutdownDevice():
 @deviceApiBlueprint.route('/trainmote/api/v1/device/update', methods=["POST"])
 def updateDevice():    
     deviceController.update()
-    stopRunningThreads()
+    apiController.stopRunningThreads()
     gpioservice.clean()
     return "", 200
