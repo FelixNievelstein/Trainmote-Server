@@ -44,7 +44,7 @@ class RestartTimer(Thread):
         time.sleep(self.time)
         restart()
 
-def __performUpdate():
+def performUpdate():
     if is_root() is True:
         call("sudo pip3 install trainmote-module-felix-nievelstein-de -U", shell=True)
     else:
@@ -58,7 +58,7 @@ def update():
 class UpdateTimer(Thread):
     def run(self):
         time.sleep(2)
-        __performUpdate()
+        performUpdate()
 
 def is_root() -> bool:
     return os.geteuid() == 0

@@ -29,7 +29,7 @@ def shutdownDevice():
         return json.dumps({"error": str(e)}), 401, baseAPI.defaultHeader()
 
 @deviceApiBlueprint.route('/trainmote/api/v1/device/update', methods=["POST"])
-def updateDevice():
-    gpioservice.clean()
+def updateDevice():    
     deviceController.update()
+    gpioservice.clean()
     return "", 200
