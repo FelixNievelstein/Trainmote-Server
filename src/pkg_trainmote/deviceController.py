@@ -3,9 +3,10 @@ import time
 from threading import Thread
 import os
 import sys
+from . import userHelper
 
 def shutdownAfter(seconds: int):
-    if is_root() is True:
+    if userHelper.is_root() is True:
         timer = ShutDownTimer(seconds)
         timer.start()
     else:
@@ -25,7 +26,7 @@ class ShutDownTimer(Thread):
         shutdown()
 
 def restartAfter(seconds: int):
-    if is_root() is True:
+    if userHelper.is_root() is True:
         timer = RestartTimer(seconds)
         timer.start()
     else:
@@ -45,7 +46,7 @@ class RestartTimer(Thread):
         restart()
 
 def performUpdate():
-    if is_root() is True:
+    if userHelper.is_root() is True:
         call("sudo pip3 install trainmote-module-felix-nievelstein-de -U", shell=True)
     else:
         call("pip3 install trainmote-module-felix-nievelstein-de -U", shell=True)
@@ -59,6 +60,3 @@ class UpdateTimer(Thread):
     def run(self):
         time.sleep(2)
         performUpdate()
-
-def is_root() -> bool:
-    return os.geteuid() == 0
