@@ -192,11 +192,10 @@ def storeSwitch(model: GPIOSwitchPoint) -> Optional[GPIOSwitchPoint]:
 
 
 def getStop(id: str):
-    for stop in DatabaseController().getAllStopModels():
-        if str(stop.id) == id:
-            currentValue = getValueForPin(int(stop.id))
-            return json.dumps({"model": stop.to_dict(), "currentValue": currentValue})
-
+    stop = getStopFor(int(id))
+    if stop is not None:
+        currentValue = stop.getStatus()
+        return json.dumps({"model": stop.to_dict(), "currentValue": currentValue})
     return json.dumps({"error": "Stop for id {} not found".format(id)})
 
 

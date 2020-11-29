@@ -158,7 +158,7 @@ def handler(signal, frame):
 def stopRunningThreads():
     if powerThread is not None:
         if powerThread.is_alive():
-            powerThread.kill.set()
+            powerThread.stop()
             powerThread.isTurningOff = True
             powerThread.join()
     if stateController is not None:
