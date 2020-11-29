@@ -2,9 +2,10 @@ from . import apiController
 import os
 import argparse
 from subprocess import call
+from . import configControllerModule
 
 
-version: str = '0.4.20'
+version: str = '0.4.21'
 
 
 def main():
@@ -23,7 +24,8 @@ def main():
 
 
 def setAutoStart():
-    lineToAdd = 'sudo trainmote & > /content/log.txt 2>&1\n'
+    contentDir = configControllerModule.ConfigController().getContentDir()
+    lineToAdd = 'sudo trainmote & > ' + contentDir + '/log.txt 2>&1\n'
 
     try:
         with open('/etc/rc.local') as fin:
