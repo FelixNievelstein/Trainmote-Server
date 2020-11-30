@@ -147,6 +147,24 @@ class DatabaseController():
 
         return switch
 
+    def updateSwitch(self, uid: int, updatModel: GPIOSwitchPoint) -> Optional[GPIOSwitchPoint]:
+        if self.openDatabase():
+            def readSwitch(lastrowId):
+                return self.getSwitch(uid)
+
+            updateString = self.createUpdateStringFor("TMSwitchModel", updatModel, "uid = ")
+            self.execute(updateString, readSwitch)
+        return None
+
+    def createUpdateStringFor(self, table: str, model, condition: Optional[str]) -> str:
+        string = "UPDATE %s SET " % (table)
+        for property, value in vars(model).items():
+            print(property, ":", value)
+            if value is not None:
+                string = "%s %s = '%s' " % (string, property, value)
+        string = "%s WHERE %s" % (string, condition)
+        return string
+
     def getAllSwichtModels(self):
         allSwitchModels = []
         if self.openDatabase():

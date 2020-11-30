@@ -7,6 +7,7 @@ from . import gpioservice
 from .validator import Validator
 import json
 from .databaseControllerModule import DatabaseController
+from types import SimpleNamespace as Namespace
 
 switchApiBlueprint = Blueprint('switchApi', __name__)
 
@@ -35,7 +36,21 @@ def setSwitch(switch_id: str):
 def updateSwitch(switch_id: str):
     mJson = request.get_json()
     if mJson is not None:
-        abort(501)
+        validator = Validator()
+        if validator.validateDict(mJson, "switch_update_scheme") is False:
+            abort(400)
+        try:
+            validator.isAlreadyInUse(int(mJson["pin"]))
+            model = json.loads(mJson, object_hook=lambda d: Namespace(**d))
+            updatedSwitch = DatabaseController().updateSwitch(int(switch_id), model)
+            if updateSwitch is not None:
+                return json.dumps({"model": updatedSwitch.to_dict()})
+            else:
+                abort(500)
+
+        except ValueError as e:
+            return json.dumps({"error": str(e)}), 409, baseAPI.defaultHeader()
+
     else:
         abort(400)
 

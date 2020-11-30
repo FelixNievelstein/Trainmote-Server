@@ -9,9 +9,7 @@
                 "switchType": {"type" : "string"},
                 "name": {"type": "string"},
                 "description": {"type": "string"}
-            },
-            "required": ["switchType"]
+            }
         }
-    },
-    "required": ["pin", "defaultValue", "params"]
+    }
 }
