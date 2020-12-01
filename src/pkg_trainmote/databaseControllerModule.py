@@ -154,7 +154,7 @@ class DatabaseController():
                 nonlocal switch
                 switch = self.getSwitch(uid)
 
-            updateString = self.createUpdateStringFor("TMSwitchModel", updatModel, "uid = ")
+            updateString = self.createUpdateStringFor("TMSwitchModel", updatModel, "uid = %i" % (uid))
             self.execute(updateString, readSwitch)
         return switch
 
