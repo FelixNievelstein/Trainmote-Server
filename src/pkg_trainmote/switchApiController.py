@@ -2,12 +2,13 @@ from flask import Blueprint
 from flask import request
 from flask import abort
 from flask import Response
+
+from pkg_trainmote.models.GPIORelaisModel import GPIOSwitchPoint
 from . import baseAPI
 from . import gpioservice
 from .validator import Validator
 import json
 from .databaseControllerModule import DatabaseController
-from types import SimpleNamespace as Namespace
 
 switchApiBlueprint = Blueprint('switchApi', __name__)
 
@@ -19,7 +20,10 @@ switchApiBlueprint = Blueprint('switchApi', __name__)
 def switch(switch_id: str):
     if switch_id is None:
         abort(400)
-    return gpioservice.getSwitch(switch_id), 200, baseAPI.defaultHeader()
+    try:
+        return gpioservice.getSwitch(switch_id), 200, baseAPI.defaultHeader()
+    except ValueError as e:
+        return json.dumps({"error": str(e)}), 404, baseAPI.defaultHeader()
 
 
 @switchApiBlueprint.route('/trainmote/api/v1/control/switch/<switch_id>', methods=["PATCH"])
@@ -40,9 +44,14 @@ def updateSwitch(switch_id: str):
         if validator.validateDict(mJson, "switch_update_scheme") is False:
             abort(400)
         try:
-            validator.isAlreadyInUse(int(mJson["pin"]))
-            model = json.loads(mJson, object_hook=lambda d: Namespace(**d))
-            updatedSwitch = DatabaseController().updateSwitch(int(switch_id), model)
+            database = DatabaseController()
+            exModel = database.getSwitch(int(switch_id))
+            if exModel is None:
+                return json.dumps({"error": "Switch for id {} not found".format(switch_id)}), 404
+            model = GPIOSwitchPoint.from_dict(mJson, int(switch_id))
+            if model.pin is not None and exModel.pin is not None and model.pin is not exModel.pin:
+                validator.isAlreadyInUse(int(mJson["pin"]))
+            updatedSwitch = database.updateSwitch(int(switch_id), model)
             if updateSwitch is not None:
                 return json.dumps({"model": updatedSwitch.to_dict()})
             else:

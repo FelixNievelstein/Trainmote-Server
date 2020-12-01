@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import enum
-from typing import Optional
+from typing import Any, Optional, Dict
 
 class GPIORelaisModel():
 
@@ -9,7 +9,7 @@ class GPIORelaisModel():
 
     def __init__(
         self, uid: int,
-        pin: int,
+        pin: Optional[int],
         name: Optional[str] = None,
         description: Optional[str] = None
     ):
@@ -63,7 +63,7 @@ class GPIOStoppingPoint(GPIORelaisModel):
 
     def __init__(
         self, uid: int,
-        pin: int, measurmentpin: Optional[int],
+        pin: Optional[int], measurmentpin: Optional[int],
         name: Optional[str], description: Optional[str]
     ):
         self.measurmentpin = measurmentpin
@@ -94,7 +94,7 @@ class GPIOSwitchPoint(GPIORelaisModel):
 
     def __init__(
         self, uid: int,
-        switchType: str, pin: int,
+        switchType: Optional[str], pin: Optional[int],
         name: Optional[str], description: Optional[str]
     ):
         self.needsPowerOn = True
@@ -128,6 +128,13 @@ class GPIOSwitchPoint(GPIORelaisModel):
         mdict["switchType"] = self.switchType
         mdict["uid"] = self.uid
         return mdict
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any], id: int):
+        switch = cls(id, data["switchType"], data["pin"], data["name"], data["description"])
+        switch.defaultValue = data["defaultValue"]
+        switch.needsPowerOn = data["needsPowerOn"]
+        return switch
 
     @classmethod
     def fromParent(cls, parent: GPIORelaisModel, switchType: str):

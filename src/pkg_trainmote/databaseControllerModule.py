@@ -134,7 +134,7 @@ class DatabaseController():
             # Insert a row of data
             self.execute("DELETE FROM TMSwitchModel WHERE uid = '%i';" % (id), None)
 
-    def getSwitch(self, uid) -> Optional[GPIOSwitchPoint]:
+    def getSwitch(self, uid: int) -> Optional[GPIOSwitchPoint]:
         switch = None
         if self.openDatabase():
             def readSwitch(lastrowid):
@@ -148,13 +148,15 @@ class DatabaseController():
         return switch
 
     def updateSwitch(self, uid: int, updatModel: GPIOSwitchPoint) -> Optional[GPIOSwitchPoint]:
+        switch = None
         if self.openDatabase():
             def readSwitch(lastrowId):
-                return self.getSwitch(uid)
+                nonlocal switch
+                switch = self.getSwitch(uid)
 
             updateString = self.createUpdateStringFor("TMSwitchModel", updatModel, "uid = ")
             self.execute(updateString, readSwitch)
-        return None
+        return switch
 
     def createUpdateStringFor(self, table: str, model, condition: Optional[str]) -> str:
         string = "UPDATE %s SET " % (table)
