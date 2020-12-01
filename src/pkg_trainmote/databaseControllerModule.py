@@ -160,10 +160,14 @@ class DatabaseController():
 
     def createUpdateStringFor(self, table: str, model, condition: Optional[str]) -> str:
         string = "UPDATE %s SET " % (table)
+        count = 0
         for property, value in vars(model).items():
-            print(property, ":", value)
-            if value is not None:
-                string = "%s %s = '%s' " % (string, property, value)
+            if property != "uid" and value is not None:
+                if count == 0:
+                    string = "%s %s = '%s' " % (string, property, value)
+                else:
+                    string = "%s, %s = '%s' " % (string, property, value)
+                count = count + 1
         string = "%s WHERE %s" % (string, condition)
         return string
 

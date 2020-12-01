@@ -1,3 +1,4 @@
+from sqlite3.dbapi2 import Error
 from flask import Blueprint
 from flask import request
 from flask import abort
@@ -59,7 +60,8 @@ def updateSwitch(switch_id: str):
 
         except ValueError as e:
             return json.dumps({"error": str(e)}), 409, baseAPI.defaultHeader()
-
+        except Error as e:
+            return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
     else:
         abort(400)
 
