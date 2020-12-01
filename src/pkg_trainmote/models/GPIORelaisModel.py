@@ -131,9 +131,15 @@ class GPIOSwitchPoint(GPIORelaisModel):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any], id: int):
-        switch = cls(id, data["switchType"], data["pin"], data["name"], data["description"])
-        switch.defaultValue = data["defaultValue"]
-        switch.needsPowerOn = data["needsPowerOn"]
+        params = data.get("params")
+        switchType = None
+        if params is not None:
+            switchType = params.get("switchType")            
+            if GPIOSwitchHelper.isValidType(switchType) is False:
+                raise ValueError("Invalid switch type")
+        switch = cls(id, switchType, data.get("pin"), data.get("name"), data.get("description"))
+        switch.defaultValue = data.get("defaultValue")
+        switch.needsPowerOn = data.get("needsPowerOn")
         return switch
 
     @classmethod
