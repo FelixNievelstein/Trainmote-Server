@@ -64,6 +64,19 @@ class DatabaseController():
             self.curs.execute("DELETE FROM TMStopModel")
             self.conn.commit()
             self.conn.close()
+    
+    def createUpdateStringFor(self, table: str, model, condition: Optional[str]) -> str:
+        string = "UPDATE %s SET " % (table)
+        count = 0
+        for property, value in vars(model).items():
+            if property != "uid" and value is not None:
+                if count == 0:
+                    string = "%s %s = '%s' " % (string, property, value)
+                else:
+                    string = "%s, %s = '%s' " % (string, property, value)
+                count = count + 1
+        string = "%s WHERE %s" % (string, condition)
+        return string
 
 ##
 # Version
@@ -153,19 +166,6 @@ class DatabaseController():
             self.execute(updateString, None)
         return self.getSwitch(uid)
 
-    def createUpdateStringFor(self, table: str, model, condition: Optional[str]) -> str:
-        string = "UPDATE %s SET " % (table)
-        count = 0
-        for property, value in vars(model).items():
-            if property != "uid" and value is not None:
-                if count == 0:
-                    string = "%s %s = '%s' " % (string, property, value)
-                else:
-                    string = "%s, %s = '%s' " % (string, property, value)
-                count = count + 1
-        string = "%s WHERE %s" % (string, condition)
-        return string
-
     def getAllSwichtModels(self):
         allSwitchModels = []
         if self.openDatabase():
@@ -183,7 +183,7 @@ class DatabaseController():
 ##
 # Stops
 ##
-    def getStop(self, uid) -> Optional[GPIOStoppingPoint]:
+    def getStop(self, uid: int) -> Optional[GPIOStoppingPoint]:
         stop = None
         if self.openDatabase():
             def readStop(lastrowid):
@@ -233,6 +233,12 @@ class DatabaseController():
                     % (relaisId, name, description), createdStop
                 )
         return resultUid
+    
+    def updateStop(self, uid: int, updatModel: GPIOStoppingPoint) -> Optional[GPIOStoppingPoint]:
+        if self.openDatabase():
+            updateString = self.createUpdateStringFor("TMStopModel", updatModel, "uid = %i" % (uid))
+            self.execute(updateString, None)
+        return self.getStop(uid)
 
     def deleteStopModel(self, id: int):
         if self.openDatabase():

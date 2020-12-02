@@ -1,7 +1,10 @@
+from sqlite3.dbapi2 import Error
 from flask import Blueprint
 from flask import request
 from flask import abort
 from flask import Response
+
+from pkg_trainmote.models.GPIORelaisModel import GPIOStoppingPoint
 from . import baseAPI
 from . import gpioservice
 from .validator import Validator
@@ -29,6 +32,35 @@ def updateStop(stop_id: str):
     mJson = request.get_json()
     if mJson is not None:
         abort(501)
+    else:
+        abort(400)
+
+
+@stopPointApi.route('/trainmote/api/v1/stoppoint/<switch_id>', methods=["PATCH"])
+def updateSwitch(switch_id: str):
+    mJson = request.get_json()
+    if mJson is not None:
+        validator = Validator()
+        if validator.validateDict(mJson, "stop_update_scheme") is False:
+            abort(400)
+        try:
+            database = DatabaseController()
+            exModel = database.getStop(int(switch_id))
+            if exModel is None:
+                return json.dumps({"error": "Stop for id {} not found".format(switch_id)}), 404
+            model = GPIOStoppingPoint.from_dict(mJson, int(switch_id))
+            if model.pin is not None and exModel.pin is not None and model.pin is not exModel.pin:
+                validator.isAlreadyInUse(int(mJson["pin"]))
+            updateStop = database.updateStop(int(switch_id), model)
+            if updateSwitch is not None:
+                return json.dumps({"model": updateStop.to_dict()})
+            else:
+                abort(500)
+
+        except ValueError as e:
+            return json.dumps({"error": str(e)}), 409, baseAPI.defaultHeader()
+        except Error as e:
+            return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
     else:
         abort(400)
 

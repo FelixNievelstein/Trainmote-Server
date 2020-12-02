@@ -81,6 +81,12 @@ class GPIOStoppingPoint(GPIORelaisModel):
         classInstance.setDefaultValue(parent.defaultValue)
         return classInstance
 
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any], id: int):
+        stop = cls(id, data.get("pin"), data.get("measurmentpin"), data.get("name"), data.get("description"))
+        stop.defaultValue = data.get("defaultValue")
+        return stop
+
 
 class GPIOSwitchType(enum.Enum):
     TM_SWITCH_STRAIGHT_LEFT = 1
