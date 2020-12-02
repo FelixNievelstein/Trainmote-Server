@@ -31,28 +31,19 @@ def setStop(stop_id: str):
 def updateStop(stop_id: str):
     mJson = request.get_json()
     if mJson is not None:
-        abort(501)
-    else:
-        abort(400)
-
-
-@stopPointApi.route('/trainmote/api/v1/stoppoint/<switch_id>', methods=["PATCH"])
-def updateSwitch(switch_id: str):
-    mJson = request.get_json()
-    if mJson is not None:
         validator = Validator()
         if validator.validateDict(mJson, "stop_update_scheme") is False:
             abort(400)
         try:
             database = DatabaseController()
-            exModel = database.getStop(int(switch_id))
+            exModel = database.getStop(int(stop_id))
             if exModel is None:
-                return json.dumps({"error": "Stop for id {} not found".format(switch_id)}), 404
-            model = GPIOStoppingPoint.from_dict(mJson, int(switch_id))
+                return json.dumps({"error": "Stop for id {} not found".format(stop_id)}), 404
+            model = GPIOStoppingPoint.from_dict(mJson, int(stop_id))
             if model.pin is not None and exModel.pin is not None and model.pin is not exModel.pin:
                 validator.isAlreadyInUse(int(mJson["pin"]))
-            updateStop = database.updateStop(int(switch_id), model)
-            if updateSwitch is not None:
+            updateStop = database.updateStop(int(stop_id), model)
+            if updateStop is not None:
                 return json.dumps({"model": updateStop.to_dict()})
             else:
                 abort(500)
