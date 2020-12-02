@@ -148,15 +148,10 @@ class DatabaseController():
         return switch
 
     def updateSwitch(self, uid: int, updatModel: GPIOSwitchPoint) -> Optional[GPIOSwitchPoint]:
-        switch = None
         if self.openDatabase():
-            def readSwitch(lastrowId):
-                nonlocal switch
-                switch = self.getSwitch(uid)
-
             updateString = self.createUpdateStringFor("TMSwitchModel", updatModel, "uid = %i" % (uid))
-            self.execute(updateString, readSwitch)
-        return switch
+            self.execute(updateString, None)
+        return self.getSwitch(uid)
 
     def createUpdateStringFor(self, table: str, model, condition: Optional[str]) -> str:
         string = "UPDATE %s SET " % (table)
