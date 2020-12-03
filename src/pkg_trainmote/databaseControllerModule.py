@@ -64,8 +64,8 @@ class DatabaseController():
             self.curs.execute("DELETE FROM TMStopModel")
             self.conn.commit()
             self.conn.close()
-    
-    def createUpdateStringFor(self, table: str, model, condition: Optional[str]) -> str:
+
+    def createUpdateStringFor(self, table: str, model, condition: Optional[str]) -> Optional[str]:
         string = "UPDATE %s SET " % (table)
         count = 0
         for property, value in vars(model).items():
@@ -75,8 +75,11 @@ class DatabaseController():
                 else:
                     string = "%s, %s = '%s' " % (string, property, value)
                 count = count + 1
-        string = "%s WHERE %s" % (string, condition)
-        return string
+        if condition is not None:
+            string = "%s WHERE %s" % (string, condition)
+        if count > 0:
+            return string
+        return None
 
 ##
 # Version
@@ -161,8 +164,8 @@ class DatabaseController():
         return switch
 
     def updateSwitch(self, uid: int, updatModel: GPIOSwitchPoint) -> Optional[GPIOSwitchPoint]:
-        if self.openDatabase():
-            updateString = self.createUpdateStringFor("TMSwitchModel", updatModel, "uid = %i" % (uid))
+        updateString = self.createUpdateStringFor("TMSwitchModel", updatModel, "uid = %i" % (uid))
+        if self.openDatabase() and updateString is not None:
             self.execute(updateString, None)
         return self.getSwitch(uid)
 
@@ -233,10 +236,10 @@ class DatabaseController():
                     % (relaisId, name, description), createdStop
                 )
         return resultUid
-    
+
     def updateStop(self, uid: int, updatModel: GPIOStoppingPoint) -> Optional[GPIOStoppingPoint]:
-        if self.openDatabase():
-            updateString = self.createUpdateStringFor("TMStopModel", updatModel, "uid = %i" % (uid))
+        updateString = self.createUpdateStringFor("TMStopModel", updatModel, "uid = %i" % (uid))
+        if self.openDatabase() and updateString is not None:
             self.execute(updateString, None)
         return self.getStop(uid)
 

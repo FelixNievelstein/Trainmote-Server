@@ -150,8 +150,7 @@ def getSwitchFor(uid: int) -> Optional[GPIOSwitchPoint]:
 def createSwitch(data):
     gpioRelais = GPIORelaisAdapter.getGPIORelaisFor(data)
     if gpioRelais is not None:
-        params = data["params"]
-        switchType = params["switchType"]
+        switchType = data.get("switchType")
         if GPIOSwitchHelper.isValidType(switchType):
             switch = GPIOSwitchPoint.fromParent(gpioRelais, switchType)
             result = storeSwitch(switch)
@@ -221,9 +220,7 @@ def getStopFor(uid: int) -> Optional[GPIOStoppingPoint]:
 def createStop(data):
     gpioRelais = GPIORelaisAdapter.getGPIORelaisFor(data)
     if gpioRelais is not None:
-        measurmentId = None
-        if "measurmentId" in data:
-            measurmentId = int(data["measurmentId"])
+        measurmentId = int(data.get("measurmentId"))
         stop = GPIOStoppingPoint.fromParent(gpioRelais, measurmentId)
         result = storeStop(stop)
         if result is not None and result.pin is not None:

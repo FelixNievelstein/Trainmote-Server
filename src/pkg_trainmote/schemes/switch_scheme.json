@@ -3,15 +3,9 @@
     "properties" : {
         "pin" : {"type" : "integer"},
         "defaultValue" : {"type" : "integer"},
-        "params" : {
-            "type" : "object",
-            "properties" : {
-                "switchType": {"type" : "string"},
-                "name": {"type": "string"},
-                "description": {"type": "string"}
-            },
-            "required": ["switchType"]
-        }
+        "switchType": {"type" : "string"},
+        "name": {"type": "string"},
+        "description": {"type": "string"}
     },
-    "required": ["pin", "defaultValue", "params"]
+    "required": ["pin", "defaultValue", "switchType"]
 }

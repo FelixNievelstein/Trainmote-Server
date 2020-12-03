@@ -45,15 +45,8 @@ class GPIORelaisModel():
 class GPIORelaisAdapter():
     @staticmethod
     def getGPIORelaisFor(data) -> GPIORelaisModel:
-        name = None
-        description = None
-        if "params" in data:            
-            params = data["params"]
-            if "name" in params:
-                name = params["name"]
-            if "description" in params:
-                description = params["description"]
-
+        name = data.get("name")
+        description = data.get("description")
         model = GPIORelaisModel(0, int(data["id"]), name, description)
         model.setDefaultValue(int(data["defaultValue"]))
         return model
@@ -137,12 +130,9 @@ class GPIOSwitchPoint(GPIORelaisModel):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any], id: int):
-        params = data.get("params")
-        switchType = None
-        if params is not None:
-            switchType = params.get("switchType")            
-            if GPIOSwitchHelper.isValidType(switchType) is False:
-                raise ValueError("Invalid switch type")
+        switchType = data.get("switchType")
+        if switchType is None or GPIOSwitchHelper.isValidType(switchType) is False:
+            raise ValueError("Invalid switch type")
         switch = cls(id, switchType, data.get("pin"), data.get("name"), data.get("description"))
         switch.defaultValue = data.get("defaultValue")
         switch.needsPowerOn = data.get("needsPowerOn")
