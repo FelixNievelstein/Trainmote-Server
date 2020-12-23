@@ -131,7 +131,7 @@ class GPIOSwitchPoint(GPIORelaisModel):
     @classmethod
     def from_dict(cls, data: Dict[str, Any], id: int):
         switchType = data.get("switchType")
-        if switchType is None or GPIOSwitchHelper.isValidType(switchType) is False:
+        if switchType is not None and GPIOSwitchHelper.isValidType(switchType) is False:
             raise ValueError("Invalid switch type")
         switch = cls(id, switchType, data.get("pin"), data.get("name"), data.get("description"))
         switch.defaultValue = data.get("defaultValue")

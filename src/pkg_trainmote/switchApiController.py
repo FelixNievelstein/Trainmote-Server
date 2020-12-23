@@ -81,7 +81,7 @@ def addSwitch():
         if Validator().validateDict(mJson, "switch_scheme") is False:
             abort(400)
         config = DatabaseController().getConfig()
-        if config is not None and config.containsPin(mJson["id"]):
+        if config is not None and config.containsPin(mJson["pin"]):
             return json.dumps({"error": "Pin is already in use as power relais"}), 409, baseAPI.defaultHeader()
 
         try:
