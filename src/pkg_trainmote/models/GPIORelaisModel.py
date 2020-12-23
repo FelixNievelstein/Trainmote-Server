@@ -47,7 +47,7 @@ class GPIORelaisAdapter():
     def getGPIORelaisFor(data) -> GPIORelaisModel:
         name = data.get("name")
         description = data.get("description")
-        model = GPIORelaisModel(0, int(data["id"]), name, description)
+        model = GPIORelaisModel(0, int(data["pin"]), name, description)
         model.setDefaultValue(int(data["defaultValue"]))
         return model
 
