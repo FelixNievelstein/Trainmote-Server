@@ -123,8 +123,7 @@ def receivedMessage(message):
 def getSwitch(id: str) -> str:
     switch = getSwitchFor(int(id))
     if switch is not None:
-        currentValue = switch.getStatus()
-        return json.dumps({"model": switch.to_dict(), "currentValue": currentValue})
+        return json.dumps(switch.to_dict())
     raise ValueError("Switch for id {} not found".format(id))
 
 
@@ -194,8 +193,7 @@ def storeSwitch(model: GPIOSwitchPoint) -> Optional[GPIOSwitchPoint]:
 def getStop(id: str):
     stop = getStopFor(int(id))
     if stop is not None:
-        currentValue = stop.getStatus()
-        return json.dumps({"model": stop.to_dict(), "currentValue": currentValue})
+        return json.dumps(stop.to_dict())
     return json.dumps({"error": "Stop for id {} not found".format(id)})
 
 
