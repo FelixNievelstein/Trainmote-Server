@@ -76,7 +76,7 @@ def deleteSwitch(switch_id: str):
         if exModel is None:
             return json.dumps({"error": "Switch for id {} not found".format(switch_id)}), 404
         database.deleteSwitchModel(int(switch_id))
-        return 'ok', 205, baseAPI.defaultHeader()
+        return "", 205, baseAPI.defaultHeader()
     except Error as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()    
 

@@ -66,7 +66,7 @@ def deleteStop(stop_id: str):
         if exModel is None:
             return json.dumps({"error": "Stop for id {} not found".format(stop_id)}), 404
         database.deleteStopModel(int(stop_id))
-        return 'ok', 205, baseAPI.defaultHeader()
+        return "", 205, baseAPI.defaultHeader()
     except Error as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
 
