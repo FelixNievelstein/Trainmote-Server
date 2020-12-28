@@ -60,8 +60,15 @@ def updateStop(stop_id: str):
 def deleteStop(stop_id: str):
     if stop_id is None:
         abort(400)
-    DatabaseController().deleteStopModel(int(stop_id)), 205, baseAPI.defaultHeader()
-    return 'ok'
+    try:        
+        database = DatabaseController()
+        exModel = database.getStop(int(stop_id))
+        if exModel is None:
+            return json.dumps({"error": "Stop for id {} not found".format(stop_id)}), 404
+        database.deleteStopModel(int(stop_id))
+        return 'ok', 205, baseAPI.defaultHeader()
+    except Error as e:
+        return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
 
 
 @stopPointApi.route('/trainmote/api/v1/stoppoint', methods=["POST"])

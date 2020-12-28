@@ -70,8 +70,15 @@ def updateSwitch(switch_id: str):
 def deleteSwitch(switch_id: str):
     if switch_id is None:
         abort(400)
-    DatabaseController().deleteSwitchModel(int(switch_id)), 205, baseAPI.defaultHeader()
-    return 'ok'
+    try:
+        database = DatabaseController()
+        exModel = database.getSwitch(int(switch_id))
+        if exModel is None:
+            return json.dumps({"error": "Switch for id {} not found".format(switch_id)}), 404
+        database.deleteSwitchModel(int(switch_id))
+        return 'ok', 205, baseAPI.defaultHeader()
+    except Error as e:
+        return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()    
 
 
 @switchApiBlueprint.route('/trainmote/api/v1/switch', methods=["POST"])
