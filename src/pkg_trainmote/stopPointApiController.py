@@ -44,7 +44,7 @@ def updateStop(stop_id: str):
                 validator.isAlreadyInUse(int(mJson["pin"]))
             updateStop = database.updateStop(int(stop_id), model)
             if updateStop is not None:
-                return json.dumps({"model": updateStop.to_dict()})
+                return json.dumps(updateStop.to_dict())
             else:
                 abort(500)
 

@@ -154,8 +154,7 @@ def createSwitch(data):
             switch = GPIOSwitchPoint.fromParent(gpioRelais, switchType)
             result = storeSwitch(switch)
             if result is not None and result.pin is not None:
-                currentValue = getValueForPin(int(result.pin))
-                return json.dumps({"model": result.to_dict(), "currentValue": currentValue})
+                return json.dumps(result.to_dict())
             else:
                 raise ValueError("Could not create switch")
         else:
@@ -222,8 +221,7 @@ def createStop(data):
         stop = GPIOStoppingPoint.fromParent(gpioRelais, measurmentId)
         result = storeStop(stop)
         if result is not None and result.pin is not None:
-            currentValue = getValueForPin(int(result.pin))
-            return json.dumps({"model": result.to_dict(), "currentValue": currentValue})
+            return json.dumps(result.to_dict())
         else:
             raise ValueError("Could not create stop")
     else:

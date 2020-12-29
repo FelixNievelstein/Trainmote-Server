@@ -54,7 +54,7 @@ def updateSwitch(switch_id: str):
                 validator.isAlreadyInUse(int(mJson["pin"]))
             updatedSwitch = database.updateSwitch(int(switch_id), model)
             if updateSwitch is not None:
-                return json.dumps({"model": updatedSwitch.to_dict()})
+                return json.dumps(updatedSwitch.to_dict())
             else:
                 abort(500)
 
