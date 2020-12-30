@@ -46,13 +46,13 @@ def updateSwitch(switch_id: str):
             abort(400)
         try:
             database = DatabaseController()
-            exModel = database.getSwitch(int(switch_id))
+            exModel = database.getSwitch(switch_id)
             if exModel is None:
                 return json.dumps({"error": "Switch for id {} not found".format(switch_id)}), 404, baseAPI.defaultHeader()
-            model = GPIOSwitchPoint.from_dict(mJson, int(switch_id))
+            model = GPIOSwitchPoint.from_dict(mJson, switch_id)
             if model.pin is not None and exModel.pin is not None and model.pin is not exModel.pin:
                 validator.isAlreadyInUse(int(mJson["pin"]))
-            updatedSwitch = database.updateSwitch(int(switch_id), model)
+            updatedSwitch = database.updateSwitch(switch_id, model)
             if updateSwitch is not None:
                 return json.dumps(updatedSwitch.to_dict()), 200, baseAPI.defaultHeader()
             else:
@@ -72,10 +72,10 @@ def deleteSwitch(switch_id: str):
         abort(400)
     try:
         database = DatabaseController()
-        exModel = database.getSwitch(int(switch_id))
+        exModel = database.getSwitch(switch_id)
         if exModel is None:
             return json.dumps({"error": "Switch for id {} not found".format(switch_id)}), 404
-        database.deleteSwitchModel(int(switch_id))
+        database.deleteSwitchModel(switch_id)
         return "", 205, baseAPI.defaultHeader()
     except Error as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()    

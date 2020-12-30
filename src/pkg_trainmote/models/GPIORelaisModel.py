@@ -8,7 +8,7 @@ class GPIORelaisModel():
     defaultValue = GPIO.HIGH
 
     def __init__(
-        self, uid: int,
+        self, uid: str,
         pin: Optional[int],
         name: Optional[str] = None,
         description: Optional[str] = None
@@ -47,7 +47,7 @@ class GPIORelaisAdapter():
     def getGPIORelaisFor(data) -> GPIORelaisModel:
         name = data.get("name")
         description = data.get("description")
-        model = GPIORelaisModel(0, int(data["pin"]), name, description)
+        model = GPIORelaisModel("", int(data["pin"]), name, description)
         model.setDefaultValue(int(data["defaultValue"]))
         return model
 
@@ -55,7 +55,7 @@ class GPIORelaisAdapter():
 class GPIOStoppingPoint(GPIORelaisModel):
 
     def __init__(
-        self, uid: int,
+        self, uid: str,
         pin: Optional[int], measurmentpin: Optional[int],
         name: Optional[str], description: Optional[str]
     ):
@@ -75,7 +75,7 @@ class GPIOStoppingPoint(GPIORelaisModel):
         return classInstance
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any], id: int):
+    def from_dict(cls, data: Dict[str, Any], id: str):
         stop = cls(id, data.get("pin"), data.get("measurmentpin"), data.get("name"), data.get("description"))
         stop.defaultValue = data.get("defaultValue")
         return stop
@@ -92,11 +92,14 @@ class GPIOSwitchType(enum.Enum):
 class GPIOSwitchPoint(GPIORelaisModel):
 
     def __init__(
-        self, uid: int,
+        self, uid: str,
         switchType: Optional[str], pin: Optional[int],
+        needsPowerOn: Optional[bool],
         name: Optional[str], description: Optional[str]
     ):
-        self.needsPowerOn = True
+        self.needsPowerOn = needsPowerOn
+        if needsPowerOn is None:
+            self.needsPowerOn = True
         self.switchType = switchType
         self.powerRelais = None
         super(GPIOSwitchPoint, self).__init__(uid, pin, name, description)
@@ -129,18 +132,18 @@ class GPIOSwitchPoint(GPIORelaisModel):
         return mdict
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any], id: int):
+    def from_dict(cls, data: Dict[str, Any], id: str):
         switchType = data.get("switchType")
         if switchType is not None and GPIOSwitchHelper.isValidType(switchType) is False:
             raise ValueError("Invalid switch type")
-        switch = cls(id, switchType, data.get("pin"), data.get("name"), data.get("description"))
+        switch = cls(id, switchType, data.get("pin"), data.get("needsPowerOn"), data.get("name"), data.get("description"))
         switch.defaultValue = data.get("defaultValue")
         switch.needsPowerOn = data.get("needsPowerOn")
         return switch
 
     @classmethod
-    def fromParent(cls, parent: GPIORelaisModel, switchType: str):
-        classInstance = cls(parent.uid, switchType, parent.pin, parent.name, parent.description)
+    def fromParent(cls, parent: GPIORelaisModel, switchType: str, needsPowerOn: bool):
+        classInstance = cls(parent.uid, switchType, parent.pin, needsPowerOn, parent.name, parent.description)
         classInstance.setDefaultValue(parent.defaultValue)
         return classInstance
 

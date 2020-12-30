@@ -36,13 +36,13 @@ def updateStop(stop_id: str):
             abort(400)
         try:
             database = DatabaseController()
-            exModel = database.getStop(int(stop_id))
+            exModel = database.getStop(stop_id)
             if exModel is None:
                 return json.dumps({"error": "Stop for id {} not found".format(stop_id)}), 404, baseAPI.defaultHeader()
-            model = GPIOStoppingPoint.from_dict(mJson, int(stop_id))
+            model = GPIOStoppingPoint.from_dict(mJson, stop_id)
             if model.pin is not None and exModel.pin is not None and model.pin is not exModel.pin:
                 validator.isAlreadyInUse(int(mJson["pin"]))
-            updateStop = database.updateStop(int(stop_id), model)
+            updateStop = database.updateStop(stop_id, model)
             if updateStop is not None:
                 return json.dumps(updateStop.to_dict()), 200, baseAPI.defaultHeader()
             else:
@@ -62,10 +62,10 @@ def deleteStop(stop_id: str):
         abort(400)
     try:        
         database = DatabaseController()
-        exModel = database.getStop(int(stop_id))
+        exModel = database.getStop(stop_id)
         if exModel is None:
             return json.dumps({"error": "Stop for id {} not found".format(stop_id)}), 404
-        database.deleteStopModel(int(stop_id))
+        database.deleteStopModel(stop_id)
         return "", 205, baseAPI.defaultHeader()
     except Error as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()

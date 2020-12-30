@@ -121,7 +121,7 @@ def receivedMessage(message):
 
 
 def getSwitch(id: str) -> str:
-    switch = getSwitchFor(int(id))
+    switch = getSwitchFor(id)
     if switch is not None:
         return json.dumps(switch.to_dict())
     raise ValueError("Switch for id {} not found".format(id))
@@ -132,15 +132,15 @@ def getAllSwitches():
 
 
 def setSwitch(id: str) -> str:
-    relais = getSwitchWithID(int(id))
+    relais = getSwitchWithID(id)
     if relais is not None:
-        switch = getSwitchFor(int(id))
+        switch = getSwitchFor(id)
         if switch is not None:
             newValue = switchPin(relais)
             return json.dumps({"model": switch.to_dict(), "currentValue": newValue})
     raise ValueError("Relais not found for id {}".format(id))
 
-def getSwitchFor(uid: int) -> Optional[GPIOSwitchPoint]:
+def getSwitchFor(uid: str) -> Optional[GPIOSwitchPoint]:
     for switch in DatabaseController().getAllSwichtModels():
         if switch.uid == uid:
             return switch
@@ -150,8 +150,9 @@ def createSwitch(data):
     gpioRelais = GPIORelaisAdapter.getGPIORelaisFor(data)
     if gpioRelais is not None:
         switchType = data.get("switchType")
+        needsPowerOn = data.get("needsPowerOn")
         if GPIOSwitchHelper.isValidType(switchType):
-            switch = GPIOSwitchPoint.fromParent(gpioRelais, switchType)
+            switch = GPIOSwitchPoint.fromParent(gpioRelais, switchType, needsPowerOn)
             result = storeSwitch(switch)
             if result is not None and result.pin is not None:
                 return json.dumps(result.to_dict())
@@ -170,6 +171,7 @@ def storeSwitch(model: GPIOSwitchPoint) -> Optional[GPIOSwitchPoint]:
         result = databaseController.insertSwitchModel(
             model.pin,
             model.switchType,
+            model.needsPowerOn,
             model.defaultValue,
             model.name,
             model.description
