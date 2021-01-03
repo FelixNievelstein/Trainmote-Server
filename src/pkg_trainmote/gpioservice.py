@@ -222,7 +222,7 @@ def createStop(data):
         measurmentId = int(data.get("measurmentId"))
         stop = GPIOStoppingPoint.fromParent(gpioRelais, measurmentId)
         result = storeStop(stop)
-        if result is not None and result.pin is not None:
+        if result is not None and result.relais_id is not None:
             return json.dumps(result.to_dict())
         else:
             raise ValueError("Could not create stop")
