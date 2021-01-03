@@ -158,14 +158,21 @@ class DatabaseController():
             # Insert a row of data
             self.execute("DELETE FROM TMSwitchModel WHERE uid = '%s';" % (id), None)
 
+    def getSwitchForDataSet(self, dataSet) -> GPIOSwitchPoint:
+        needsPowerOn = True
+        if dataSet[5] == 0:
+            needsPowerOn = False
+        switch = GPIOSwitchPoint(dataSet[1], dataSet[3], dataSet[2], needsPowerOn, dataSet[6], dataSet[7])
+        switch.setDefaultValue(dataSet[4])
+        return switch
+
     def getSwitch(self, uid: str) -> Optional[GPIOSwitchPoint]:
         switch = None
         if self.openDatabase():
             def readSwitch(lastrowid):
                 nonlocal switch
                 for dataSet in self.curs:
-                    switch = GPIOSwitchPoint(dataSet[1], dataSet[3], dataSet[2], dataSet[5], dataSet[6], dataSet[7])
-                    switch.setDefaultValue(dataSet[4])
+                    switch = self.getSwitchForDataSet(dataSet)                    
 
             self.execute("SELECT * FROM TMSwitchModel WHERE uid = '%s';" % (uid), readSwitch)
 
@@ -183,8 +190,7 @@ class DatabaseController():
             def readSwitchs(lastrowid):
                 nonlocal allSwitchModels
                 for dataSet in self.curs:
-                    switchModel = GPIOSwitchPoint(dataSet[1], dataSet[3], dataSet[2], dataSet[5], dataSet[6], dataSet[7])
-                    switchModel.setDefaultValue(dataSet[4])
+                    switchModel = self.getSwitchForDataSet(dataSet)
                     allSwitchModels.append(switchModel)
 
             self.execute("SELECT * FROM TMSwitchModel", readSwitchs)
