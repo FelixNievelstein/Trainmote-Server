@@ -32,7 +32,7 @@ def loadInitialData():
     if config is not None:
         if config.switchPowerRelais is not None:
             # Initialise GPIO for switch power relais
-            switchPowerRelais = GPIORelaisModel(config.switchPowerRelais, config.switchPowerRelais)
+            switchPowerRelais = GPIORelaisModel("switchPowerRelais", config.switchPowerRelais)
             GPIO.setup(switchPowerRelais.pin, GPIO.OUT, initial=GPIO.HIGH)
 
     switchModels = DatabaseController().getAllSwichtModels()

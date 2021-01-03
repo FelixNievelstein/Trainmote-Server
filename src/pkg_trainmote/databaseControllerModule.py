@@ -133,23 +133,24 @@ class DatabaseController():
         defaultValue: int,
         name: Optional[str],
         description: Optional[str]
-    ) -> Optional[int]:
-        resultUid = None
+    ) -> Optional[str]:
+        switchUuid = None
         if self.openDatabase():
             intVal = 0
             if needsPowerOn:
                 intVal = 1
+            switchUuid = str(uuid.uuid4())
 
             # Insert a row of data
             def createdSwitch(uid):
-                nonlocal resultUid
-                resultUid = uid
+                print(uid)
+
             self.execute(
                 "INSERT INTO TMSwitchModel(uid, relais_id, switchType, defaultValue, needsPowerOn, name, description) VALUES ('%s', '%i', '%s', '%i', '%i', '%s', '%s')"
-                % (str(uuid.uuid4()), pin, switchType, defaultValue, intVal, name, description), createdSwitch
+                % (switchUuid, pin, switchType, defaultValue, intVal, name, description), createdSwitch
             )
 
-        return resultUid
+        return switchUuid
 
     def deleteSwitchModel(self, id: str):
         if self.openDatabase():
@@ -223,25 +224,26 @@ class DatabaseController():
         messId: Optional[int],
         name: Optional[str],
         description: Optional[str]
-    ) -> Optional[int]:
-        resultUid = None
+    ) -> Optional[str]:
+        stopUuid = None
         if self.openDatabase():
+            stopUuid = str(uuid.uuid4())
+
             # Insert a row of data
             def createdStop(uid):
-                nonlocal resultUid
-                resultUid = uid
+                print(uid)
 
             if messId is not None:
                 self.execute(
                     "INSERT INTO TMStopModel(uid, relais_id, mess_id, name, description) VALUES ('%s', '%i','%i', '%s', '%s')"
-                    % (str(uuid.uuid4()), relaisId, messId, name, description), createdStop
+                    % (stopUuid, relaisId, messId, name, description), createdStop
                 )
             else:
                 self.execute(
                     "INSERT INTO TMStopModel(uid, relais_id, name, description) VALUES ('%s', '%i', '%s', '%s')"
-                    % (str(uuid.uuid4()), relaisId, name, description), createdStop
+                    % (stopUuid, relaisId, name, description), createdStop
                 )
-        return resultUid
+        return stopUuid
 
     def updateStop(self, uid: str, updatModel: GPIOStoppingPoint) -> Optional[GPIOStoppingPoint]:
         updateString = self.createUpdateStringFor("TMStopModel", updatModel, "uid = %s" % (uid))
