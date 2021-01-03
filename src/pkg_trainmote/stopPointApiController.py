@@ -40,8 +40,8 @@ def updateStop(stop_id: str):
             if exModel is None:
                 return json.dumps({"error": "Stop for id {} not found".format(stop_id)}), 404, baseAPI.defaultHeader()
             model = GPIOStoppingPoint.from_dict(mJson, stop_id)
-            if model.pin is not None and exModel.pin is not None and model.pin is not exModel.pin:
-                validator.isAlreadyInUse(int(mJson["pin"]))
+            if model.relais_id is not None and exModel.relais_id is not None and model.relais_id is not exModel.relais_id:
+                validator.isAlreadyInUse(int(mJson["relais_id"]))
             updateStop = database.updateStop(stop_id, model)
             if updateStop is not None:
                 return json.dumps(updateStop.to_dict()), 200, baseAPI.defaultHeader()
@@ -79,7 +79,7 @@ def addStop():
             abort(400)
 
         config = DatabaseController().getConfig()
-        if config is not None and config.containsPin(mJson["pin"]):
+        if config is not None and config.containsPin(mJson["relais_id"]):
             return json.dumps({"error": "Pin is already in use as power relais"}), 409, baseAPI.defaultHeader()
 
         try:

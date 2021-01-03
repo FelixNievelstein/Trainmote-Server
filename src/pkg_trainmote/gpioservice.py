@@ -33,7 +33,7 @@ def loadInitialData():
         if config.switchPowerRelais is not None:
             # Initialise GPIO for switch power relais
             switchPowerRelais = GPIORelaisModel("switchPowerRelais", config.switchPowerRelais)
-            GPIO.setup(switchPowerRelais.pin, GPIO.OUT, initial=GPIO.HIGH)
+            GPIO.setup(switchPowerRelais.relais_id, GPIO.OUT, initial=GPIO.HIGH)
 
     switchModels = DatabaseController().getAllSwichtModels()
     for model in switchModels:
@@ -47,7 +47,7 @@ def loadInitialData():
 
 def addRelais(relais: GPIORelaisModel):
     try:
-        GPIO.setup(relais.pin, GPIO.OUT, initial=relais.defaultValue)
+        GPIO.setup(relais.relais_id, GPIO.OUT, initial=relais.defaultValue)
         gpioRelais.append(relais)
     except Exception as e:
         print(e)
@@ -154,7 +154,7 @@ def createSwitch(data):
         if GPIOSwitchHelper.isValidType(switchType):
             switch = GPIOSwitchPoint.fromParent(gpioRelais, switchType, needsPowerOn)
             result = storeSwitch(switch)
-            if result is not None and result.pin is not None:
+            if result is not None and result.relais_id is not None:
                 return json.dumps(result.to_dict())
             else:
                 raise ValueError("Could not create switch")
@@ -166,10 +166,10 @@ def createSwitch(data):
 # Stores a Switch Point to the database if is a valid pin number.
 # Throws error if not valid. Adds the relais to the gpioservice relais.
 def storeSwitch(model: GPIOSwitchPoint) -> Optional[GPIOSwitchPoint]:
-    if (model.pin is not None and isValidRaspberryPiGPIO(model.pin)):
+    if (model.relais_id is not None and isValidRaspberryPiGPIO(model.relais_id)):
         databaseController = DatabaseController()
         result = databaseController.insertSwitchModel(
-            model.pin,
+            model.relais_id,
             model.switchType,
             model.needsPowerOn,
             model.defaultValue,
@@ -232,9 +232,9 @@ def createStop(data):
 # Stores a Stop Point to the database if is a valid pin number.
 # Throws error if not valid. Adds the relais to the gpioservice relais.
 def storeStop(model: GPIOStoppingPoint) -> Optional[GPIOStoppingPoint]:
-    if (model.pin is not None and isValidRaspberryPiGPIO(model.pin)):
+    if (model.relais_id is not None and isValidRaspberryPiGPIO(model.relais_id)):
         databaseController = DatabaseController()
-        result = databaseController.insertStopModel(model.pin, model.measurmentpin, model.name, model.description)
+        result = databaseController.insertStopModel(model.relais_id, model.measurmentpin, model.name, model.description)
         if (result is not None):
             stop = databaseController.getStop(result)
             if (stop is not None):

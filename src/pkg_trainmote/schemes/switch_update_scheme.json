@@ -1,7 +1,7 @@
 {
     "type" : "object",
     "properties" : {
-        "pin" : {"type" : "integer"},
+        "relais_id" : {"type" : "integer"},
         "defaultValue" : {"type" : "integer"},
         "switchType": {"type" : "string"},
         "name": {"type": "string"},

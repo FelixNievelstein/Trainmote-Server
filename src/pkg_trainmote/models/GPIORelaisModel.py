@@ -9,12 +9,12 @@ class GPIORelaisModel():
 
     def __init__(
         self, uid: str,
-        pin: Optional[int],
+        relais_id: Optional[int],
         name: Optional[str] = None,
         description: Optional[str] = None
     ):
         self.uid = uid
-        self.pin = pin
+        self.relais_id = relais_id
         self.name = name
         self.description = description
 
@@ -22,19 +22,19 @@ class GPIORelaisModel():
         self.defaultValue = value
 
     def toDefault(self):
-        GPIO.output(self.pin, self.defaultValue)
+        GPIO.output(self.relais_id, self.defaultValue)
 
     def getStatus(self):
-        return GPIO.input(self.pin)
+        return GPIO.input(self.relais_id)
 
     def setStatus(self, value):
-        GPIO.output(self.pin, value)
+        GPIO.output(self.relais_id, value)
         return self.getStatus()
 
     def to_dict(self):
         return {
             "uid": self.uid,
-            "pin": self.pin,
+            "relais_id": self.relais_id,
             "defaultValue": self.defaultValue,
             "status": self.getStatus(),
             "name": self.name,
@@ -47,7 +47,7 @@ class GPIORelaisAdapter():
     def getGPIORelaisFor(data) -> GPIORelaisModel:
         name = data.get("name")
         description = data.get("description")
-        model = GPIORelaisModel("", int(data["pin"]), name, description)
+        model = GPIORelaisModel("", int(data["relais_id"]), name, description)
         model.setDefaultValue(int(data["defaultValue"]))
         return model
 
@@ -70,13 +70,13 @@ class GPIOStoppingPoint(GPIORelaisModel):
 
     @classmethod
     def fromParent(cls, parent: GPIORelaisModel, measurmentpin: Optional[int]):
-        classInstance = cls(parent.uid, parent.pin, measurmentpin, parent.name, parent.description)
+        classInstance = cls(parent.uid, parent.relais_id, measurmentpin, parent.name, parent.description)
         classInstance.setDefaultValue(parent.defaultValue)
         return classInstance
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any], id: str):
-        stop = cls(id, data.get("pin"), data.get("measurmentpin"), data.get("name"), data.get("description"))
+        stop = cls(id, data.get("relais_id"), data.get("measurmentpin"), data.get("name"), data.get("description"))
         stop.defaultValue = data.get("defaultValue")
         return stop
 
@@ -110,7 +110,7 @@ class GPIOSwitchPoint(GPIORelaisModel):
     def setStatus(self, value: int):
         if self.needsPowerOn and self.powerRelais is not None:
             self.powerRelais.setStatus(GPIO.LOW)
-        GPIO.output(self.pin, value)
+        GPIO.output(self.relais_id, value)
         time.sleep(0.2)
         if self.needsPowerOn and self.powerRelais is not None:
             self.powerRelais.setStatus(GPIO.HIGH)
@@ -119,7 +119,7 @@ class GPIOSwitchPoint(GPIORelaisModel):
     def toDefault(self):
         if self.needsPowerOn and self.powerRelais is not None:
             self.powerRelais.setStatus(GPIO.LOW)
-        GPIO.output(self.pin, self.defaultValue)
+        GPIO.output(self.relais_id, self.defaultValue)
         time.sleep(0.2)
         if self.needsPowerOn and self.powerRelais is not None:
             self.powerRelais.setStatus(GPIO.HIGH)
@@ -136,14 +136,14 @@ class GPIOSwitchPoint(GPIORelaisModel):
         switchType = data.get("switchType")
         if switchType is not None and GPIOSwitchHelper.isValidType(switchType) is False:
             raise ValueError("Invalid switch type")
-        switch = cls(id, switchType, data.get("pin"), data.get("needsPowerOn"), data.get("name"), data.get("description"))
+        switch = cls(id, switchType, data.get("relais_id"), data.get("needsPowerOn"), data.get("name"), data.get("description"))
         switch.defaultValue = data.get("defaultValue")
         switch.needsPowerOn = data.get("needsPowerOn")
         return switch
 
     @classmethod
     def fromParent(cls, parent: GPIORelaisModel, switchType: str, needsPowerOn: bool):
-        classInstance = cls(parent.uid, switchType, parent.pin, needsPowerOn, parent.name, parent.description)
+        classInstance = cls(parent.uid, switchType, parent.relais_id, needsPowerOn, parent.name, parent.description)
         classInstance.setDefaultValue(parent.defaultValue)
         return classInstance
 

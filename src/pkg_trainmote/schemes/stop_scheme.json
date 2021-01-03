@@ -1,11 +1,11 @@
 {
     "type" : "object",
     "properties" : {
-        "pin" : {"type" : "integer"},
+        "relais_id" : {"type" : "integer"},
         "defaultValue" : {"type" : "integer"},
         "measurmentId" : {"type" : "integer"},
         "name": {"type": "string"},
         "description": {"type": "string"}        
     },
-    "required": ["pin", "defaultValue"]
+    "required": ["relais_id", "defaultValue"]
 }

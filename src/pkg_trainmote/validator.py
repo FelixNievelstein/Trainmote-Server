@@ -29,9 +29,9 @@ class Validator:
             print(e)
             return None
 
-    def containsPin(self, pin: int, relais: List[GPIORelaisModel]) -> bool:
+    def containsPin(self, relais_id: int, relais: List[GPIORelaisModel]) -> bool:
         for rel in relais:
-            if rel.pin == pin:
+            if rel.relais_id == relais_id:
                 return True
         return False 
 
