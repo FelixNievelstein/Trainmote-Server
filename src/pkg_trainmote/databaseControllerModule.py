@@ -179,7 +179,7 @@ class DatabaseController():
         return switch
 
     def updateSwitch(self, uid: str, updatModel: GPIOSwitchPoint) -> Optional[GPIOSwitchPoint]:
-        updateString = self.createUpdateStringFor("TMSwitchModel", updatModel, "uid = %s" % (uid))
+        updateString = self.createUpdateStringFor("TMSwitchModel", updatModel, "uid = '%s'" % (uid))
         if self.openDatabase() and updateString is not None:
             self.execute(updateString, None)
         return self.getSwitch(uid)
@@ -253,7 +253,7 @@ class DatabaseController():
         return stopUuid
 
     def updateStop(self, uid: str, updatModel: GPIOStoppingPoint) -> Optional[GPIOStoppingPoint]:
-        updateString = self.createUpdateStringFor("TMStopModel", updatModel, "uid = %s" % (uid))
+        updateString = self.createUpdateStringFor("TMStopModel", updatModel, "uid = '%s'" % (uid))
         if self.openDatabase() and updateString is not None:
             self.execute(updateString, None)
         return self.getStop(uid)
