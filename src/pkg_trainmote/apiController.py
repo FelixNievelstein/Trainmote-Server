@@ -75,7 +75,8 @@ def setupPowerGPIO(pin: int):
 
 @app.route('/trainmote/api/v1')
 def hello_world():
-    stateController.setState(stateControllerModule.STATE_CONNECTED)
+    if stateController is not None:
+        stateController.setState(stateControllerModule.STATE_CONNECTED)
     return json.dumps({"trainmote": "trainmote.module.felix-nievelstein.de", "version": mVersion})
 
 

@@ -23,6 +23,7 @@ class DatabaseController():
         config = ConfigController()
         dbPath = config.getDataBasePath()
         if dbPath is not None:
+            print(dbPath)
             if not os.path.exists(dbPath):
                 self.createInitalDatabse(dbPath)
 
