@@ -56,7 +56,7 @@ def updateSwitch(switch_id: str):
             if updateSwitch is not None:
                 if exModel.relais_id != model.relais_id:
                     gpioservice.removeRelais(exModel)
-                    gpioservice.addRelais(model)
+                    gpioservice.addSwitch(model)
                 return json.dumps(updatedSwitch.to_dict()), 200, baseAPI.defaultHeader()
             else:
                 abort(500)

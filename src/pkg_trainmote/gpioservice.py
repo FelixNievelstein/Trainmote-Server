@@ -1,5 +1,4 @@
 import json
-from sqlite3.dbapi2 import Error
 import RPi.GPIO as GPIO
 from .traintrackingservice import TrackingService
 from .models.GPIORelaisModel import GPIORelaisAdapter, GPIORelaisModel, GPIOSwitchHelper
@@ -27,6 +26,7 @@ def setup():
 
 
 def loadInitialData():
+    global switchPowerRelais
     config = DatabaseController().getConfig()
     if config is not None:
         if config.switchPowerRelais is not None:
