@@ -11,7 +11,7 @@ from typing import Optional
 gpioRelais = []
 trackingServices = []
 validGpios = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
-
+switchPowerRelais: Optional[GPIORelaisModel] = None
 # Inital Loading and Setup
 
 
@@ -28,7 +28,6 @@ def setup():
 
 def loadInitialData():
     config = DatabaseController().getConfig()
-    switchPowerRelais: Optional[GPIORelaisModel] = None
     if config is not None:
         if config.switchPowerRelais is not None:
             # Initialise GPIO for switch power relais
@@ -37,9 +36,8 @@ def loadInitialData():
 
     switchModels = DatabaseController().getAllSwichtModels()
     for model in switchModels:
-        if model.needsPowerOn and switchPowerRelais is not None:
-            model.setPowerRelais(switchPowerRelais)
-        addRelais(model)
+        addSwitch(model)
+
     stopModels = DatabaseController().getAllStopModels()
     for stop in stopModels:
         addRelais(stop)
@@ -49,13 +47,17 @@ def removeRelais(relais: GPIORelaisModel):
         gpioRelais.remove(relais)
         GPIO.cleanup(relais.relais_id)
 
+def addSwitch(switch: GPIOSwitchPoint):    
+    if switch.needsPowerOn and switchPowerRelais is not None:
+        switch.setPowerRelais(switchPowerRelais)
+    addRelais(switch)
+
 def addRelais(relais: GPIORelaisModel):
     try:
         GPIO.setup(relais.relais_id, GPIO.OUT, initial=relais.defaultValue)
         gpioRelais.append(relais)
     except Exception as e:
         print(e)
-
 
 def setupTrackingDefault():
     for relais in gpioRelais:
