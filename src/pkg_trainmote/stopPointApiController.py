@@ -44,6 +44,9 @@ def updateStop(stop_id: str):
                 validator.isAlreadyInUse(int(mJson["relais_id"]))
             updateStop = database.updateStop(stop_id, model)
             if updateStop is not None:
+                if exModel.relais_id != model.relais_id:
+                    gpioservice.removeRelais(exModel)
+                    gpioservice.addRelais(model)
                 return json.dumps(updateStop.to_dict()), 200, baseAPI.defaultHeader()
             else:
                 abort(500)

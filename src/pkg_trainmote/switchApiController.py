@@ -48,12 +48,15 @@ def updateSwitch(switch_id: str):
             database = DatabaseController()
             exModel = database.getSwitch(switch_id)
             if exModel is None:
-                return json.dumps({"error": "Switch for id {} not found".format(switch_id)}), 404, baseAPI.defaultHeader()
-            model = GPIOSwitchPoint.from_dict(mJson, switch_id)
+                return json.dumps({"error": "Switch for id {} not found".format(switch_id)}), 404, baseAPI.defaultHeader()            
+            model = GPIOSwitchPoint.from_dict(mJson, switch_id)            
             if model.relais_id is not None and exModel.relais_id is not None and model.relais_id is not exModel.relais_id:
                 validator.isAlreadyInUse(int(mJson["relais_id"]))
             updatedSwitch = database.updateSwitch(switch_id, model)
             if updateSwitch is not None:
+                if exModel.relais_id != model.relais_id:
+                    gpioservice.removeRelais(exModel)
+                    gpioservice.addRelais(model)
                 return json.dumps(updatedSwitch.to_dict()), 200, baseAPI.defaultHeader()
             else:
                 abort(500)

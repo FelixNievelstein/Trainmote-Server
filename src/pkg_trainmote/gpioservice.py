@@ -44,6 +44,10 @@ def loadInitialData():
     for stop in stopModels:
         addRelais(stop)
 
+def removeRelais(relais: GPIORelaisModel):
+    if relais in gpioRelais:
+        gpioRelais.remove(relais)
+        GPIO.cleanup(relais.relais_id)
 
 def addRelais(relais: GPIORelaisModel):
     try:

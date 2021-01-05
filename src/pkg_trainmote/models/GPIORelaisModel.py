@@ -40,6 +40,9 @@ class GPIORelaisModel():
             "name": self.name,
             "description": self.description
         }
+    
+    def __eq__(self, other):
+        return self.relais_id == other.relais_id and self.uid == other.uid
 
 
 class GPIORelaisAdapter():
