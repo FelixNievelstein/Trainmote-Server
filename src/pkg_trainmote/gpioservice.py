@@ -198,7 +198,7 @@ def storeSwitch(model: GPIOSwitchPoint) -> Optional[GPIOSwitchPoint]:
 
 
 def getStop(id: str):
-    stop = getStopFor(int(id))
+    stop = getStopFor(id)
     if stop is not None:
         return json.dumps(stop.to_dict())
     return json.dumps({"error": "Stop for id {} not found".format(id)})
@@ -208,15 +208,15 @@ def getAllStopPoints():
     return json.dumps([ob.to_dict() for ob in DatabaseController().getAllStopModels()])
 
 def setStop(id: str):
-    relais = getStopWithID(int(id))
+    relais = getStopWithID(id)
     if relais is not None:
-        stop = getStopFor(int(id))
+        stop = getStopFor(id)
         if stop is not None:
             newValue = switchPin(relais)
             return json.dumps({"model": stop.to_dict(), "currentValue": newValue})
     raise ValueError("Relais not found for id {}".format(id))
 
-def getStopFor(uid: int) -> Optional[GPIOStoppingPoint]:
+def getStopFor(uid: str) -> Optional[GPIOStoppingPoint]:
     for stop in DatabaseController().getAllStopModels():
         if stop.uid == uid:
             return stop
