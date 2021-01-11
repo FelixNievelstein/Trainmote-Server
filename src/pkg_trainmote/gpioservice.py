@@ -61,7 +61,7 @@ def addRelais(relais: GPIORelaisModel):
 
 def setupTrackingDefault():
     for relais in gpioRelais:
-        if isinstance(relais, GPIOStoppingPoint) and relais.measurmentpin is not None:
+        if isinstance(relais, GPIOStoppingPoint) and relais.mess_id is not None:
             startTrackingFor(relais)
 
 
@@ -113,7 +113,7 @@ def switchPin(relais):
                 trackingServices.remove(trackingService)
         return relais.setStatus(GPIO.LOW)
     else:
-        if isinstance(relais, GPIOStoppingPoint) and relais.measurmentpin is not None:
+        if isinstance(relais, GPIOStoppingPoint) and relais.mess_id is not None:
             startTrackingFor(relais)
         return relais.setStatus(GPIO.HIGH)
 
@@ -225,8 +225,8 @@ def getStopFor(uid: str) -> Optional[GPIOStoppingPoint]:
 def createStop(data):
     gpioRelais = GPIORelaisAdapter.getGPIORelaisFor(data)
     if gpioRelais is not None:
-        measurmentId = int(data.get("measurmentId"))
-        stop = GPIOStoppingPoint.fromParent(gpioRelais, measurmentId)
+        mess_id = int(data.get("mess_id"))
+        stop = GPIOStoppingPoint.fromParent(gpioRelais, mess_id)
         result = storeStop(stop)
         if result is not None and result.relais_id is not None:
             return json.dumps(result.to_dict())
@@ -240,7 +240,7 @@ def createStop(data):
 def storeStop(model: GPIOStoppingPoint) -> Optional[GPIOStoppingPoint]:
     if (model.relais_id is not None and isValidRaspberryPiGPIO(model.relais_id)):
         databaseController = DatabaseController()
-        result = databaseController.insertStopModel(model.relais_id, model.measurmentpin, model.name, model.description)
+        result = databaseController.insertStopModel(model.relais_id, model.mess_id, model.name, model.description)
         if (result is not None):
             stop = databaseController.getStop(result)
             if (stop is not None):

@@ -3,7 +3,7 @@
     "properties" : {
         "relais_id" : {"type" : "integer"},
         "defaultValue" : {"type" : "integer"},
-        "measurmentId" : {"type" : "integer"},
+        "mess_id" : {"type" : "integer"},
         "name": {"type": "string"},
         "description": {"type": "string"}        
     },

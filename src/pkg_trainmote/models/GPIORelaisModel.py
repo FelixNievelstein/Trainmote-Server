@@ -59,27 +59,27 @@ class GPIOStoppingPoint(GPIORelaisModel):
 
     def __init__(
         self, uid: str,
-        pin: Optional[int], measurmentpin: Optional[int],
+        pin: Optional[int], mess_id: Optional[int],
         name: Optional[str], description: Optional[str]
     ):
-        self.measurmentpin = measurmentpin
+        self.mess_id = mess_id
         super(GPIOStoppingPoint, self).__init__(uid, pin, name, description)
 
     def to_dict(self):
         mdict = super(GPIOStoppingPoint, self).to_dict()
-        mdict["measurmentpin"] = self.measurmentpin
+        mdict["mess_id"] = self.mess_id
         mdict["uid"] = self.uid
         return mdict
 
     @classmethod
-    def fromParent(cls, parent: GPIORelaisModel, measurmentpin: Optional[int]):
-        classInstance = cls(parent.uid, parent.relais_id, measurmentpin, parent.name, parent.description)
+    def fromParent(cls, parent: GPIORelaisModel, mess_id: Optional[int]):
+        classInstance = cls(parent.uid, parent.relais_id, mess_id, parent.name, parent.description)
         classInstance.setDefaultValue(parent.defaultValue)
         return classInstance
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any], id: str):
-        stop = cls(id, data.get("relais_id"), data.get("measurmentpin"), data.get("name"), data.get("description"))
+        stop = cls(id, data.get("relais_id"), data.get("mess_id"), data.get("name"), data.get("description"))
         stop.defaultValue = data.get("defaultValue")
         return stop
 

@@ -18,11 +18,11 @@ class TrackingService:
         # do some stuff
         self.isTracking = True
         self.trackingThread.start()
-        print('Start Tracking: ', self.stoppingPoint.measurmentpin)
+        print('Start Tracking: ', self.stoppingPoint.mess_id)
         # continue doing stuff
 
     def stopTracking(self):
-        print('Stop Tracking: ', self.stoppingPoint.measurmentpin)
+        print('Stop Tracking: ', self.stoppingPoint.mess_id)
         self.trackingThread.kill.set()
         self.trackingThread.join()
         self.isTracking = False
