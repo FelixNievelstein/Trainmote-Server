@@ -240,7 +240,13 @@ def createStop(data):
 def storeStop(model: GPIOStoppingPoint) -> Optional[GPIOStoppingPoint]:
     if (model.relais_id is not None and isValidRaspberryPiGPIO(model.relais_id)):
         databaseController = DatabaseController()
-        result = databaseController.insertStopModel(model.relais_id, model.mess_id, model.name, model.description)
+        result = databaseController.insertStopModel(
+            model.relais_id,
+            model.mess_id,
+            model.name,
+            model.defaultValue,
+            model.description
+        )
         if (result is not None):
             stop = databaseController.getStop(result)
             if (stop is not None):
