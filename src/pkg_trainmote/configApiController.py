@@ -31,20 +31,26 @@ def setConfig():
 
         stops = DatabaseController().getAllStopModels()
         switchs = DatabaseController().getAllSwichtModels()
-        switchPowerRelaisIsStop = validator.containsPin(int(mJson["switchPowerRelais"]), stops)
-        switchPowerRelaisIsSwitch = validator.containsPin(int(mJson["switchPowerRelais"]), switchs)
-        if switchPowerRelaisIsStop or switchPowerRelaisIsSwitch:
-            return json.dumps({"error": "Switch power relais pin is already in use"}), 409, baseAPI.defaultHeader()
+        switchPowerRelais = int(mJson["switchPowerRelais"])
+        if switchPowerRelais is not None:
+            switchPowerRelaisIsStop = validator.containsPin(switchPowerRelais, stops)
+            switchPowerRelaisIsSwitch = validator.containsPin(switchPowerRelais, switchs)
+            if switchPowerRelaisIsStop or switchPowerRelaisIsSwitch:
+                return json.dumps({"error": "Switch power relais pin is already in use"}), 409, baseAPI.defaultHeader()
 
-        powerRelaisIsStop = validator.containsPin(int(mJson["powerRelais"]), stops)
-        powerRelaisIsSwitch = validator.containsPin(int(mJson["powerRelais"]), switchs)
-        if powerRelaisIsStop or powerRelaisIsSwitch:
-            return json.dumps({"error": "Power relais pin is already in use"}), 409, baseAPI.defaultHeader()
+        powerRelais = int(mJson["powerRelais"])
+        if powerRelais is not None:
+            powerRelaisIsStop = validator.containsPin(int(mJson["powerRelais"]), stops)
+            powerRelaisIsSwitch = validator.containsPin(int(mJson["powerRelais"]), switchs)
+            if powerRelaisIsStop or powerRelaisIsSwitch:
+                return json.dumps({"error": "Power relais pin is already in use"}), 409, baseAPI.defaultHeader()
 
-        stateRelaisIsStop = validator.containsPin(int(mJson["stateRelais"]), stops)
-        stateRelaisIsSwitch = validator.containsPin(int(mJson["stateRelais"]), switchs)
-        if stateRelaisIsStop or stateRelaisIsSwitch:
-            return json.dumps({"error": "State relais pin is already in use"}), 409, baseAPI.defaultHeader()
+        stateRelais = int(mJson["stateRelais"])
+        if stateRelais is not None:
+            stateRelaisIsStop = validator.containsPin(int(mJson["stateRelais"]), stops)
+            stateRelaisIsSwitch = validator.containsPin(int(mJson["stateRelais"]), switchs)
+            if stateRelaisIsStop or stateRelaisIsSwitch:
+                return json.dumps({"error": "State relais pin is already in use"}), 409, baseAPI.defaultHeader()
 
         DatabaseController().insertConfig(
             int(mJson["switchPowerRelais"]),
