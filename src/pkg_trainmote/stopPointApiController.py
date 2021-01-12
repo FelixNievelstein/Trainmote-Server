@@ -40,7 +40,11 @@ def updateStop(stop_id: str):
             if exModel is None:
                 return json.dumps({"error": "Stop for id {} not found".format(stop_id)}), 404, baseAPI.defaultHeader()
             model = GPIOStoppingPoint.from_dict(mJson, stop_id)
-            if model.relais_id is not None and exModel.relais_id is not None and model.relais_id is not exModel.relais_id:
+            if (
+                model.relais_id is not None
+                and exModel.relais_id is not None
+                and model.relais_id is not exModel.relais_id
+            ):
                 validator.isAlreadyInUse(int(mJson["relais_id"]))
             updateStop = database.updateStop(stop_id, model)
             if updateStop is not None:

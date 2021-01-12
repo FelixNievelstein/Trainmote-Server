@@ -39,16 +39,17 @@ class Validator:
         database = DatabaseController()
         stops = database.getAllStopModels()
         switchs = database.getAllSwichtModels()
-        relaisIsStop = self.containsPin(pin, stops)        
+        relaisIsStop = self.containsPin(pin, stops)
         if relaisIsStop:
             raise ValueError("Pin is already in use as stop point")
         relaisIsSwitch = self.containsPin(pin, switchs)
         if relaisIsSwitch:
             raise ValueError("Pin is already in use as switch")
         config = database.getConfig()
-        if config.powerRelais is pin:
-            raise ValueError("Pin is already in use as power relais")
-        if config.switchPowerRelais is pin:
-            raise ValueError("Pin is already in use as switch power relais")
-        if config.stateRelais is pin:
-            raise ValueError("Pin is already in use as state relais")
+        if config is not None:
+            if config.powerRelais is pin:
+                raise ValueError("Pin is already in use as power relais")
+            if config.switchPowerRelais is pin:
+                raise ValueError("Pin is already in use as switch power relais")
+            if config.stateRelais is pin:
+                raise ValueError("Pin is already in use as state relais")
