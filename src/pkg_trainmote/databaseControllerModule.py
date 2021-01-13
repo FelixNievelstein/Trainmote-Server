@@ -115,7 +115,7 @@ class DatabaseController():
             self.execute("SELECT * FROM TMConfigModel WHERE pk = '0';", getConfigDB)
         return config
 
-    def insertConfig(self, switchPowerRelais: int, powerRelais: int, stateRelais: int):
+    def insertConfig(self, switchPowerRelais: Optional[int], powerRelais: Optional[int], stateRelais: Optional[int]):
         if self.openDatabase():
             self.execute(
                 "INSERT OR REPLACE INTO TMConfigModel(pk, switchPowerRelais, powerRelais, stateRelais) VALUES ('0', '%i','%i', '%i')"

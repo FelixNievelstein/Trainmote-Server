@@ -32,6 +32,7 @@ def setConfig():
         stops = DatabaseController().getAllStopModels()
         switchs = DatabaseController().getAllSwichtModels()
 
+        switchPowerRelais = None
         if "switchPowerRelais" in mJson:
             switchPowerRelais = int(mJson["switchPowerRelais"])
             if switchPowerRelais is not None:
@@ -40,6 +41,7 @@ def setConfig():
                 if switchPowerRelaisIsStop or switchPowerRelaisIsSwitch:
                     return json.dumps({"error": "Switch power relais pin is already in use"}), 409, baseAPI.defaultHeader()
 
+        powerRelais = None
         if "powerRelais" in mJson:
             powerRelais = int(mJson["powerRelais"])
             if powerRelais is not None:
@@ -48,6 +50,7 @@ def setConfig():
                 if powerRelaisIsStop or powerRelaisIsSwitch:
                     return json.dumps({"error": "Power relais pin is already in use"}), 409, baseAPI.defaultHeader()
 
+        stateRelais = None
         if "stateRelais" in mJson:
             stateRelais = int(mJson["stateRelais"])
             if stateRelais is not None:
@@ -57,9 +60,9 @@ def setConfig():
                     return json.dumps({"error": "State relais pin is already in use"}), 409, baseAPI.defaultHeader()
 
         DatabaseController().insertConfig(
-            int(mJson["switchPowerRelais"]),
-            int(mJson["powerRelais"]),
-            int(mJson["stateRelais"])
+            switchPowerRelais,
+            powerRelais,
+            stateRelais
         )
 
         if apiController.powerThread is not None:

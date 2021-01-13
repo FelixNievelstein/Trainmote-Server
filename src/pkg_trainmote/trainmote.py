@@ -5,7 +5,7 @@ from subprocess import call
 from . import configControllerModule
 
 
-version: str = '0.4.54'
+version: str = '0.4.55'
 
 
 def main():
