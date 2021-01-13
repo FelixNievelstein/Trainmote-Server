@@ -117,6 +117,15 @@ class DatabaseController():
 
     def insertConfig(self, switchPowerRelais: Optional[int], powerRelais: Optional[int], stateRelais: Optional[int]):
         if self.openDatabase():
+            if powerRelais is None:
+                powerRelais = 0
+
+            if switchPowerRelais is None:
+                switchPowerRelais = 0
+
+            if stateRelais is None:
+                stateRelais = 0
+
             self.execute(
                 "INSERT OR REPLACE INTO TMConfigModel(pk, switchPowerRelais, powerRelais, stateRelais) VALUES ('0', '%i','%i', '%i')"
                 % (switchPowerRelais, powerRelais, stateRelais), None

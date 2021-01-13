@@ -10,9 +10,20 @@ class ConfigModel():
         stateRelais: Optional[int]
     ):
         self.uid = uid
-        self.switchPowerRelais = switchPowerRelais
-        self.powerRelais = powerRelais
-        self.stateRelais = stateRelais
+        if switchPowerRelais == 0:
+            self.switchPowerRelais = None
+        else:
+            self.switchPowerRelais = switchPowerRelais
+
+        if powerRelais == 0:
+            self.powerRelais = None
+        else:
+            self.powerRelais = powerRelais
+
+        if stateRelais == 0:
+            self.stateRelais = None
+        else:
+            self.stateRelais = stateRelais
 
     def to_dict(self):
         return {

@@ -40,7 +40,7 @@ class GPIORelaisModel():
             "name": self.name,
             "description": self.description
         }
-    
+
     def __eq__(self, other):
         return self.relais_id == other.relais_id and self.uid == other.uid
 
@@ -139,7 +139,14 @@ class GPIOSwitchPoint(GPIORelaisModel):
         switchType = data.get("switchType")
         if switchType is not None and GPIOSwitchHelper.isValidType(switchType) is False:
             raise ValueError("Invalid switch type")
-        switch = cls(id, switchType, data.get("relais_id"), data.get("needsPowerOn"), data.get("name"), data.get("description"))
+        switch = cls(
+            id,
+            switchType,
+            data.get("relais_id"),
+            data.get("needsPowerOn"),
+            data.get("name"),
+            data.get("description")
+        )
         switch.defaultValue = data.get("defaultValue")
         switch.needsPowerOn = data.get("needsPowerOn")
         return switch
