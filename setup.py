@@ -28,7 +28,8 @@ setuptools.setup(
         'RPI.GPIO',
         'adafruit-blinka',
         'flask',
-        'jsonschema'
+        'jsonschema',
+        'Flask-HTTPAuth'
     ],
     entry_points={
         'console_scripts': [

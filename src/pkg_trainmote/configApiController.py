@@ -6,6 +6,7 @@ from .validator import Validator
 from . import apiController
 import json
 from .databaseControllerModule import DatabaseController
+from .apiController import auth
 
 configApi = Blueprint('configApi', __name__)
 
@@ -13,6 +14,7 @@ configApi = Blueprint('configApi', __name__)
 # Endpoints Config
 ##
 
+@auth.login_required
 @configApi.route('/trainmote/api/v1/config', methods=["GET"])
 def getConfig():
     config = DatabaseController().getConfig()
@@ -21,6 +23,7 @@ def getConfig():
     else:
         abort(404)
 
+@auth.login_required
 @configApi.route('/trainmote/api/v1/config', methods=["POST"])
 def setConfig():
     mJson = request.get_json()

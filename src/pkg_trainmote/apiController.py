@@ -1,6 +1,8 @@
 from pkg_trainmote.stateControllerModule import StateController
 from . import gpioservice
 from flask import Flask
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import generate_password_hash, check_password_hash
 from .powerControllerModule import PowerThread
 from .configControllerModule import ConfigController
 from . import stateControllerModule
@@ -25,6 +27,20 @@ app.register_blueprint(stopPointApi)
 app.register_blueprint(deviceApiBlueprint)
 app.register_blueprint(switchApiBlueprint)
 app.register_blueprint(configApi)
+
+
+auth = HTTPBasicAuth()
+
+users = {
+    "default": generate_password_hash("S5Va4BUzjj4K")
+}
+
+@auth.verify_password
+def verify_password(username, password):
+    if username in users and \
+            check_password_hash(users.get(username), password):
+        return username
+
 mVersion: Optional[str] = None
 
 def loadPersistentData():
