@@ -31,15 +31,20 @@ app.register_blueprint(configApi)
 
 auth = HTTPBasicAuth()
 
-users = {
-    "default": generate_password_hash("S5Va4BUzjj4K")
-}
+# users = {
+#    "guest": generate_password_hash("S5Va4BUzjj4K")
+# }
 
 @auth.verify_password
 def verify_password(username, password):
-    if username in users and \
-            check_password_hash(users.get(username), password):
-        return username
+    users = dataBaseController.getUsers()
+    print(next(u for u in users if u.username == username and check_password_hash(u.password, password)))
+    return next(u for u in users if u.username == username and check_password_hash(u.password, password))
+
+@auth.get_user_roles
+def get_user_roles(user):
+    print(user)
+    return user.roles
 
 mVersion: Optional[str] = None
 

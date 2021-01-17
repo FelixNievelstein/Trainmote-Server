@@ -6,8 +6,9 @@ from .models.ConfigModel import ConfigModel
 from .configControllerModule import ConfigController
 from .models.GPIORelaisModel import GPIOSwitchPoint
 from .models.GPIORelaisModel import GPIOStoppingPoint
-from typing import Optional
+from typing import Optional, List
 from pkg_resources import parse_version
+from .models.User import User
 
 
 class DatabaseController():
@@ -53,10 +54,12 @@ class DatabaseController():
         sqlStatementSwitch = 'CREATE TABLE "TMSwitchModel" ("pk" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "uid" TEXT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "switchType" TEXT, "defaultValue" INTEGER, "needsPowerOn" INTEGER, "name" TEXT DEFAULT " ", "description" TEXT DEFAULT " ", "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
         sqlStatementVersion = 'CREATE TABLE "TMVersion" ("pk" INTEGER PRIMARY KEY CHECK (pk = 0), "version" TEXT NOT NULL)'
         sqlStatementConfig = 'CREATE TABLE "TMConfigModel" (pk INTEGER PRIMARY KEY CHECK (pk = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER, "stateRelais" INTEGER, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
+        sqlStatementUser = 'CREATE TABLE "TMUser" ("pk" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "uid" TEXT NOT NULL UNIQUE, "username" TEXT NOT NULL UNIQUE, "password" TEXT NOT NULL, "roles" TEXT NOT NULL, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
         cursor.execute(sqlStatementStop)
         cursor.execute(sqlStatementSwitch)
         cursor.execute(sqlStatementVersion)
         cursor.execute(sqlStatementConfig)
+        cursor.execute(sqlStatementUser)
         connection.commit()
         connection.close()
 
@@ -129,6 +132,41 @@ class DatabaseController():
             self.execute(
                 "INSERT OR REPLACE INTO TMConfigModel(pk, switchPowerRelais, powerRelais, stateRelais) VALUES ('0', '%i','%i', '%i')"
                 % (switchPowerRelais, powerRelais, stateRelais), None
+            )
+
+##
+# User
+##
+
+    def getUser(self, name: str) -> Optional[User]:
+        user = None
+        if self.openDatabase():
+            def getUserDB(lastrowid):
+                nonlocal user
+                for dataSet in self.curs:
+                    user = User(dataSet[1], dataSet[2], dataSet[3], dataSet[4])
+            self.execute("SELECT * FROM TMUser WHERE username = '%s';" % (name), getUserDB)
+        return user
+
+    def getUsers(self) -> List[User]:
+        users: List[User] = []
+        if self.openDatabase():
+            def getUsers():
+                nonlocal users
+                for dataSet in self.curs:
+                    users.append(User(dataSet[1], dataSet[2], dataSet[3], dataSet[4]))
+            self.execute("SELECT * FROM TMUser", getUsers)
+        return users
+
+    def insertUser(self, name: str, password: str, role: str):
+        if self.openDatabase():
+            userUuid = str(uuid.uuid4())
+
+            def createUser(uid):
+                print(uid)
+            self.execute(
+                "INSERT INTO TMUser(uid, username, password, roles) VALUES ('%s', '%s', '%s', '%s')"
+                % (userUuid, name, password, role), createUser
             )
 
 ##

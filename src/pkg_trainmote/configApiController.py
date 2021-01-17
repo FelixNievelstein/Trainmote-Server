@@ -14,7 +14,7 @@ configApi = Blueprint('configApi', __name__)
 # Endpoints Config
 ##
 
-@auth.login_required
+@auth.login_required(role="admin")
 @configApi.route('/trainmote/api/v1/config', methods=["GET"])
 def getConfig():
     config = DatabaseController().getConfig()
@@ -23,7 +23,7 @@ def getConfig():
     else:
         abort(404)
 
-@auth.login_required
+@auth.login_required(role="admin")
 @configApi.route('/trainmote/api/v1/config', methods=["POST"])
 def setConfig():
     mJson = request.get_json()

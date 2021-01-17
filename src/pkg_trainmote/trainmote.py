@@ -1,12 +1,14 @@
+from pkg_trainmote.databaseControllerModule import DatabaseController
+from pkg_trainmote.models.User import User
 from . import apiController
 import os
 import argparse
+import os
 from subprocess import call
 from . import configControllerModule
 
 
-version: str = '0.4.56'
-
+version: str = '0.4.61'
 
 def main():
     parser = argparse.ArgumentParser()
@@ -19,6 +21,16 @@ def main():
     args = parser.parse_args()
     if args.autostart:
         setAutoStart()
+
+    database = DatabaseController()
+    if database.getUsers().count == 0:
+        language = os.getenv('LANG')
+        print(language)
+        print("!!!Welcome Trainmote.!!!")
+        print("First you have to create a user for your Trainmote. Please write down the login details so that you can find them again at any time.")
+        username = input("Enter username")
+        password = setPassword()
+        database.insertUser(username, password, "admin")
 
     apiController.setup(version)
 
@@ -43,6 +55,14 @@ def setAutoStart():
     except PermissionError:
         print("Autostart needs root permission")
 
+def setPassword() -> str:
+    password = input("Please enter a password")
+    secondPassword = input("Please repeat the password")
+    if password == secondPassword:
+        return password
+    else:
+        print("The passwords do not match.")
+        return setPassword()
 
 if __name__ == '__main__':
     main()
