@@ -6,7 +6,7 @@ from .validator import Validator
 from . import apiController
 import json
 from .databaseControllerModule import DatabaseController
-from .apiController import auth
+from .authentication import auth
 
 configApi = Blueprint('configApi', __name__)
 

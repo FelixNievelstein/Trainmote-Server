@@ -1,8 +1,6 @@
 from pkg_trainmote.stateControllerModule import StateController
 from . import gpioservice
 from flask import Flask
-from flask_httpauth import HTTPBasicAuth
-from werkzeug.security import generate_password_hash, check_password_hash
 from .powerControllerModule import PowerThread
 from .configControllerModule import ConfigController
 from . import stateControllerModule
@@ -12,6 +10,7 @@ from .stopPointApiController import stopPointApi
 from .deviceApiController import deviceApiBlueprint
 from .switchApiController import switchApiBlueprint
 from .configApiController import configApi
+from .authentication import auth
 from typing import Optional
 import sys
 import os
@@ -28,23 +27,9 @@ app.register_blueprint(deviceApiBlueprint)
 app.register_blueprint(switchApiBlueprint)
 app.register_blueprint(configApi)
 
-
-auth = HTTPBasicAuth()
-
 # users = {
 #    "guest": generate_password_hash("S5Va4BUzjj4K")
 # }
-
-@auth.verify_password
-def verify_password(username, password):
-    users = dataBaseController.getUsers()
-    print(next(u for u in users if u.username == username and check_password_hash(u.password, password)))
-    return next(u for u in users if u.username == username and check_password_hash(u.password, password))
-
-@auth.get_user_roles
-def get_user_roles(user):
-    print(user)
-    return user.roles
 
 mVersion: Optional[str] = None
 
