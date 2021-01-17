@@ -151,11 +151,11 @@ class DatabaseController():
     def getUsers(self) -> List[User]:
         users: List[User] = []
         if self.openDatabase():
-            def getUsers():
+            def usersLoaded(lastrowid):
                 nonlocal users
                 for dataSet in self.curs:
                     users.append(User(dataSet[1], dataSet[2], dataSet[3], dataSet[4]))
-            self.execute("SELECT * FROM TMUser", getUsers)
+            self.execute("SELECT * FROM TMUser", usersLoaded)
         return users
 
     def insertUser(self, name: str, password: str, role: str):
