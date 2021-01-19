@@ -6,7 +6,7 @@ from subprocess import call
 from . import configControllerModule
 
 
-version: str = '0.4.65'
+version: str = '0.4.66'
 
 def main():
     parser = argparse.ArgumentParser()

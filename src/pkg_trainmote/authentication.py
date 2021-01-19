@@ -9,10 +9,11 @@ auth = HTTPBasicAuth()
 def verify_password(username, password):
     users = DatabaseController().getUsers()
     print(users)
-    print(next(u for u in users if u.username == username and check_password_hash(u.password, password)))
-    return next(u for u in users if u.username == username and check_password_hash(u.password, password))
+    for user in users:
+        if username == user.username and check_password_hash(user.password, password):
+            return user
+    return None
 
 @auth.get_user_roles
 def get_user_roles(user):
-    print(user)
     return user.roles
