@@ -9,6 +9,7 @@ from .models.GPIORelaisModel import GPIOStoppingPoint
 from typing import Optional, List
 from pkg_resources import parse_version
 from .models.User import User
+from werkzeug.security import generate_password_hash
 
 
 class DatabaseController():
@@ -166,7 +167,7 @@ class DatabaseController():
                 print(uid)
             self.execute(
                 "INSERT INTO TMUser(uid, username, password, roles) VALUES ('%s', '%s', '%s', '%s')"
-                % (userUuid, name, password, role), createUser
+                % (userUuid, name, generate_password_hash(password), role), createUser
             )
 
 ##
