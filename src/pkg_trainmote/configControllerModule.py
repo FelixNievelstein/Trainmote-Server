@@ -17,7 +17,6 @@ class ConfigController():
     def checkSettingsFile(self):
         pathPreferences = self.getContentDir() + self.preferencesFileName
         if os.path.exists(pathPreferences):
-            print("os.path.exists")
             if len(self.parser.read(pathPreferences)) == 1:
                 return pathPreferences
         else:
@@ -28,7 +27,6 @@ class ConfigController():
         return None
 
     def createPreferencesFile(self, file):
-        print("createPreferencesFile")
         createParser = SafeConfigParser()
         createParser.add_section('info')
         createParser.set('info', 'version', '0.1')
@@ -36,11 +34,9 @@ class ConfigController():
         dbPath = self.getContentDir() + '/tom-db.sqlite'
         createParser.set('settings', 'sqlitePath', dbPath)
         with open(file, 'w+') as iniFile:
-            print('Created Preferences Inital File')
             createParser.write(iniFile)
 
     def createContentDir(self):
-        print("createContentDir")
         if not os.path.exists(self.getContentDir()):
             os.makedirs(self.getContentDir())
 

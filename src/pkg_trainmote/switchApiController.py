@@ -10,6 +10,7 @@ from . import gpioservice
 from .validator import Validator
 import json
 from .databaseControllerModule import DatabaseController
+from .authentication import auth
 
 switchApiBlueprint = Blueprint('switchApi', __name__)
 
@@ -38,6 +39,7 @@ def setSwitch(switch_id: str):
 
 
 @switchApiBlueprint.route('/trainmote/api/v1/switch/<switch_id>', methods=["PATCH"])
+@auth.login_required(role="admin")
 def updateSwitch(switch_id: str):
     mJson = request.get_json()
     if mJson is not None:
@@ -49,7 +51,7 @@ def updateSwitch(switch_id: str):
             exModel = database.getSwitch(switch_id)
             if exModel is None:
                 return json.dumps({"error": "Switch for id {} not found".format(switch_id)}), 404, baseAPI.defaultHeader()            
-            model = GPIOSwitchPoint.from_dict(mJson, switch_id)            
+            model = GPIOSwitchPoint.from_dict(mJson, switch_id)
             if model.relais_id is not None and exModel.relais_id is not None and model.relais_id is not exModel.relais_id:
                 validator.isAlreadyInUse(int(mJson["relais_id"]))
             updatedSwitch = database.updateSwitch(switch_id, model)
@@ -70,6 +72,7 @@ def updateSwitch(switch_id: str):
 
 
 @switchApiBlueprint.route('/trainmote/api/v1/switch/<switch_id>', methods=["DELETE"])
+@auth.login_required(role="admin")
 def deleteSwitch(switch_id: str):
     if switch_id is None:
         abort(400)
@@ -85,6 +88,7 @@ def deleteSwitch(switch_id: str):
 
 
 @switchApiBlueprint.route('/trainmote/api/v1/switch', methods=["POST"])
+@auth.login_required(role="admin")
 def addSwitch():
     mJson = request.get_json()
     if mJson is not None:

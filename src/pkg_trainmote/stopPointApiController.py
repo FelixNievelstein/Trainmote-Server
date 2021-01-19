@@ -10,6 +10,7 @@ from . import gpioservice
 from .validator import Validator
 import json
 from .databaseControllerModule import DatabaseController
+from .authentication import auth
 
 
 stopPointApi = Blueprint('stopPointApi', __name__)
@@ -28,6 +29,7 @@ def setStop(stop_id: str):
 
 
 @stopPointApi.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["PATCH"])
+@auth.login_required(role="admin")
 def updateStop(stop_id: str):
     mJson = request.get_json()
     if mJson is not None:
@@ -64,6 +66,7 @@ def updateStop(stop_id: str):
 
 
 @stopPointApi.route('/trainmote/api/v1/stoppoint/<stop_id>', methods=["DELETE"])
+@auth.login_required(role="admin")
 def deleteStop(stop_id: str):
     if stop_id is None:
         abort(400)
@@ -79,6 +82,7 @@ def deleteStop(stop_id: str):
 
 
 @stopPointApi.route('/trainmote/api/v1/stoppoint', methods=["POST"])
+@auth.login_required(role="admin")
 def addStop():
     mJson = request.get_json()
     if mJson is not None:

@@ -1,14 +1,12 @@
 from pkg_trainmote.databaseControllerModule import DatabaseController
-from pkg_trainmote.models.User import User
 from . import apiController
 import os
 import argparse
-import os
 from subprocess import call
 from . import configControllerModule
 
 
-version: str = '0.4.63'
+version: str = '0.4.64'
 
 def main():
     parser = argparse.ArgumentParser()
@@ -24,8 +22,6 @@ def main():
 
     database = DatabaseController()
     if not database.getUsers():
-        language = os.getenv('LANG')
-        print(language)
         print("!!!Welcome Trainmote.!!!")
         print("First you have to create a user for your Trainmote. Please write down the login details so that you can find them again at any time.")
         username = input("Enter username: ")
