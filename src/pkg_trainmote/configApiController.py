@@ -62,10 +62,15 @@ def setConfig():
                 if stateRelaisIsStop or stateRelaisIsSwitch:
                     return json.dumps({"error": "State relais pin is already in use"}), 409, baseAPI.defaultHeader()
 
+        deviceName = None
+        if "deviceName" in mJson:
+            deviceName = str(mJson["deviceName"])
+
         DatabaseController().insertConfig(
             switchPowerRelais,
             powerRelais,
-            stateRelais
+            stateRelais,
+            deviceName
         )
 
         if apiController.powerThread is not None:

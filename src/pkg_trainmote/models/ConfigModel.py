@@ -7,7 +7,8 @@ class ConfigModel():
         uid: int,
         switchPowerRelais: Optional[int],
         powerRelais: Optional[int],
-        stateRelais: Optional[int]
+        stateRelais: Optional[int],
+        deviceName: Optional[str]
     ):
         self.uid = uid
         if switchPowerRelais == 0:
@@ -24,13 +25,16 @@ class ConfigModel():
             self.stateRelais = None
         else:
             self.stateRelais = stateRelais
+        
+        self.deviceName = deviceName
 
     def to_dict(self):
         return {
             "uid": self.uid,
             "switchPowerRelais": self.switchPowerRelais,
             "powerRelais": self.powerRelais,
-            "stateRelais": self.stateRelais
+            "stateRelais": self.stateRelais,
+            "deviceName": self.deviceName
         }
 
     def containsPin(self, pin: int) -> bool:

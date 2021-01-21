@@ -2,6 +2,8 @@
     "type" : "object",
     "properties" : {
         "switchPowerRelais" : {"type" : "integer"},
-        "powerRelais" : {"type" : "integer"}
+        "powerRelais" : {"type" : "integer"},
+        "stateRelais" : {"type" : "integer"},
+        "deviceName" : {"type": "string"}
     }
 }

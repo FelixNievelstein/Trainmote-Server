@@ -54,7 +54,7 @@ class DatabaseController():
         sqlStatementStop = 'CREATE TABLE "TMStopModel" ("pk" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "uid" TEXT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "mess_id" INTEGER, "defaultValue" INTEGER, "name" TEXT DEFAULT " ", "description" TEXT DEFAULT " ", "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
         sqlStatementSwitch = 'CREATE TABLE "TMSwitchModel" ("pk" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "uid" TEXT NOT NULL UNIQUE, "relais_id" INTEGER NOT NULL, "switchType" TEXT, "defaultValue" INTEGER, "needsPowerOn" INTEGER, "name" TEXT DEFAULT " ", "description" TEXT DEFAULT " ", "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
         sqlStatementVersion = 'CREATE TABLE "TMVersion" ("pk" INTEGER PRIMARY KEY CHECK (pk = 0), "version" TEXT NOT NULL)'
-        sqlStatementConfig = 'CREATE TABLE "TMConfigModel" (pk INTEGER PRIMARY KEY CHECK (pk = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER, "stateRelais" INTEGER, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
+        sqlStatementConfig = 'CREATE TABLE "TMConfigModel" (pk INTEGER PRIMARY KEY CHECK (pk = 0), "switchPowerRelais" INTEGER, "powerRelais" INTEGER, "stateRelais" INTEGER, "deviceName" TEXT, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
         sqlStatementUser = 'CREATE TABLE "TMUser" ("pk" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "uid" TEXT NOT NULL UNIQUE, "username" TEXT NOT NULL UNIQUE, "password" TEXT NOT NULL, "roles" TEXT NOT NULL, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
         cursor.execute(sqlStatementStop)
         cursor.execute(sqlStatementSwitch)
@@ -115,11 +115,17 @@ class DatabaseController():
             def getConfigDB(lastrowid):
                 nonlocal config
                 for dataSet in self.curs:
-                    config = ConfigModel(dataSet[0], dataSet[1], dataSet[2], dataSet[3])
+                    config = ConfigModel(dataSet[0], dataSet[1], dataSet[2], dataSet[3], dataSet[4])
             self.execute("SELECT * FROM TMConfigModel WHERE pk = '0';", getConfigDB)
         return config
 
-    def insertConfig(self, switchPowerRelais: Optional[int], powerRelais: Optional[int], stateRelais: Optional[int]):
+    def insertConfig(
+        self,
+        switchPowerRelais: Optional[int],
+        powerRelais: Optional[int],
+        stateRelais: Optional[int],
+        deviceName: Optional[str]
+    ):
         if self.openDatabase():
             if powerRelais is None:
                 powerRelais = 0
@@ -131,8 +137,8 @@ class DatabaseController():
                 stateRelais = 0
 
             self.execute(
-                "INSERT OR REPLACE INTO TMConfigModel(pk, switchPowerRelais, powerRelais, stateRelais) VALUES ('0', '%i','%i', '%i')"
-                % (switchPowerRelais, powerRelais, stateRelais), None
+                "INSERT OR REPLACE INTO TMConfigModel(pk, switchPowerRelais, powerRelais, stateRelais, deviceName) VALUES ('0', '%i','%i', '%i', '%s')"
+                % (switchPowerRelais, powerRelais, stateRelais, deviceName), None
             )
 
 ##
