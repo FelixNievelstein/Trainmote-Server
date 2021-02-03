@@ -16,6 +16,7 @@ import sys
 import os
 import json
 import signal
+import socket
 
 stateController: Optional[StateController]
 dataBaseController: Optional[DatabaseController]
@@ -83,7 +84,19 @@ def setupPowerGPIO(pin: int):
 def hello_world():
     if stateController is not None:
         stateController.setState(stateControllerModule.STATE_CONNECTED)
-    return json.dumps({"trainmote": "trainmote.module.felix-nievelstein.de", "version": mVersion})
+    conf = dataBaseController.getConfig()
+    if conf is not None:
+        return json.dumps({
+            "trainmote": "trainmote.module.felix-nievelstein.de",
+            "version": mVersion,
+            "name": conf.deviceName
+        })
+    else:
+        return json.dumps({
+            "trainmote": "trainmote.module.felix-nievelstein.de",
+            "version": mVersion,
+            "name": socket.gethostname()
+        })
 
 
 def restart():
