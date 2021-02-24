@@ -6,6 +6,8 @@ from .models.ConfigModel import ConfigModel
 from .configControllerModule import ConfigController
 from .models.GPIORelaisModel import GPIOSwitchPoint
 from .models.GPIORelaisModel import GPIOStoppingPoint
+from .models.Program import Program
+from .models.Action import Action
 from typing import Optional, List
 from pkg_resources import parse_version
 from .models.User import User
@@ -20,6 +22,9 @@ class DatabaseController():
         dbVersion = self.getVersion()
         if dbVersion is not None and parse_version(dbVersion) < parse_version("0.3.81"):
             self.setVersion("0.3.81")
+        if dbVersion is None or dbVersion is not None and parse_version(dbVersion) < parse_version("0.5.0"):
+            self.updateDatabase_0_5_0()
+            self.setVersion("0.5.0")
 
     def openDatabase(self):
         config = ConfigController()
@@ -46,7 +51,7 @@ class DatabaseController():
                 tableExists = self.curs.rowcount > 0
 
             self.execute("SELECT * FROM sqlite_master WHERE name ='%s' and type='table';" % (name), checkTable)
-        return tableExists
+        return tableExists        
 
     def createInitalDatabse(self, dbPath):
         connection = sqlite3.connect(dbPath)
@@ -63,6 +68,13 @@ class DatabaseController():
         cursor.execute(sqlStatementUser)
         connection.commit()
         connection.close()
+
+    def updateDatabase_0_5_0(self):
+        if self.openDatabase():
+            programTable = 'CREATE TABLE "TMProgramModel" ("pk" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "uid" TEXT NOT NULL UNIQUE, "name" TEXT, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
+            actionTable = 'CREATE TABLE "TMActionModel" ("pk" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "uid" TEXT NOT NULL UNIQUE, "program" INTEGER NOT NULL, "type" TEXT NOT NULL, "position" INTEGER NOT NULL, "values" TEXT NOT NULL, "name" TEXT, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
+            self.curs.execute(programTable)
+            self.curs.execute(actionTable)
 
     def removeAll(self):
         if self.openDatabase():
@@ -322,6 +334,61 @@ class DatabaseController():
         if self.openDatabase():
             # Insert a row of data
             self.execute("DELETE FROM TMStopModel WHERE uid = '%s';" % (id), None)
+
+##
+# Programs
+##
+
+    def getProgram(self, uid: str) -> Optional[Program]:
+        stop = None
+        if self.openDatabase():
+            def readProgram(lastrowid):
+                nonlocal stop
+                for dataSet in self.curs:
+                    stop = self.getStopForDataSet(dataSet)
+
+            self.execute("SELECT * FROM TMProgramModel WHERE uid = '%s';" % (uid), readProgram)
+
+        return stop
+
+    def getProgramForDataSet(self, dataSet) -> Program:
+        actions = self.getActionsFor(dataSet[1])
+        if actions is not None:
+            return Program(dataSet[1], actions, dataSet[2])
+        else:
+            return Program(dataSet[1], [], dataSet[2])
+
+##
+# Actions
+##
+
+    def getActionsFor(self, program: str) -> Optional[List[Action]]:
+        allActions = []
+        if self.openDatabase():
+            def readActions(lastrowid):
+                nonlocal allActions
+                for dataSet in self.curs:
+                    action = self.getStopForDataSet(dataSet)
+                    allActions.append(action)
+
+            self.execute("SELECT * FROM TMActionModel WHERE program = '%s" % (program), readActions)
+
+        return allActions
+
+    def getAction(self, uid: str) -> Optional[Action]:
+        action = None
+        if self.openDatabase():
+            def readAction(lastrowid):
+                nonlocal action
+                for dataSet in self.curs:
+                    action = self.getActionForDataSet(dataSet)
+
+            self.execute("SELECT * FROM TMStopModel WHERE uid = '%s';" % (uid), readAction)
+
+        return action
+
+    def getActionForDataSet(self, dataSet) -> Action:
+        return Action(dataSet[1], dataSet[3], dataSet[4], dataSet[5], dataSet[6])
 
     def execute(self, query, _callback):
         try:
