@@ -339,6 +339,19 @@ class DatabaseController():
 # Programs
 ##
 
+    def insertProgram(self, name: Optional[str]) -> Optional[str]:
+        progUuid = None
+        if self.openDatabase():
+            progUuid = str(uuid.uuid4())
+
+            def createdProgram(uid):
+                print(uid)
+
+            self.execute(
+                "INSERT INTO TMProgramModel(uid, name) VALUES ('%s', '%s')" % (progUuid, name), createdProgram
+            )
+        return progUuid
+
     def getProgram(self, uid: str) -> Optional[Program]:
         stop = None
         if self.openDatabase():
@@ -361,6 +374,27 @@ class DatabaseController():
 ##
 # Actions
 ##
+
+    def insertAction(
+        self,
+        type: str,
+        position: int,
+        values: List[str],
+        programId: str,
+        name: Optional[str]
+    ) -> Optional[str]:
+        actionUuid = None
+        if self.openDatabase():
+            actionUuid = str(uuid.uuid4())
+
+            def createdProgram(uid):
+                print(uid)
+
+            self.execute(
+                "INSERT INTO TMActionModel(uid, program, type, name) VALUES ('%s', '%s', '%s', '%s')"
+                % (actionUuid, programId, type, name), createdProgram
+            )
+        return actionUuid
 
     def getActionsFor(self, program: str) -> Optional[List[Action]]:
         allActions = []
