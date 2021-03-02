@@ -7,7 +7,8 @@ from flask import Response
 from pkg_trainmote.models.GPIORelaisModel import GPIOSwitchPoint
 from . import baseAPI
 from . import gpioservice
-from .validator import Validator
+from .validators.validator import Validator
+from .validators import pinValidator
 import json
 from .databaseControllerModule import DatabaseController
 from .authentication import auth
@@ -53,7 +54,7 @@ def updateSwitch(switch_id: str):
                 return json.dumps({"error": "Switch for id {} not found".format(switch_id)}), 404, baseAPI.defaultHeader()            
             model = GPIOSwitchPoint.from_dict(mJson, switch_id)
             if model.relais_id is not None and exModel.relais_id is not None and model.relais_id is not exModel.relais_id:
-                validator.isAlreadyInUse(int(mJson["relais_id"]))
+                pinValidator.isAlreadyInUse(int(mJson["relais_id"]))
             updatedSwitch = database.updateSwitch(switch_id, model)
             if updateSwitch is not None:
                 if exModel.relais_id != model.relais_id:

@@ -7,7 +7,8 @@ from flask import Response
 from pkg_trainmote.models.GPIORelaisModel import GPIOStoppingPoint
 from . import baseAPI
 from . import gpioservice
-from .validator import Validator
+from .validators.validator import Validator
+from .validators import pinValidator
 import json
 from .databaseControllerModule import DatabaseController
 from .authentication import auth
@@ -47,7 +48,7 @@ def updateStop(stop_id: str):
                 and exModel.relais_id is not None
                 and model.relais_id is not exModel.relais_id
             ):
-                validator.isAlreadyInUse(int(mJson["relais_id"]))
+                pinValidator.isAlreadyInUse(int(mJson["relais_id"]))
             updateStop = database.updateStop(stop_id, model)
             if updateStop is not None:
                 if exModel.relais_id != model.relais_id:

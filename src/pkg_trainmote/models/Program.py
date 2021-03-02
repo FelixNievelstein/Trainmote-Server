@@ -2,7 +2,7 @@ from typing import Optional, List, Dict, Any
 from .Action import Action
 from types import SimpleNamespace
 import json
-from pkg_trainmote.validator import Validator
+from pkg_trainmote.validators.validator import Validator
 
 class Program():
 

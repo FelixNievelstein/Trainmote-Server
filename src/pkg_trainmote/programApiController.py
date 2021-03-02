@@ -4,14 +4,12 @@ from flask import request
 from flask import abort
 from flask import Response
 
-from pkg_trainmote.models.GPIORelaisModel import GPIOStoppingPoint
 from . import baseAPI
 from . import gpioservice
-from .validator import Validator
+from .validators.validator import Validator
 import json
 from .databaseControllerModule import DatabaseController
 from .authentication import auth
-from types import SimpleNamespace
 from .models.Program import Program
 
 
