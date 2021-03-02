@@ -5,7 +5,7 @@ class Action():
 
     def __init__(
         self,
-        uid: str,
+        uid: Optional[str],
         type: str,
         position: int,
         values: List[str],

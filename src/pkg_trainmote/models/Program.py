@@ -1,11 +1,14 @@
 from typing import Optional, List, Dict, Any
 from .Action import Action
+from types import SimpleNamespace
+import json
+from pkg_trainmote.validator import Validator
 
 class Program():
 
     def __init__(
         self,
-        uid: str,
+        uid: Optional[str],
         actions: List[Action],
         name: Optional[str]
     ):
@@ -32,3 +35,11 @@ class Program():
             str(data.get("name"))
         )
         return program
+
+    @classmethod
+    def from_Json(cls, data: Any):
+        if Validator().validateDict(data, "program_scheme") is False:
+            mProgram = json.loads(data, object_hook=lambda d: SimpleNamespace(**d))
+            return cls(mProgram.uid, mProgram.actions, mProgram.name)
+        else:
+            raise ValueError("Invalid json")

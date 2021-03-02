@@ -1,4 +1,4 @@
-from sqlite3.dbapi2 import Error
+from sqlite3.dbapi2 import Error, ProgrammingError
 from flask import Blueprint
 from flask import request
 from flask import abort
@@ -11,6 +11,8 @@ from .validator import Validator
 import json
 from .databaseControllerModule import DatabaseController
 from .authentication import auth
+from types import SimpleNamespace
+from .models.Program import Program
 
 
 programApi = Blueprint('programApi', __name__)
@@ -50,7 +52,7 @@ def updateProgram(program_id: str):
 
             """ exModel = database.getStop(program_id)
             if exModel is None:
-                return json.dumps({"error": "Program for id {} not found".format(program_id)}), 404, baseAPI.defaultHeader()
+        return json.dumps({"error": "Program for id {} not found".format(program_id)}), 404, baseAPI.defaultHeader()
             model = GPIOStoppingPoint.from_dict(mJson, stop_id)
             if (
                 model.relais_id is not None
@@ -93,18 +95,28 @@ def deleteStop(program_id: str):
 
 @programApi.route('/trainmote/api/v1/program', methods=["POST"])
 @auth.login_required(role="admin")
-def addStop():
+def addProgram():
     mJson = request.get_json()
     if mJson is not None:
-        if Validator().validateDict(mJson, "program_scheme") is False:
-            abort(400)
-
-        config = DatabaseController().getConfig()
-        if config is not None and config.containsPin(mJson["relais_id"]):
-            return json.dumps({"error": "Pin is already in use as power relais"}), 409, baseAPI.defaultHeader()
-
         try:
-            return gpioservice.createStop(mJson), 201, baseAPI.defaultHeader()
+            programModel = Program.from_Json(mJson)
+            database = DatabaseController()
+            programId = database.insertProgram(programModel.name)
+            if programId is None:
+                abort(500)
+
+            programPk = database.getProgramPk(programId)
+            if programPk is None:
+                abort(500)
+
+            for action in programModel.actions:
+                database.insertAction(action, programPk)
+
+            dbProgram = database.getProgram(programId)
+            if dbProgram is None:
+                abort(500)
+
+            return json.dumps(dbProgram.to_dict()), 200, baseAPI.defaultHeader()
         except ValueError as e:
             return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
     else:
@@ -112,12 +124,12 @@ def addStop():
 
 
 @programApi.route('/trainmote/api/v1/program/all', methods=["GET"])
-def getAllStops():
+def getAllPrograms():
     return Response(gpioservice.getAllStopPoints(), mimetype="application/json"), 200, baseAPI.defaultHeader()
 
 
 @programApi.route('/trainmote/api/v1/program/<program_id>', methods=["GET"])
-def stop(program_id: str):
+def program(program_id: str):
     if program_id is None:
         abort(400)
-    return gpioservice.getStop(program_id), 200, baseAPI.defaultHeader()
+    return json.dumps(DatabaseController().getProgram(program_id)), 200, baseAPI.defaultHeader()
