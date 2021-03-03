@@ -9,7 +9,7 @@ from .models.GPIORelaisModel import GPIOSwitchPoint
 from .models.GPIORelaisModel import GPIOStoppingPoint
 from .models.Program import Program
 from .models.Action import Action
-from typing import Optional, List
+from typing import Optional, List, Any
 from pkg_resources import parse_version
 from .models.User import User
 from werkzeug.security import generate_password_hash
@@ -73,7 +73,7 @@ class DatabaseController():
     def updateDatabase_0_5_0(self):
         if self.openDatabase():
             programTable = 'CREATE TABLE "TMProgramModel" ("pk" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "uid" TEXT NOT NULL UNIQUE, "name" TEXT, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
-            actionTable = 'CREATE TABLE "TMActionModel" ("pk" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "uid" TEXT NOT NULL UNIQUE, "program" INTEGER NOT NULL, "type" TEXT NOT NULL, "position" INTEGER NOT NULL, "values" TEXT NOT NULL, "name" TEXT, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
+            actionTable = 'CREATE TABLE "TMActionModel" ("pk" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, "uid" TEXT NOT NULL UNIQUE, "program" INTEGER NOT NULL, "type" TEXT NOT NULL, "position" INTEGER NOT NULL, "inputs" TEXT NOT NULL, "name" TEXT, "updated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)'
             self.curs.execute(programTable)
             self.curs.execute(actionTable)
             self.conn.commit()
@@ -412,9 +412,9 @@ class DatabaseController():
             def createdProgram(uid):
                 print(uid)
 
-            self.execute(
-                "INSERT INTO TMActionModel(uid, program, type, position, values, name) VALUES ('%s', '%i', '%s', '%i', '%s', '%s')"
-                % (actionUuid, programId, action.type, action.position, valuesString, action.name), createdProgram
+            self.executeWith(
+                "INSERT INTO TMActionModel(uid, program, type, position, inputs, name) VALUES (?, ?, ?, ?, ?, ?)",
+                createdProgram, (actionUuid, programId, action.type, action.position, valuesString, action.name)
             )
         return actionUuid
 
@@ -433,7 +433,7 @@ class DatabaseController():
                     action = self.getStopForDataSet(dataSet)
                     allActions.append(action)
 
-            self.execute("SELECT * FROM TMActionModel WHERE program = '%i" % (program), readActions)
+            self.execute("SELECT * FROM TMActionModel WHERE program = %i" % (program), readActions)
 
         return allActions
 
@@ -451,10 +451,24 @@ class DatabaseController():
     def getActionForDataSet(self, dataSet) -> Action:
         return Action(dataSet[1], dataSet[3], dataSet[4], self.decodeValues(dataSet[5]), dataSet[6])
 
-    def execute(self, query, _callback):
+    def execute(self, query, _callback, ):
         try:
             print(query)
             self.curs.execute(query)
+            if _callback is not None:
+                _callback(self.curs.lastrowid)
+            self.conn.commit()
+        except Exception as err:
+            print('Query Failed: %s\nError: %s' % (query, str(err)))
+        finally:
+            self.conn.close()
+            self.curs = None
+            self.conn = None
+
+    def executeWith(self, query, _callback, parameters: Any):
+        try:
+            print(query)
+            self.curs.execute(query, parameters)
             if _callback is not None:
                 _callback(self.curs.lastrowid)
             self.conn.commit()

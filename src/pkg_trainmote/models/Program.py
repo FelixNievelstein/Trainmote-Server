@@ -39,7 +39,11 @@ class Program():
     @classmethod
     def from_Json(cls, data: Any):
         if Validator().validateDict(data, "program_scheme") is True:
-            mProgram = json.loads(data, object_hook=lambda d: SimpleNamespace(**d))
-            return cls(mProgram.uid, mProgram.actions, mProgram.name)
+            mProgram = json.loads(json.dumps(data), object_hook=lambda d: SimpleNamespace(**d))
+            if hasattr(mProgram, 'uid'): 
+                return cls(mProgram.uid, mProgram.actions, mProgram.name)
+            else:
+                return cls(None, mProgram.actions, mProgram.name)
         else:
             raise ValueError("Invalid json")
+    
