@@ -10,6 +10,7 @@ from .stopPointApiController import stopPointApi
 from .deviceApiController import deviceApiBlueprint
 from .switchApiController import switchApiBlueprint
 from .configApiController import configApi
+from .programApiController import programApi
 from .authentication import auth
 from typing import Optional
 import sys
@@ -27,6 +28,7 @@ app.register_blueprint(stopPointApi)
 app.register_blueprint(deviceApiBlueprint)
 app.register_blueprint(switchApiBlueprint)
 app.register_blueprint(configApi)
+app.register_blueprint(programApi)
 
 # users = {
 #    "guest": generate_password_hash("S5Va4BUzjj4K")
