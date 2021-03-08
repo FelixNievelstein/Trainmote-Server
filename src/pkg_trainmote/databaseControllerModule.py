@@ -359,7 +359,7 @@ class DatabaseController():
                 nonlocal program
                 program = self.getProgramForDataSet(self.curs.fetchone())
 
-            self.execute("SELECT * FROM TMProgramModel WHERE uid = '%s';" % (uid), readProgram)
+            self.execute("SELECT * FROM TMProgramModel WHERE uid = '%s';" % (uid), readProgram, shouldClose=False)
 
         return program
 
@@ -451,7 +451,7 @@ class DatabaseController():
     def getActionForDataSet(self, dataSet) -> Action:
         return Action(dataSet[1], dataSet[3], dataSet[4], self.decodeValues(dataSet[5]), dataSet[6])
 
-    def execute(self, query, _callback, ):
+    def execute(self, query, _callback, shouldClose: bool = True):
         try:
             print(query)
             self.curs.execute(query)
@@ -461,9 +461,10 @@ class DatabaseController():
         except Exception as err:
             print('Query Failed: %s\nError: %s' % (query, str(err)))
         finally:
-            self.conn.close()
-            self.curs = None
-            self.conn = None
+            if shouldClose:
+                self.conn.close()
+                self.curs = None
+                self.conn = None
 
     def executeWith(self, query, _callback, parameters: Any):
         try:
