@@ -457,7 +457,8 @@ class DatabaseController():
             self.curs.execute(query)
             if _callback is not None:
                 _callback(self.curs.lastrowid)
-            self.conn.commit()
+                if shouldClose:
+                    self.conn.commit()
         except Exception as err:
             print('Query Failed: %s\nError: %s' % (query, str(err)))
         finally:
