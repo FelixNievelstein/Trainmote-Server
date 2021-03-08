@@ -354,13 +354,17 @@ class DatabaseController():
 
     def getProgram(self, uid: str) -> Optional[Program]:
         program = None
+        pk: Optional[int] = None
         if self.openDatabase():
             def readProgram(lastrowid):
                 nonlocal program
+                nonlocal pk
                 program = self.getProgramForDataSet(self.curs.fetchone())
+                pk = self.curs.fetchone()[0]
 
-            self.execute("SELECT * FROM TMProgramModel WHERE uid = '%s';" % (uid), readProgram, shouldClose=False)
-
+            self.execute("SELECT * FROM TMProgramModel WHERE uid = '%s';" % (uid), readProgram)
+        if pk is not None and program is not None:
+            program.actions = self.getActionsFor(pk)
         return program
 
     def getProgramPk(self, uid: str) -> Optional[int]:
@@ -389,11 +393,7 @@ class DatabaseController():
         return allPrograms
 
     def getProgramForDataSet(self, dataSet) -> Program:
-        actions = self.getActionsFor(dataSet[0])
-        if actions is not None:
-            return Program(dataSet[1], actions, dataSet[2])
-        else:
-            return Program(dataSet[1], [], dataSet[2])
+        return Program(dataSet[1], [], dataSet[2])            
 
 ##
 # Actions
