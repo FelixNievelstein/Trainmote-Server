@@ -52,7 +52,7 @@ class DatabaseController():
                 tableExists = self.curs.rowcount > 0
 
             self.execute("SELECT * FROM sqlite_master WHERE name ='%s' and type='table';" % (name), checkTable)
-        return tableExists        
+        return tableExists
 
     def createInitalDatabse(self, dbPath):
         connection = sqlite3.connect(dbPath)
@@ -380,21 +380,36 @@ class DatabaseController():
         return programPk
 
     def getAllPrograms(self):
+        allProgramIds = []
         allPrograms = []
         if self.openDatabase():
             def readPrograms(lastrowid):
                 nonlocal allPrograms
                 for dataSet in self.curs:
-                    program = self.getProgramForDataSet(dataSet)
-                    allPrograms.append(program)
+                    allProgramIds.append(dataSet[1])
 
             self.execute("SELECT * FROM TMProgramModel", readPrograms)
+
+        for id in allProgramIds:
+            program = self.getProgram(id)
+            allPrograms.append(program)
 
         return allPrograms
 
     def getProgramForDataSet(self, dataSet) -> Program:
-        return Program(dataSet[1], [], dataSet[2])            
+        return Program(dataSet[1], [], dataSet[2])
 
+    def deleteProgram(self, id: str):
+        pk = self.getProgramPk(id)
+        if pk is not None:
+            actions = self.getActionsFor(pk)
+            for action in actions:
+                if action.uid is not None:
+                    self.deleteAction(action.uid)
+
+        if self.openDatabase():
+            # Insert a row of data
+            self.execute("DELETE FROM TMProgramModel WHERE uid = '%s';" % (id), None)
 ##
 # Actions
 ##
@@ -430,7 +445,7 @@ class DatabaseController():
             def readActions(lastrowid):
                 nonlocal allActions
                 for dataSet in self.curs:
-                    action = self.getStopForDataSet(dataSet)
+                    action = self.getActionForDataSet(dataSet)
                     allActions.append(action)
 
             self.execute("SELECT * FROM TMActionModel WHERE program = %i" % (program), readActions)
@@ -441,7 +456,7 @@ class DatabaseController():
         action = None
         if self.openDatabase():
             def readAction(lastrowid):
-                nonlocal action                
+                nonlocal action
                 action = self.getActionForDataSet(self.curs.fetchone())
 
             self.execute("SELECT * FROM TMActionModel WHERE uid = '%s';" % (uid), readAction)
@@ -451,14 +466,18 @@ class DatabaseController():
     def getActionForDataSet(self, dataSet) -> Action:
         return Action(dataSet[1], dataSet[3], dataSet[4], self.decodeValues(dataSet[5]), dataSet[6])
 
+    def deleteAction(self, id: str):
+        if self.openDatabase():
+            self.execute("DELETE FROM TMActionModel WHERE uid = '%s';" % (id), None)
+
     def execute(self, query, _callback, shouldClose: bool = True):
         try:
             print(query)
             self.curs.execute(query)
             if _callback is not None:
                 _callback(self.curs.lastrowid)
-                if shouldClose:
-                    self.conn.commit()
+            if shouldClose:
+                self.conn.commit()
         except Exception as err:
             print('Query Failed: %s\nError: %s' % (query, str(err)))
         finally:

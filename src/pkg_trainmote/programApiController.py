@@ -1,11 +1,10 @@
-from sqlite3.dbapi2 import Error, ProgrammingError
+from sqlite3.dbapi2 import Error
 from flask import Blueprint
 from flask import request
 from flask import abort
 from flask import Response
 
 from . import baseAPI
-from . import gpioservice
 from .validators.validator import Validator
 import json
 from .databaseControllerModule import DatabaseController
@@ -77,15 +76,15 @@ def updateProgram(program_id: str):
 
 @programApi.route('/trainmote/api/v1/program/<program_id>', methods=["DELETE"])
 @auth.login_required(role="admin")
-def deleteStop(program_id: str):
+def deleteProgram(program_id: str):
     if program_id is None:
         abort(400)
     try:
         database = DatabaseController()
-        """ exModel = database.getStop(stop_id)
+        exModel = database.getProgram(program_id)
         if exModel is None:
-            return json.dumps({"error": "Stop for id {} not found".format(stop_id)}), 404
-        database.deleteStopModel(stop_id) """
+            return json.dumps({"error": "Program for id {} not found".format(program_id)}), 404
+        database.deleteProgram(program_id)
         return "", 205, baseAPI.defaultHeader()
     except Error as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
@@ -123,11 +122,12 @@ def addProgram():
 
 @programApi.route('/trainmote/api/v1/program/all', methods=["GET"])
 def getAllPrograms():
-    return Response(gpioservice.getAllStopPoints(), mimetype="application/json"), 200, baseAPI.defaultHeader()
+    jsonResponse = json.dumps([ob.to_dict() for ob in DatabaseController().getAllPrograms()])
+    return Response(jsonResponse, mimetype="application/json"), 200, baseAPI.defaultHeader()
 
 
 @programApi.route('/trainmote/api/v1/program/<program_id>', methods=["GET"])
 def program(program_id: str):
     if program_id is None:
         abort(400)
-    return json.dumps(DatabaseController().getProgram(program_id)), 200, baseAPI.defaultHeader()
+    return json.dumps(DatabaseController().getProgram(program_id).to_dict()), 200, baseAPI.defaultHeader()
