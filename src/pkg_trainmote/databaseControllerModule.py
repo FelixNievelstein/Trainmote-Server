@@ -359,8 +359,9 @@ class DatabaseController():
             def readProgram(lastrowid):
                 nonlocal program
                 nonlocal pk
-                program = self.getProgramForDataSet(self.curs.fetchone())
-                pk = self.curs.fetchone()[0]
+                dataSet = self.curs.fetchone()
+                program = self.getProgramForDataSet(dataSet)
+                pk = dataSet[0]
 
             self.execute("SELECT * FROM TMProgramModel WHERE uid = '%s';" % (uid), readProgram)
         if pk is not None and program is not None:
