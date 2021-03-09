@@ -4,6 +4,8 @@ from flask import request
 from flask import abort
 from flask import Response
 
+from .programMachine import ProgramMachine
+
 from . import baseAPI
 from .validators.validator import Validator
 import json
@@ -13,6 +15,7 @@ from .models.Program import Program
 
 
 programApi = Blueprint('programApi', __name__)
+programMachine = ProgramMachine()
 ##
 # Endpoint Program
 ##
@@ -22,6 +25,11 @@ def startProgram(program_id: str):
     if program_id is None:
         abort(400)
     try:
+        database = DatabaseController()
+        exModel = database.getProgram(program_id)
+        if exModel is None:
+            return json.dumps({"error": "Program for id {} not found".format(program_id)}), 404
+        programMachine.startProgram(exModel)
         return "", 200
     except ValueError as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
