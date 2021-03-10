@@ -1,6 +1,9 @@
 from typing import Optional, Dict, Any, List
 import enum
 
+from pkg_trainmote.actions.actionInterface import ActionInterface
+from pkg_trainmote.actions.setSwitchAction import SetSwitchAction
+
 class Action():
 
     def __init__(
@@ -26,6 +29,10 @@ class Action():
             "name": self.name
         }
 
+    def getProgramAction(self) -> Optional[ActionInterface]:
+        if self.type == ActionType.TM_SET_SWITCH.value:
+            return SetSwitchAction(self)
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]):
         values: List[str] = []
@@ -42,7 +49,7 @@ class Action():
 
 
 class ActionType(enum.Enum):
-    TM_SET_SWITCH = 1
-    TM_SET_STOP = 2
-    TM_PERFORM_TIMER = 3
-    TM_PERFORM_ALARM = 4
+    TM_SET_SWITCH = "SetSwitch"
+    TM_SET_STOP = "SetStop"
+    TM_PERFORM_TIMER = "WaitFor"
+    TM_PERFORM_ALARM = "StartAtClock"

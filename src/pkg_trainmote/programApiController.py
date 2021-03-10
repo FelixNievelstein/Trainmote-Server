@@ -29,7 +29,7 @@ def startProgram(program_id: str):
         exModel = database.getProgram(program_id)
         if exModel is None:
             return json.dumps({"error": "Program for id {} not found".format(program_id)}), 404
-        programMachine.startProgram(exModel)
+        programMachine.start(exModel)
         return "", 200
     except ValueError as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
