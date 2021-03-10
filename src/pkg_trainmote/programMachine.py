@@ -4,6 +4,7 @@ from pkg_trainmote.actions.actionInterface import ActionInterface
 from .models.Program import Program
 from .models.Action import Action
 from typing import Optional
+from .actions import actionHelper
 
 class ProgramMachine(StateMachine):
 
@@ -33,7 +34,7 @@ class ProgramMachine(StateMachine):
 
     def on_startAction(self):
         print('startAction')
-        
+
         def actionCallback():
             print("action finished")
             self.endAction()
@@ -49,7 +50,7 @@ class ProgramMachine(StateMachine):
         print('on_prepareForAction')
         if self.__action_index < len(self.__program.actions):
             action = self.__program.actions[self.__action_index]
-            self.__actionInterface = action.getProgramAction()
+            self.__actionInterface = actionHelper.getProgramAction(action)
             if self.__actionInterface is not None:
                 self.startAction()
                 return
