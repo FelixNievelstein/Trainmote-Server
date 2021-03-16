@@ -10,6 +10,6 @@ def getProgramAction(action: Action) -> Optional[ActionInterface]:
         return SetSwitchAction(action)
     elif action.type == ActionType.TM_SET_STOP.value:
         return SetStopAction(action)
-    elif action.type == ActionType.TM_PERFORM_TIMER:
+    elif action.type == ActionType.TM_PERFORM_TIMER.value:
         return TimerAction(action)
     return None
