@@ -8,11 +8,14 @@ from .actions import actionHelper
 
 class ProgramMachine(StateMachine):
 
-    __program: Program
+    __program: Optional[Program]
     __action_index: int = 0
     __actionInterface: Optional[ActionInterface] = None
 
+    isRunning: bool = False
+
     def start(self, program: Program):
+
         if self.is_readyForAction:
             self.__program = program
             self.startProgram()
@@ -31,6 +34,8 @@ class ProgramMachine(StateMachine):
 
     def on_startProgram(self):
         print('startProgram')
+        self.isRunning = True
+        self.prepare()
 
     def on_startAction(self):
         print('startAction')
@@ -41,13 +46,20 @@ class ProgramMachine(StateMachine):
         self.__actionInterface.runAction(actionCallback)
 
     def on_cancelProgram(self):
-        print('startAction')
+        print('cancelProgram')
+        self.isRunning = False
+        self.__program = None
 
     def on_endAction(self):
-        print('startAction')
+        print('endAction')
+        self.__action_index = self.__action_index + 1
+        self.prepareForAction()
 
     def on_prepareForAction(self):
         print('on_prepareForAction')
+        self.prepare()
+
+    def prepare(self):
         if self.__action_index < len(self.__program.actions):
             action = self.__program.actions[self.__action_index]
             self.__actionInterface = actionHelper.getProgramAction(action)
@@ -55,3 +67,8 @@ class ProgramMachine(StateMachine):
                 self.startAction()
                 return
         self.endProgram()
+
+    def on_endProgram(self):
+        print('on_endProgram')
+        self.isRunning = False
+        self.__program = None
