@@ -35,9 +35,8 @@ class ProgramMachine(StateMachine):
     def on_startProgram(self):
         print('startProgram')
         self.isRunning = True
-        self.prepare()
 
-    def on_startAction(self):
+    def on_enter_runningAction(self):
         print('startAction')
 
         def actionCallback():
@@ -53,10 +52,12 @@ class ProgramMachine(StateMachine):
     def on_endAction(self):
         print('endAction')
         self.__action_index = self.__action_index + 1
+
+    def on_enter_actionFinished(self):
         self.prepareForAction()
 
-    def on_prepareForAction(self):
-        print('on_prepareForAction')
+    def on_enter_preparingAction(self):
+        print('preparing')
         self.prepare()
 
     def prepare(self):
