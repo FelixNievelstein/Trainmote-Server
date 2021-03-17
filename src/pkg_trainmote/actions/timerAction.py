@@ -36,7 +36,8 @@ class TimerAction(ActionInterface):
             print(self.__seconds)
 
     def runAction(self, _callback):
-        TimerThread(self.__seconds, _callback)
+        self.timer = TimerThread(self.__seconds, _callback)
+        self.timer.start()
 
     def cancelAction(self):
         self.timer.join()

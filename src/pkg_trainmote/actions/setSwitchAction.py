@@ -16,7 +16,10 @@ class SetSwitchAction(ActionInterface):
             print(self.__action.values[0])
 
     def runAction(self, _callback):
-        gpioservice.setSwitch(self.__action.values[0])
+        try:
+            gpioservice.setSwitch(self.__action.values[0])
+        except Exception as err:
+            print(err)        
         _callback()
 
     def cancelAction(self):
