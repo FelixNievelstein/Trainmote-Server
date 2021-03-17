@@ -34,6 +34,13 @@ def startProgram(program_id: str):
     except ValueError as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
 
+@programApi.route('/trainmote/api/v1/control/program/status', methods=["GET"])
+def getProgramStatus():
+    if programMachine.isRunning:
+        return json.dumps(programMachine.program.to_dict()), 200, baseAPI.defaultHeader()
+    else:
+        return json.dumps([]), 200, baseAPI.defaultHeader()
+
 @programApi.route('/trainmote/api/v1/control/program/stop/<program_id>', methods=["PATCH"])
 def stopProgram(program_id: str):
     if program_id is None:

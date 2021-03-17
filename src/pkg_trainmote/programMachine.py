@@ -8,16 +8,18 @@ from .actions import actionHelper
 
 class ProgramMachine(StateMachine):
 
-    __program: Optional[Program]
+    program: Optional[Program]
     __action_index: int = 0
     __actionInterface: Optional[ActionInterface] = None
 
     isRunning: bool = False
 
     def start(self, program: Program):
+        if program.name is not None:
+            print("Start " + program.name)
 
         if self.is_readyForAction:
-            self.__program = program
+            self.program = program
             self.startProgram()
 
     readyForAction = State('readyForAction', initial=True)
@@ -32,44 +34,40 @@ class ProgramMachine(StateMachine):
     startAction = preparingAction.to(runningAction)
     endProgram = preparingAction.to(readyForAction)
 
-    def on_startProgram(self):
-        print('startProgram')
+    def on_startProgram(self):        
         self.isRunning = True
 
     def on_enter_runningAction(self):
-        print('startAction')
-
         def actionCallback():
-            print("action finished")
             self.endAction()
+
         self.__actionInterface.runAction(actionCallback)
 
     def on_cancelProgram(self):
-        print('cancelProgram')
         self.isRunning = False
-        self.__program = None
+        self.program = None
 
     def on_endAction(self):
-        print('endAction')
         self.__action_index = self.__action_index + 1
 
     def on_enter_actionFinished(self):
         self.prepareForAction()
 
     def on_enter_preparingAction(self):
-        print('preparing')
         self.prepare()
 
     def prepare(self):
-        if self.__action_index < len(self.__program.actions):
-            action = self.__program.actions[self.__action_index]
+        if self.__action_index < len(self.program.actions):
+            action = self.program.actions[self.__action_index]
             self.__actionInterface = actionHelper.getProgramAction(action)
             if self.__actionInterface is not None:
+                self.__actionInterface.prepareAction()
                 self.startAction()
                 return
         self.endProgram()
 
     def on_endProgram(self):
-        print('on_endProgram')
+        print('Program End')
         self.isRunning = False
-        self.__program = None
+        self.program = None
+        self.__action_index = 0
