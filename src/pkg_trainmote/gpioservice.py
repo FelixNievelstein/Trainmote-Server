@@ -47,7 +47,7 @@ def removeRelais(relais: GPIORelaisModel):
         gpioRelais.remove(relais)
         GPIO.cleanup(relais.relais_id)
 
-def addSwitch(switch: GPIOSwitchPoint):    
+def addSwitch(switch: GPIOSwitchPoint):
     if switch.needsPowerOn and switchPowerRelais is not None:
         switch.setPowerRelais(switchPowerRelais)
     addRelais(switch)
@@ -100,18 +100,28 @@ def getStopWithID(id):
 
 # Relais Actions
 
+def setPin(relais: GPIORelaisModel, value: bool) -> bool:
+    if value is not relais.getStatus():
+        if value:
+            if isinstance(relais, GPIOStoppingPoint):
+                trackingService = next(
+                    (tracker for tracker in trackingServices if tracker.stoppingPoint.uid == relais.uid),
+                    None
+                )
+                if trackingService:
+                    trackingService.stopTracking()
+                    trackingServices.remove(trackingService)
+            return relais.setStatus(GPIO.LOW)
+        else:
+            if isinstance(relais, GPIOStoppingPoint) and relais.mess_id is not None:
+                startTrackingFor(relais)
+            return relais.setStatus(GPIO.HIGH)
+    else:
+        return value
 
-def switchPin(relais):
+def switchPin(relais) -> bool:
     if relais.getStatus():
-        if isinstance(relais, GPIOStoppingPoint):
-            trackingService = next(
-                (tracker for tracker in trackingServices if tracker.stoppingPoint.uid == relais.uid),
-                None
-            )
-            if trackingService:
-                trackingService.stopTracking()
-                trackingServices.remove(trackingService)
-        return relais.setStatus(GPIO.LOW)
+        return setPin(relais, GPIO.LOW)
     else:
         if isinstance(relais, GPIOStoppingPoint) and relais.mess_id is not None:
             startTrackingFor(relais)
@@ -137,12 +147,16 @@ def getAllSwitches():
     return json.dumps([ob.to_dict() for ob in DatabaseController().getAllSwichtModels()])
 
 
-def setSwitch(id: str) -> str:
+def setSwitch(id: str, value: Optional[bool] = None) -> str:
     relais = getSwitchWithID(id)
     if relais is not None:
         switch = getSwitchFor(id)
         if switch is not None:
-            newValue = switchPin(relais)
+            newValue = False
+            if value is not None:
+                newValue = setPin(relais, value)
+            else:
+                newValue = switchPin(relais)
             return json.dumps({"model": switch.to_dict(), "currentValue": newValue})
     raise ValueError("Relais not found for id {}".format(id))
 
@@ -207,12 +221,16 @@ def getStop(id: str):
 def getAllStopPoints():
     return json.dumps([ob.to_dict() for ob in DatabaseController().getAllStopModels()])
 
-def setStop(id: str):
+def setStop(id: str, value: Optional[bool] = None):
     relais = getStopWithID(id)
     if relais is not None:
         stop = getStopFor(id)
         if stop is not None:
-            newValue = switchPin(relais)
+            newValue = False
+            if value is not None:
+                newValue = setPin(relais, value)
+            else:
+                newValue = switchPin(relais)
             return json.dumps({"model": stop.to_dict(), "currentValue": newValue})
     raise ValueError("Relais not found for id {}".format(id))
 

@@ -46,6 +46,9 @@ class ProgramMachine(StateMachine):
     def on_cancelProgram(self):
         self.isRunning = False
         self.program = None
+        if self.__actionInterface is not None:
+            self.__actionInterface.cancelAction()
+        self.__action_index = 0
 
     def on_endAction(self):
         self.__action_index = self.__action_index + 1

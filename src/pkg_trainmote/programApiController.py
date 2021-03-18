@@ -46,7 +46,11 @@ def stopProgram(program_id: str):
     if program_id is None:
         abort(400)
     try:
-        return "", 200
+        if programMachine.isRunning and programMachine.program.uid == program_id:
+            programMachine.cancelProgram()
+            return "", 204, baseAPI.defaultHeader()
+        else:
+            return json.dumps({"error": f"Program for with id {program_id} is not running."}), 400, baseAPI.defaultHeader()
     except ValueError as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
 
