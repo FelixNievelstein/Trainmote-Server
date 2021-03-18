@@ -16,7 +16,7 @@ class SetStopAction(ActionInterface):
 
     def runAction(self, _callback):
         try:
-            intValue = int(self.__action.values[0])
+            intValue = int(self.__action.values[1])
             gpioservice.setStop(self.__action.values[0], bool(intValue))
         except Exception as err:
             print(err)

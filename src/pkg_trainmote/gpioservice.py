@@ -100,9 +100,10 @@ def getStopWithID(id):
 
 # Relais Actions
 
-def setPin(relais: GPIORelaisModel, value: bool) -> bool:
-    if value is not relais.getStatus():
-        if value:
+def setPin(relais: GPIORelaisModel, value: int) -> int:
+    if value != relais.getStatus():
+        if not bool(value):
+            print(value)
             if isinstance(relais, GPIOStoppingPoint):
                 trackingService = next(
                     (tracker for tracker in trackingServices if tracker.stoppingPoint.uid == relais.uid),
@@ -111,22 +112,16 @@ def setPin(relais: GPIORelaisModel, value: bool) -> bool:
                 if trackingService:
                     trackingService.stopTracking()
                     trackingServices.remove(trackingService)
-            return relais.setStatus(GPIO.LOW)
+            return relais.setStatus(value)
         else:
             if isinstance(relais, GPIOStoppingPoint) and relais.mess_id is not None:
                 startTrackingFor(relais)
-            return relais.setStatus(GPIO.HIGH)
+            return relais.setStatus(value)
     else:
         return value
 
-def switchPin(relais) -> bool:
-    if relais.getStatus():
-        return setPin(relais, GPIO.LOW)
-    else:
-        if isinstance(relais, GPIOStoppingPoint) and relais.mess_id is not None:
-            startTrackingFor(relais)
-        return relais.setStatus(GPIO.HIGH)
-
+def switchPin(relais) -> int:
+    return setPin(relais, int(not relais.getStatus()))
 
 def receivedMessage(message):
     return "msg:Not valid json"
@@ -147,12 +142,12 @@ def getAllSwitches():
     return json.dumps([ob.to_dict() for ob in DatabaseController().getAllSwichtModels()])
 
 
-def setSwitch(id: str, value: Optional[bool] = None) -> str:
+def setSwitch(id: str, value: Optional[int] = None) -> str:
     relais = getSwitchWithID(id)
     if relais is not None:
         switch = getSwitchFor(id)
         if switch is not None:
-            newValue = False
+            newValue = 0
             if value is not None:
                 newValue = setPin(relais, value)
             else:
@@ -221,12 +216,12 @@ def getStop(id: str):
 def getAllStopPoints():
     return json.dumps([ob.to_dict() for ob in DatabaseController().getAllStopModels()])
 
-def setStop(id: str, value: Optional[bool] = None):
+def setStop(id: str, value: Optional[int] = None):
     relais = getStopWithID(id)
     if relais is not None:
         stop = getStopFor(id)
         if stop is not None:
-            newValue = False
+            newValue = 0
             if value is not None:
                 newValue = setPin(relais, value)
             else:
