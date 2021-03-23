@@ -21,6 +21,7 @@ programMachine = ProgramMachine()
 ##
 
 @programApi.route('/trainmote/api/v1/control/program/start/<program_id>', methods=["PATCH"])
+@auth.login_required(role="admin")
 def startProgram(program_id: str):
     if program_id is None:
         abort(400)
@@ -33,6 +34,8 @@ def startProgram(program_id: str):
         return "", 200
     except ValueError as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
+    except Error as e:
+        return json.dumps({"error": str(e)}), 503, baseAPI.defaultHeader()
 
 @programApi.route('/trainmote/api/v1/control/program/status', methods=["GET"])
 def getProgramStatus():
@@ -42,6 +45,7 @@ def getProgramStatus():
         return json.dumps([]), 200, baseAPI.defaultHeader()
 
 @programApi.route('/trainmote/api/v1/control/program/stop/<program_id>', methods=["PATCH"])
+@auth.login_required(role="admin")
 def stopProgram(program_id: str):
     if program_id is None:
         abort(400)
@@ -50,7 +54,7 @@ def stopProgram(program_id: str):
             programMachine.cancelProgram()
             return "", 204, baseAPI.defaultHeader()
         else:
-            return json.dumps({"error": f"Program for with id {program_id} is not running."}), 400, baseAPI.defaultHeader()
+            return json.dumps({"error": f"Program for with id {program_id} is not running."}), 404, baseAPI.defaultHeader()
     except ValueError as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
 
@@ -63,27 +67,23 @@ def updateProgram(program_id: str):
         validator = Validator()
         if validator.validateDict(mJson, "program_update_scheme") is False:
             abort(400)
+        if programMachine.isRunning and programMachine.program.uid == program_id:
+            return json.dumps(
+                {"error": "Program is currently running and cannot be updated."}
+            ), 409, baseAPI.defaultHeader()
         try:
             database = DatabaseController()
-
-            """ exModel = database.getStop(program_id)
+            exModel = database.getProgram(program_id)
             if exModel is None:
-        return json.dumps({"error": "Program for id {} not found".format(program_id)}), 404, baseAPI.defaultHeader()
-            model = GPIOStoppingPoint.from_dict(mJson, stop_id)
-            if (
-                model.relais_id is not None
-                and exModel.relais_id is not None
-                and model.relais_id is not exModel.relais_id
-            ):
-                validator.isAlreadyInUse(int(mJson["relais_id"]))
-            updateStop = database.updateStop(stop_id, model)
-            if updateStop is not None:
-                if exModel.relais_id != model.relais_id:
-                    gpioservice.removeRelais(exModel)
-                    gpioservice.addRelais(model)
-                return json.dumps(updateStop.to_dict()), 200, baseAPI.defaultHeader()
-            else: """
-            abort(500)
+                return json.dumps(
+                    {"error": "Program for id {} not found".format(program_id)}
+                ), 404, baseAPI.defaultHeader()
+            programModel = Program.from_Json(mJson)
+            updatedProgram = database.updateProgram(program_id, programModel)
+            if updatedProgram is not None:
+                return json.dumps(updateProgram.to_dict()), 200, baseAPI.defaultHeader()
+            else:
+                abort(500)
 
         except ValueError as e:
             return json.dumps({"error": str(e)}), 409, baseAPI.defaultHeader()
@@ -99,6 +99,9 @@ def deleteProgram(program_id: str):
     if program_id is None:
         abort(400)
     try:
+        if programMachine.isRunning and programMachine.program.uid == program_id:
+            programMachine.cancelProgram()
+
         database = DatabaseController()
         exModel = database.getProgram(program_id)
         if exModel is None:

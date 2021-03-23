@@ -411,6 +411,14 @@ class DatabaseController():
         if self.openDatabase():
             # Insert a row of data
             self.execute("DELETE FROM TMProgramModel WHERE uid = '%s';" % (id), None)
+
+    def updateProgram(self, uid: str, updatModel: Program) -> Optional[Program]:
+        for action in updatModel.actions:
+            self.updateAction(action)
+        if updatModel.name is not None and self.openDatabase():
+            self.execute("UPDATE TMProgramModel SET name = '%s'  WHERE uid = '%s';" % (updatModel.name, uid), None)
+
+        return self.getProgram(uid)
 ##
 # Actions
 ##
@@ -470,6 +478,14 @@ class DatabaseController():
     def deleteAction(self, id: str):
         if self.openDatabase():
             self.execute("DELETE FROM TMActionModel WHERE uid = '%s';" % (id), None)
+
+    def updateAction(self, updatModel: Action) -> Optional[Action]:
+        if updatModel.uid is not None:
+            updateString = self.createUpdateStringFor("TMActionModel", updatModel, "uid = '%s'" % (updatModel.uid))
+            if self.openDatabase() and updateString is not None:
+                self.execute(updateString, None)
+            return self.getAction(updatModel.uid)
+        return None
 
     def execute(self, query, _callback, shouldClose: bool = True):
         try:

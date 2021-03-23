@@ -1,3 +1,4 @@
+from sqlite3.dbapi2 import DatabaseError, Error
 from statemachine import StateMachine, State
 
 from pkg_trainmote.actions.actionInterface import ActionInterface
@@ -12,15 +13,7 @@ class ProgramMachine(StateMachine):
     __action_index: int = 0
     __actionInterface: Optional[ActionInterface] = None
 
-    isRunning: bool = False
-
-    def start(self, program: Program):
-        if program.name is not None:
-            print("Start " + program.name)
-
-        if self.is_readyForAction:
-            self.program = program
-            self.startProgram()
+    isRunning: bool = False    
 
     readyForAction = State('readyForAction', initial=True)
     runningAction = State('RunningAction')
@@ -33,6 +26,16 @@ class ProgramMachine(StateMachine):
     prepareForAction = actionFinished.to(preparingAction)
     startAction = preparingAction.to(runningAction)
     endProgram = preparingAction.to(readyForAction)
+
+    def start(self, program: Program):
+        if program.name is not None:
+            print("Start " + program.name)
+
+        if self.is_readyForAction:
+            self.program = program
+            self.startProgram()
+        else:
+            raise Error("A program is already running.")
 
     def on_startProgram(self):        
         self.isRunning = True
