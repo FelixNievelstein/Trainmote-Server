@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from sqlite3.dbapi2 import DataError
 import uuid
 import json
 
@@ -413,11 +414,17 @@ class DatabaseController():
             self.execute("DELETE FROM TMProgramModel WHERE uid = '%s';" % (id), None)
 
     def updateProgram(self, uid: str, updatModel: Program) -> Optional[Program]:
-        for action in updatModel.actions:
-            self.updateAction(action)
-        if updatModel.name is not None and self.openDatabase():
-            self.execute("UPDATE TMProgramModel SET name = '%s'  WHERE uid = '%s';" % (updatModel.name, uid), None)
-
+        programPk = self.getProgramPk(uid)
+        if programPk is not None:
+            for action in updatModel.actions:
+                if action.uid is not None:
+                    self.updateAction(action)
+                else:
+                    self.insertAction(action, programPk)
+            if updatModel.name is not None and self.openDatabase():
+                self.execute("UPDATE TMProgramModel SET name = '%s'  WHERE uid = '%s';" % (updatModel.name, uid), None)            
+        else:
+            raise ValueError("Program not found")
         return self.getProgram(uid)
 ##
 # Actions

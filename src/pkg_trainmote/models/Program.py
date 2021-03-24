@@ -46,4 +46,21 @@ class Program():
                 return cls(None, mProgram.actions, mProgram.name)
         else:
             raise ValueError("Invalid json")
-    
+
+class UpdateProgramRequest():
+
+    def __init__(
+        self,
+        program: Program,
+        actionsToDelete: List[str]
+    ):
+        self.program = program
+        self.actionsToDelete = actionsToDelete
+
+    @classmethod
+    def from_Json(cls, data: Any):
+        if Validator().validateDict(data, "program_update_scheme") is True:
+            mRequest = json.loads(json.dumps(data), object_hook=lambda d: SimpleNamespace(**d))
+            return cls(mRequest.program, mRequest.program)
+        else:
+            raise ValueError("Invalid json")

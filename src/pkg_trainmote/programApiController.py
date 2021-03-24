@@ -11,7 +11,7 @@ from .validators.validator import Validator
 import json
 from .databaseControllerModule import DatabaseController
 from .authentication import auth
-from .models.Program import Program
+from .models.Program import Program, UpdateProgramRequest
 
 
 programApi = Blueprint('programApi', __name__)
@@ -78,8 +78,10 @@ def updateProgram(program_id: str):
                 return json.dumps(
                     {"error": "Program for id {} not found".format(program_id)}
                 ), 404, baseAPI.defaultHeader()
-            programModel = Program.from_Json(mJson)
-            updatedProgram = database.updateProgram(program_id, programModel)
+            updateRequest = UpdateProgramRequest.from_Json(mJson)
+            updatedProgram = database.updateProgram(program_id, updateRequest.program)
+            for action in updateRequest.actionsToDelete:
+                database.deleteAction(action)
             if updatedProgram is not None:
                 return json.dumps(updateProgram.to_dict()), 200, baseAPI.defaultHeader()
             else:
