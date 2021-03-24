@@ -6,9 +6,9 @@ class Action():
     def __init__(
         self,
         uid: Optional[str],
-        type: str,
-        position: int,
-        values: List[str],
+        type: Optional[str],
+        position: Optional[int],
+        values: Optional[List[str]],
         name: Optional[str]
     ):
         self.uid = uid
@@ -28,17 +28,25 @@ class Action():
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]):
-        values: List[str] = []
-        for value in data.get("values"):
-            values.append(value)
-        action = cls(
-            str(data.get("uid")),
-            str(data.get("type")),
-            int(str(data.get("position"))),
-            values,
-            data.get("name")
-        )
-        return action
+        if "values" in data.keys():
+            values: List[str] = []
+            for value in data.get("values"):
+                values.append(value)
+            return cls(
+                None if data.get("uid") is None else str(data.get("uid")),
+                None if data.get("type") is None else str(data.get("type")),
+                None if data.get("position") is None else int(str(data.get("position"))),
+                values,
+                data.get("name")
+            )
+        else:
+            return cls(
+                None if data.get("uid") is None else str(data.get("uid")),
+                None if data.get("type") is None else str(data.get("type")),
+                None if data.get("position") is None else int(str(data.get("position"))),
+                None,
+                data.get("name")
+            )
 
 
 class ActionType(enum.Enum):

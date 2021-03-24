@@ -438,6 +438,8 @@ class DatabaseController():
         actionUuid = None
         if self.openDatabase():
             actionUuid = str(uuid.uuid4())
+            if action.values is None:
+                raise ValueError("No values found for action")
             valuesString = self.encodeValues(action.values)
 
             def createdProgram(uid):

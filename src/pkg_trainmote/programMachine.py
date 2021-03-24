@@ -62,8 +62,12 @@ class ProgramMachine(StateMachine):
     def on_enter_preparingAction(self):
         self.prepare()
 
+    def get_position(self, action: Action) -> int:
+        return action.position or 0
+
     def prepare(self):
         if self.program is not None and self.__action_index < len(self.program.actions):
+            self.program.actions.sort(key=self.get_position)
             action = self.program.actions[self.__action_index]
             self.__actionInterface = actionHelper.getProgramAction(action)
             if self.__actionInterface is not None:
