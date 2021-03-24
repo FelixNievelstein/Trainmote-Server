@@ -37,7 +37,7 @@ class ProgramMachine(StateMachine):
         else:
             raise Error("A program is already running.")
 
-    def on_startProgram(self):        
+    def on_startProgram(self):
         self.isRunning = True
 
     def on_enter_runningAction(self):
@@ -63,7 +63,7 @@ class ProgramMachine(StateMachine):
         self.prepare()
 
     def prepare(self):
-        if self.__action_index < len(self.program.actions):
+        if self.program is not None and self.__action_index < len(self.program.actions):
             action = self.program.actions[self.__action_index]
             self.__actionInterface = actionHelper.getProgramAction(action)
             if self.__actionInterface is not None:
