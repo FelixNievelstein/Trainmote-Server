@@ -365,8 +365,9 @@ class DatabaseController():
                 pk = dataSet[0]
 
             self.execute("SELECT * FROM TMProgramModel WHERE uid = '%s';" % (uid), readProgram)
+
         if pk is not None and program is not None:
-            program.actions = self.getActionsFor(pk)
+            program.actions = self.getActionsFor(pk) or []
         return program
 
     def getProgramPk(self, uid: str) -> Optional[int]:
@@ -467,8 +468,8 @@ class DatabaseController():
                     allActions.append(action)
 
             self.execute("SELECT * FROM TMActionModel WHERE program = %i" % (program), readActions)
-
-        return allActions.sort(key=self.get_position)
+        allActions.sort(key=self.get_position)
+        return allActions
 
     def get_position(self, action: Action) -> int:
         return action.position or 0
