@@ -467,8 +467,11 @@ class DatabaseController():
                     allActions.append(action)
 
             self.execute("SELECT * FROM TMActionModel WHERE program = %i" % (program), readActions)
+            
+        return allActions.sort(key=self.get_position)
 
-        return allActions
+    def get_position(self, action: Action) -> int:
+        return action.position or 0
 
     def getAction(self, uid: str) -> Optional[Action]:
         action = None
