@@ -15,7 +15,11 @@ class TimerThread(threading.Thread):
         self.callback = callback
 
     def run(self):
-        time.sleep(self.seconds)
+        for i in range(self.seconds):
+            if not self.kill.is_set():
+                time.sleep(1)
+            else:
+                return
         if self.callback is not None:
             self.callback()
 
@@ -40,7 +44,6 @@ class TimerAction(ActionInterface):
         self.timer.start()
 
     def cancelAction(self):
-        self.timer.join()
         self.timer.kill.set()
         pass
 
