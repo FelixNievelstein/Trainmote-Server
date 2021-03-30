@@ -87,15 +87,22 @@ class DatabaseController():
             self.conn.commit()
             self.conn.close()
 
-    def createUpdateStringFor(self, table: str, model, condition: Optional[str]) -> Optional[str]:
+    def createUpdateStringFor(self, table: str, model, condition: Optional[str], encoder = None) -> Optional[str]:
         string = "UPDATE %s SET " % (table)
         count = 0
         for property, value in vars(model).items():
             if property != "uid" and value is not None:
-                if count == 0:
-                    string = "%s %s = '%s' " % (string, property, value)
+                if encoder is not None:
+                    mValue = encoder(property, value)
+                    if count == 0:
+                        string = "%s %s = '%s' " % (string, property, mValue)
+                    else:
+                        string = "%s, %s = '%s' " % (string, property, mValue)
                 else:
-                    string = "%s, %s = '%s' " % (string, property, value)
+                    if count == 0:
+                        string = "%s %s = '%s' " % (string, property, value)
+                    else:
+                        string = "%s, %s = '%s' " % (string, property, value)
                 count = count + 1
         if condition is not None:
             string = "%s WHERE %s" % (string, condition)
@@ -423,7 +430,7 @@ class DatabaseController():
                 else:
                     self.insertAction(action, programPk)
             if updatModel.name is not None and self.openDatabase():
-                self.execute("UPDATE TMProgramModel SET name = '%s'  WHERE uid = '%s';" % (updatModel.name, uid), None)            
+                self.execute("UPDATE TMProgramModel SET name = '%s'  WHERE uid = '%s';" % (updatModel.name, uid), None)
         else:
             raise ValueError("Program not found")
         return self.getProgram(uid)
@@ -439,24 +446,24 @@ class DatabaseController():
         actionUuid = None
         if self.openDatabase():
             actionUuid = str(uuid.uuid4())
-            if action.values is None:
+            if action.inputs is None:
                 raise ValueError("No values found for action")
-            valuesString = self.encodeValues(action.values)
+            inputsString = self.encodeValues(action.inputs)
 
             def createdProgram(uid):
                 print(uid)
 
             self.executeWith(
                 "INSERT INTO TMActionModel(uid, program, type, position, inputs, name) VALUES (?, ?, ?, ?, ?, ?)",
-                createdProgram, (actionUuid, programId, action.type, action.position, valuesString, action.name)
+                createdProgram, (actionUuid, programId, action.type, action.position, inputsString, action.name)
             )
         return actionUuid
 
-    def decodeValues(self, values: str) -> List[str]:
-        return json.loads(values)
+    def decodeValues(self, inputs: str) -> List[str]:
+        return json.loads(inputs)
 
-    def encodeValues(self, values: List[str]) -> str:
-        return json.dumps(values)
+    def encodeValues(self, inputs: List[str]) -> str:
+        return json.dumps(inputs)
 
     def getActionsFor(self, program: int) -> Optional[List[Action]]:
         allActions = []
@@ -492,12 +499,18 @@ class DatabaseController():
         if self.openDatabase():
             self.execute("DELETE FROM TMActionModel WHERE uid = '%s';" % (id), None)
 
-    def updateAction(self, updatModel: Action) -> Optional[Action]:
-        if updatModel.uid is not None:
-            updateString = self.createUpdateStringFor("TMActionModel", updatModel, "uid = '%s'" % (updatModel.uid))
+    def updateAction(self, updateModel: Action) -> Optional[Action]:
+        if updateModel.uid is not None:
+            def encode(propertyName, value) -> Any:
+                if propertyName == "inputs":
+                    return self.encodeValues(value)
+                else:
+                    return value
+
+            updateString = self.createUpdateStringFor("TMActionModel", updateModel, "uid = '%s'" % (updateModel.uid), encode)
             if self.openDatabase() and updateString is not None:
                 self.execute(updateString, None)
-            return self.getAction(updatModel.uid)
+            return self.getAction(updateModel.uid)
         return None
 
     def execute(self, query, _callback, shouldClose: bool = True):

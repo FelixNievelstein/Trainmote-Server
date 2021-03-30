@@ -30,9 +30,9 @@ class TimerAction(ActionInterface):
 
     def prepareAction(self):
         if self.__action is not None:
-            hhSeconds = int(self.__action.values[0]) * 3600
-            mmSeconds = int(self.__action.values[1]) * 60
-            self.__seconds = + hhSeconds + mmSeconds + int(self.__action.values[2])
+            hhSeconds = int(self.__action.inputs[0]) * 3600
+            mmSeconds = int(self.__action.inputs[1]) * 60
+            self.__seconds = + hhSeconds + mmSeconds + int(self.__action.inputs[2])
             print(self.__seconds)
 
     def runAction(self, _callback):

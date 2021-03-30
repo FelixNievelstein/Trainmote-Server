@@ -78,7 +78,7 @@ def updateProgram(program_id: str):
                 return json.dumps(
                     {"error": "Program for id {} not found".format(program_id)}
                 ), 404, baseAPI.defaultHeader()
-            updateRequest = UpdateProgramRequest.from_Json(mJson, program_id)   
+            updateRequest = UpdateProgramRequest.from_Json(mJson, program_id)
             for action in updateRequest.actionsToDelete:
                 database.deleteAction(action)
             updatedProgram = database.updateProgram(program_id, updateRequest.program)

@@ -8,35 +8,35 @@ class Action():
         uid: Optional[str],
         type: Optional[str],
         position: Optional[int],
-        values: Optional[List[str]],
+        inputs: Optional[List[str]],
         name: Optional[str]
     ):
         self.uid = uid
         self.type = type
         self.position = position
         self.name = name
-        self.values = values
+        self.inputs = inputs
 
     def to_dict(self):
         return {
             "uid": self.uid,
             "type": self.type,
             "position": self.position,
-            "values": self.values,
+            "inputs": self.inputs,
             "name": self.name
-        }    
+        }
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]):
-        if "values" in data.keys():
-            values: List[str] = []
-            for value in data.get("values"):
-                values.append(value)
+        if "inputs" in data.keys():
+            inputs: List[str] = []
+            for value in data.get("inputs"):
+                inputs.append(value)
             return cls(
                 None if data.get("uid") is None else str(data.get("uid")),
                 None if data.get("type") is None else str(data.get("type")),
                 None if data.get("position") is None else int(str(data.get("position"))),
-                values,
+                inputs,
                 data.get("name")
             )
         else:

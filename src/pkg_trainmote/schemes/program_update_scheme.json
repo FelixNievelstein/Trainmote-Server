@@ -13,7 +13,7 @@
                             "uid" : {"type": "string"}, 
                             "type" : {"type": "string"},
                             "position" : {"type": "integer"},
-                            "values" : {
+                            "inputs" : {
                                 "type": "array",
                                 "items": {
                                     "type": "string"

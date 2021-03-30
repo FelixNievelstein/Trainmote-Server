@@ -41,17 +41,17 @@ class ClockAction(ActionInterface):
 
     def prepareAction(self):
         if self.__action is not None:
-            hhValue = int(self.__action.values[0])
+            hhValue = int(self.__action.inputs[0])
             hour = 0
             if hhValue <= 23 and hhValue >= 0:
                 hour = hhValue
 
-            mmValue = int(self.__action.values[1])
+            mmValue = int(self.__action.inputs[1])
             minutes = 0
             if mmValue <= 59 and mmValue >= 0:
                 minutes = mmValue
 
-            ssValue = int(self.__action.values[1])
+            ssValue = int(self.__action.inputs[1])
             seconds = 0
             if ssValue <= 59 and ssValue >= 0:
                 seconds = ssValue

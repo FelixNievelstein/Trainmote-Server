@@ -12,12 +12,12 @@ class SetStopAction(ActionInterface):
 
     def prepareAction(self):
         if self.__action is not None:
-            print(self.__action.values[0])
+            print(self.__action.inputs[0])
 
     def runAction(self, _callback):
         try:
-            intValue = int(self.__action.values[1])
-            gpioservice.setStop(self.__action.values[0], bool(intValue))
+            intValue = int(self.__action.inputs[1])
+            gpioservice.setStop(self.__action.inputs[0], bool(intValue))
         except Exception as err:
             print(err)
         _callback()
