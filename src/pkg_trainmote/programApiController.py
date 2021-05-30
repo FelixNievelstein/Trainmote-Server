@@ -4,18 +4,17 @@ from flask import request
 from flask import abort
 from flask import Response
 
-from .programMachine import ProgramMachine
-
 from . import baseAPI
 from .validators.validator import Validator
 import json
 from .databaseControllerModule import DatabaseController
 from .authentication import auth
 from .models.Program import Program, UpdateProgramRequest
+from . import programController
 
 
 programApi = Blueprint('programApi', __name__)
-programMachine = ProgramMachine()
+
 ##
 # Endpoint Program
 ##
@@ -30,7 +29,7 @@ def startProgram(program_id: str):
         exModel = database.getProgram(program_id)
         if exModel is None:
             return json.dumps({"error": "Program for id {} not found".format(program_id)}), 404
-        programMachine.start(exModel)
+        programController.programMachine.start(exModel)
         return "", 200
     except ValueError as e:
         return json.dumps({"error": str(e)}), 400, baseAPI.defaultHeader()
@@ -39,8 +38,9 @@ def startProgram(program_id: str):
 
 @programApi.route('/trainmote/api/v1/control/program/status', methods=["GET"])
 def getProgramStatus():
-    if programMachine.isRunning:
-        return json.dumps(programMachine.program.to_dict()), 200, baseAPI.defaultHeader()
+    runningProgram = programController.getRunningProgramm()
+    if runningProgram is not None:
+        return json.dumps(runningProgram.to_dict()), 200, baseAPI.defaultHeader()
     else:
         return json.dumps([]), 200, baseAPI.defaultHeader()
 
@@ -50,8 +50,9 @@ def stopProgram(program_id: str):
     if program_id is None:
         abort(400)
     try:
-        if programMachine.isRunning and programMachine.program.uid == program_id:
-            programMachine.cancelProgram()
+        runningProgram = programController.getRunningProgramm()
+        if runningProgram is not None and runningProgram.uid == program_id:
+            programController.programMachine.cancelProgram()
             return "", 204, baseAPI.defaultHeader()
         else:
             return json.dumps({"error": f"Program for with id {program_id} is not running."}), 404, baseAPI.defaultHeader()
@@ -67,7 +68,8 @@ def updateProgram(program_id: str):
         validator = Validator()
         if validator.validateDict(mJson, "program_update_scheme") is False:
             abort(400)
-        if programMachine.isRunning and programMachine.program.uid == program_id:
+        runningProgram = programController.getRunningProgramm()
+        if runningProgram is not None and runningProgram.uid == program_id:
             return json.dumps(
                 {"error": "Program is currently running and cannot be updated."}
             ), 409, baseAPI.defaultHeader()
@@ -101,8 +103,9 @@ def deleteProgram(program_id: str):
     if program_id is None:
         abort(400)
     try:
-        if programMachine.isRunning and programMachine.program.uid == program_id:
-            programMachine.cancelProgram()
+        runningProgram = programController.getRunningProgramm()
+        if runningProgram is not None and runningProgram.uid == program_id:
+            programController.programMachine.cancelProgram()
 
         database = DatabaseController()
         exModel = database.getProgram(program_id)

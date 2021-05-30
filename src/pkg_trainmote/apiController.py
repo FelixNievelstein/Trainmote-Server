@@ -1,5 +1,6 @@
 from pkg_trainmote.stateControllerModule import StateController
 from . import gpioservice
+from . import programController
 from flask import Flask
 from .powerControllerModule import PowerThread
 from .configControllerModule import ConfigController
@@ -87,17 +88,43 @@ def hello_world():
     if stateController is not None:
         stateController.setState(stateControllerModule.STATE_CONNECTED)
     conf = dataBaseController.getConfig()
+
     if conf is not None:
         return json.dumps({
             "trainmote": "trainmote.module.felix-nievelstein.de",
             "version": mVersion,
-            "name": conf.deviceName
+            "name": conf.deviceName        
         })
     else:
         return json.dumps({
             "trainmote": "trainmote.module.felix-nievelstein.de",
             "version": mVersion,
             "name": socket.gethostname()
+        })
+
+
+@app.route('/trainmote/api/v1/status')
+def statusReport():
+    if stateController is not None:
+        stateController.setState(stateControllerModule.STATE_CONNECTED)
+    conf = dataBaseController.getConfig()
+    if conf is not None:
+        return json.dumps({
+            "trainmote": "trainmote.module.felix-nievelstein.de",
+            "version": mVersion,
+            "name": conf.deviceName,
+            "runningProgram": programController.getRunningProgramm().to_dict(),
+            "currentAction": programController.programMachine.getCurrentAction(),
+            "followingActions": json.dumps([ob.to_dict() for ob in programController.programMachine.followingActions()])
+        })
+    else:
+        return json.dumps({
+            "trainmote": "trainmote.module.felix-nievelstein.de",
+            "version": mVersion,
+            "name": socket.gethostname(),
+            "runningProgram": programController.getRunningProgramm().to_dict(),
+            "currentAction": programController.programMachine.getCurrentAction(),       
+            "followingActions": json.dumps([ob.to_dict() for ob in programController.programMachine.followingActions()])
         })
 
 

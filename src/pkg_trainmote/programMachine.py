@@ -4,7 +4,7 @@ from statemachine import StateMachine, State
 from pkg_trainmote.actions.actionInterface import ActionInterface
 from .models.Program import Program
 from .models.Action import Action
-from typing import Optional
+from typing import Optional, List
 from .actions import actionHelper
 
 class ProgramMachine(StateMachine):
@@ -12,8 +12,9 @@ class ProgramMachine(StateMachine):
     program: Optional[Program]
     __action_index: int = 0
     __actionInterface: Optional[ActionInterface] = None
+    __currentAction: Optional[Action] = None
 
-    isRunning: bool = False    
+    isRunning: bool = False
 
     readyForAction = State('readyForAction', initial=True)
     runningAction = State('RunningAction')
@@ -55,17 +56,17 @@ class ProgramMachine(StateMachine):
 
     def on_endAction(self):
         self.__action_index = self.__action_index + 1
+        self.__currentAction = self.loadAction()
 
     def on_enter_actionFinished(self):
         self.prepareForAction()
 
     def on_enter_preparingAction(self):
-        self.prepare()    
+        self.prepare()
 
     def prepare(self):
-        if self.program is not None and self.__action_index < len(self.program.actions):            
-            action = self.program.actions[self.__action_index]
-            self.__actionInterface = actionHelper.getProgramAction(action)
+        if self.__currentAction is not None:
+            self.__actionInterface = actionHelper.getProgramAction(self.__currentAction)
             if self.__actionInterface is not None:
                 self.__actionInterface.prepareAction()
                 self.startAction()
@@ -77,3 +78,25 @@ class ProgramMachine(StateMachine):
         self.isRunning = False
         self.program = None
         self.__action_index = 0
+
+##
+#
+##
+    def getCurrentAction(self) -> Optional[Action]:
+        return self.__currentAction
+
+##
+#   Load the action for the current __action_index.
+##
+    def loadAction(self) -> Optional[Action]:
+        if self.program is not None and self.__action_index < len(self.program.actions):
+            return self.program.actions[self.__action_index]
+        return None
+
+##
+# Returns the following actions of the program
+##
+    def followingActions(self) -> Optional[List[Action]]:
+        if self.program is not None and self.__action_index < len(self.program.actions):
+            return self.program.actions[self.__action_index + 1:]
+        return None
