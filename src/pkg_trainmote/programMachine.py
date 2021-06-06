@@ -97,7 +97,7 @@ class ProgramMachine(StateMachine):
 ##
 # Returns the following actions of the program
 ##
-    def followingActions(self) -> Optional[List[Action]]:
+    def followingActions(self) -> List[Action]:
         if self.program is not None and self.__action_index < len(self.program.actions):
             return self.program.actions[self.__action_index + 1:]
-        return None
+        return []

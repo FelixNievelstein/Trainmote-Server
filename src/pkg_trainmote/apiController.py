@@ -93,7 +93,7 @@ def hello_world():
         return json.dumps({
             "trainmote": "trainmote.module.felix-nievelstein.de",
             "version": mVersion,
-            "name": conf.deviceName        
+            "name": conf.deviceName
         })
     else:
         return json.dumps({
@@ -104,17 +104,25 @@ def hello_world():
 
 
 @app.route('/trainmote/api/v1/status')
+@auth.login_required(role="admin")
 def statusReport():
     if stateController is not None:
         stateController.setState(stateControllerModule.STATE_CONNECTED)
     conf = dataBaseController.getConfig()
+
+    program = programController.getRunningProgramm()
+    programString = program is not None and program.to_dict() or ""
+
+    currentAction = programController.programMachine.getCurrentAction()
+    currentActionString = currentAction is not None and currentAction.to_dict() or ""
+
     if conf is not None:
         return json.dumps({
             "trainmote": "trainmote.module.felix-nievelstein.de",
             "version": mVersion,
             "name": conf.deviceName,
-            "runningProgram": programController.getRunningProgramm().to_dict(),
-            "currentAction": programController.programMachine.getCurrentAction(),
+            "runningProgram": programString,
+            "currentAction": currentActionString,
             "followingActions": json.dumps([ob.to_dict() for ob in programController.programMachine.followingActions()])
         })
     else:
@@ -122,8 +130,8 @@ def statusReport():
             "trainmote": "trainmote.module.felix-nievelstein.de",
             "version": mVersion,
             "name": socket.gethostname(),
-            "runningProgram": programController.getRunningProgramm().to_dict(),
-            "currentAction": programController.programMachine.getCurrentAction(),       
+            "runningProgram": programString,
+            "currentAction": currentActionString,
             "followingActions": json.dumps([ob.to_dict() for ob in programController.programMachine.followingActions()])
         })
 
