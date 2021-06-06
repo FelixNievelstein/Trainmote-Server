@@ -9,7 +9,7 @@ from .actions import actionHelper
 
 class ProgramMachine(StateMachine):
 
-    program: Optional[Program]
+    program: Optional[Program] = None
     __action_index: int = 0
     __actionInterface: Optional[ActionInterface] = None
     __currentAction: Optional[Action] = None

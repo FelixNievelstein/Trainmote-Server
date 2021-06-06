@@ -123,7 +123,7 @@ def statusReport():
             "name": conf.deviceName,
             "runningProgram": programString,
             "currentAction": currentActionString,
-            "followingActions": json.dumps([ob.to_dict() for ob in programController.programMachine.followingActions()])
+            "followingActions": [ob.to_dict() for ob in programController.programMachine.followingActions()]
         })
     else:
         return json.dumps({
@@ -132,7 +132,7 @@ def statusReport():
             "name": socket.gethostname(),
             "runningProgram": programString,
             "currentAction": currentActionString,
-            "followingActions": json.dumps([ob.to_dict() for ob in programController.programMachine.followingActions()])
+            "followingActions": [ob.to_dict() for ob in programController.programMachine.followingActions()]
         })
 
 
