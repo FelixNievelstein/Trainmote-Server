@@ -111,10 +111,10 @@ def statusReport():
     conf = dataBaseController.getConfig()
 
     program = programController.getRunningProgramm()
-    programString = program is not None and program.to_dict() or ""
+    programString = program is not None and program.to_dict() or None
 
     currentAction = programController.programMachine.getCurrentAction()
-    currentActionString = currentAction is not None and currentAction.to_dict() or ""
+    currentActionString = currentAction is not None and currentAction.to_dict() or None
 
     if conf is not None:
         return json.dumps({
