@@ -40,6 +40,7 @@ class ProgramMachine(StateMachine):
 
     def on_startProgram(self):
         self.isRunning = True
+        self.__currentAction = self.loadAction()
 
     def on_enter_runningAction(self):
         def actionCallback():
