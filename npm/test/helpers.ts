@@ -13,7 +13,9 @@ export async function resetDb() {
 
 export function buildApp() {
   const gpio = createGpio();
+  gpio.init();
+  gpio.setMode(17, 'output');
   const service = interpret(trainMachine).start();
-  const app = createApp({ prisma, gpio, service });
+  const app = createApp({ prisma, gpio, service, trainPowerPin: 17 });
   return { app, gpio, service };
 }

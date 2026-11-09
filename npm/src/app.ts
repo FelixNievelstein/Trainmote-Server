@@ -18,9 +18,11 @@ export interface AppDeps {
   prisma: PrismaClient;
   gpio: GpioInterface;
   service: TrainService;
+  /** GPIO, der beim Start/Stopp eines Zugs geschaltet wird. Muss als Ausgang eingerichtet sein. */
+  trainPowerPin: number;
 }
 
-export function createApp({ prisma, gpio, service }: AppDeps) {
+export function createApp({ prisma, gpio, service, trainPowerPin }: AppDeps) {
   const app = express();
 
   app.use(cors());
@@ -63,14 +65,12 @@ export function createApp({ prisma, gpio, service }: AppDeps) {
 
     if (action === 'start') {
       service.send({ type: 'START' });
-      gpio.init();
-      gpio.setMode(17, 'output');
-      gpio.write(17, 1);
+      gpio.write(trainPowerPin, 1);
     }
 
     if (action === 'stop') {
       service.send({ type: 'STOP' });
-      gpio.write(17, 0);
+      gpio.write(trainPowerPin, 0);
     }
 
     if (typeof speed === 'number') {

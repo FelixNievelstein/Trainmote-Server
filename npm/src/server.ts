@@ -6,9 +6,14 @@ import { prisma } from './lib/prisma';
 import { gpio } from './lib/gpio';
 import { trainMachine } from './lib/trainMachine';
 import { createApp } from './app';
+import { createShutdown } from './shutdown';
+
+gpio.init();
+gpio.setMode(config.trainPowerPin, 'output');
+gpio.write(config.trainPowerPin, 0);
 
 const service = interpret(trainMachine).start();
-const app = createApp({ prisma, gpio, service });
+const app = createApp({ prisma, gpio, service, trainPowerPin: config.trainPowerPin });
 const httpServer = createServer(app);
 const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
 
@@ -29,22 +34,45 @@ wss.on('connection', (ws) => {
   });
 });
 
+const shutdown = createShutdown([
+  {
+    name: 'http',
+    run: () =>
+      new Promise<void>((resolve) => {
+        httpServer.close(() => resolve());
+        httpServer.closeAllConnections();
+      }),
+  },
+  {
+    name: 'websocket',
+    run: () => {
+      wss.clients.forEach((client) => client.terminate());
+      wss.close();
+    },
+  },
+  { name: 'state machine', run: () => void service.stop() },
+  {
+    name: 'gpio',
+    run: () => {
+      gpio.write(config.trainPowerPin, 0);
+      gpio.close();
+    },
+  },
+  { name: 'database', run: () => prisma.$disconnect() },
+]);
+
 httpServer.listen(config.port, () => {
   console.log(`Trainmote server listening on http://localhost:${config.port}`);
 });
+
+process.on('SIGINT', () => void shutdown('SIGINT'));
+process.on('SIGTERM', () => void shutdown('SIGTERM'));
 
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled promise rejection:', reason);
 });
 
 process.on('uncaughtException', (error) => {
-  console.error('Uncaught exception, exiting:', error);
-  process.exit(1);
-});
-
-process.on('SIGINT', async () => {
-  service.stop();
-  gpio.close();
-  await prisma.$disconnect();
-  process.exit(0);
+  console.error('Uncaught exception:', error);
+  void shutdown('uncaughtException', 1);
 });
