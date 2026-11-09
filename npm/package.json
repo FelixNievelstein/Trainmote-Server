@@ -24,7 +24,8 @@
     "express": "^5.1.0",
     "prisma": "^5.22.0",
     "ws": "^8.18.0",
-    "xstate": "^4.38.0"
+    "xstate": "^4.38.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.5",

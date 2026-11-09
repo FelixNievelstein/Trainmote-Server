@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import type { PrismaClient } from '@prisma/client';
 import { errorHandler, notFoundHandler } from './http/errors';
+import { parseOrThrow, validateBody } from './http/validate';
+import { createTrainSchema, trainCommandSchema, trainIdSchema } from './lib/trainSchemas';
+import type { CreateTrain, TrainCommandBody } from './lib/trainSchemas';
 import type { GpioInterface } from './lib/gpio';
 import type { TrainCommand, TrainContext } from './lib/trainMachine';
 
@@ -32,13 +35,8 @@ export function createApp({ prisma, gpio, service }: AppDeps) {
     res.json(trains);
   });
 
-  app.post('/api/trains', async (req, res) => {
-    const { name, address } = req.body ?? {};
-
-    if (!name || typeof address !== 'number') {
-      res.status(400).json({ error: 'Missing name or address' });
-      return;
-    }
+  app.post('/api/trains', validateBody(createTrainSchema), async (req, res) => {
+    const { name, address } = req.body as CreateTrain;
 
     const train = await prisma.train.create({
       data: {
@@ -53,15 +51,9 @@ export function createApp({ prisma, gpio, service }: AppDeps) {
     res.status(201).json(train);
   });
 
-  app.post('/api/trains/:id/command', async (req, res) => {
-    const { id } = req.params;
-    const { action, speed, direction } = req.body ?? {};
-
-    const trainId = Number(id);
-    if (Number.isNaN(trainId)) {
-      res.status(400).json({ error: 'Invalid train id' });
-      return;
-    }
+  app.post('/api/trains/:id/command', validateBody(trainCommandSchema), async (req, res) => {
+    const trainId = parseOrThrow(trainIdSchema, req.params.id);
+    const { action, speed, direction } = req.body as TrainCommandBody;
 
     const current = await prisma.train.findUnique({ where: { id: trainId } });
     if (!current) {
@@ -85,7 +77,7 @@ export function createApp({ prisma, gpio, service }: AppDeps) {
       service.send({ type: 'SET_SPEED', value: speed });
     }
 
-    if (direction === 'forward' || direction === 'backward' || direction === 'stop') {
+    if (direction !== undefined) {
       service.send({ type: 'SET_DIRECTION', value: direction });
     }
 
