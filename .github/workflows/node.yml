@@ -1,0 +1,31 @@
+name: Node server
+
+on:
+  push:
+    branches: [develop, master]
+    paths: ['npm/**', '.github/workflows/node.yml']
+  pull_request:
+    paths: ['npm/**', '.github/workflows/node.yml']
+
+defaults:
+  run:
+    working-directory: npm
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: npm/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: PR-Größe prüfen
+        if: github.event_name == 'pull_request'
+        run: scripts/check-diff-size.sh "origin/${{ github.base_ref }}"
