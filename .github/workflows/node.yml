@@ -26,6 +26,7 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build
+      - run: npm test
       - name: PR-Größe prüfen
         if: github.event_name == 'pull_request'
         run: scripts/check-diff-size.sh "origin/${{ github.base_ref }}"
