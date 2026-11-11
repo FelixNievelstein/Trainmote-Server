@@ -33,6 +33,15 @@ httpServer.listen(config.port, () => {
   console.log(`Trainmote server listening on http://localhost:${config.port}`);
 });
 
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught exception, exiting:', error);
+  process.exit(1);
+});
+
 process.on('SIGINT', async () => {
   service.stop();
   gpio.close();

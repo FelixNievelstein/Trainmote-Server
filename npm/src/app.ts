@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import type { PrismaClient } from '@prisma/client';
+import { errorHandler, notFoundHandler } from './http/errors';
 import type { GpioInterface } from './lib/gpio';
 import type { TrainCommand, TrainContext } from './lib/trainMachine';
 
@@ -99,6 +100,9 @@ export function createApp({ prisma, gpio, service }: AppDeps) {
 
     res.json({ ok: true, train: updated, machine: service.getSnapshot().context });
   });
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   return app;
 }
