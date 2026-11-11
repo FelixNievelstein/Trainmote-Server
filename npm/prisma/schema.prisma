@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Train {
+  id          Int      @id @default(autoincrement())
+  name        String
+  address     Int
+  speed       Int      @default(0)
+  direction   String   @default("stop")
+  isActive    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Route {
+  id          Int      @id @default(autoincrement())
+  name        String
+  steps       String   // JSON-encoded route steps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
